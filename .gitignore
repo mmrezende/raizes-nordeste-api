@@ -1,5 +1,29 @@
-node_modules
+# Dependências e build
+node_modules/
+dist/
+coverage/
 
-/generated/prisma
-
+# Variáveis de ambiente locais
 .env
+.env.*.local
+
+# Prisma (client gerado e banco SQLite local)
+/generated/prisma
+/src/generated/prisma
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+prisma/*.db
+prisma/*.db-journal
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Sistema operacional e IDEs
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
