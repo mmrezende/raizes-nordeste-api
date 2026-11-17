@@ -13,10 +13,11 @@ A API REST unifica o recebimento de pedidos dos cinco canais da rede (**App**, *
 ### Auth e Perfis (RBAC)
 - Cadastro e login de usuários com emissão de token JWT.
 - Controle de acesso por perfil: `CLIENTE`, `ATENDENTE`, `COZINHA`, `GERENTE` e `ADMIN`.
+- Funcionários de loja (`ATENDENTE`, `COZINHA`, `GERENTE`) ficam vinculados a uma unidade específica (`unidadeId`) e operam restritos a ela; `CLIENTE` e `ADMIN` ficam com `unidadeId = null`.
 
 ### Unidades, Cardápio e Estoque
 - Cadastro, edição e listagem paginada das unidades da rede (código único, endereço e status ativo/inativo).
-- CRUD de produtos na matriz e consulta paginada de cardápio por unidade, exibindo apenas disponibilidade e saldo da loja consultada.
+- CRUD de produtos na matriz com preço único padronizado para toda a rede (`precoCentavos`) e consulta paginada de cardápio por unidade exibindo a disponibilidade e o saldo da loja.
 - Movimentação de estoque por `(unidadeId, produtoId)` com tipos `ENTRADA`, `SAIDA`, `RESERVA` e `ESTORNO`, consulta de saldo por loja e bloqueio de pedido quando não houver saldo (`409`).
 
 ### Pedidos e Multicanalidade
@@ -34,7 +35,7 @@ A API REST unifica o recebimento de pedidos dos cinco canais da rede (**App**, *
 
 ### Fidelidade e Privacidade (LGPD)
 - Adesão e revogação explícita de consentimento para o programa de fidelidade com registro de data/hora.
-- Acúmulo de pontos em pedidos aprovados e resgate simples com validação de saldo, mantendo saldo consolidado e histórico de movimentações atualizados juntos.
+- Acúmulo automático após pagamento aprovado (`1 ponto` a cada `R$ 10,00` pagos no valor final) e resgate aplicado diretamente como desconto em um pedido futuro (`POST /pedidos`, `1 ponto = R$ 0,50`), mantendo saldo consolidado e histórico de movimentações atualizados juntos (com estorno de pontos caso o pedido seja cancelado ou recusado).
 - Consulta/atualização de dados mínimos pelo próprio titular e fluxo de anonimização sem quebrar o histórico financeiro e operacional dos pedidos já realizados.
 
 ### Auditoria
@@ -49,7 +50,7 @@ A API REST unifica o recebimento de pedidos dos cinco canais da rede (**App**, *
 - **RN03 — Reserva e reversão de estoque:** ao criar o pedido, o estoque é abatido na mesma operação de banco (`RESERVA`). Se o pagamento for recusado ou o pedido for cancelado antes da entrega, os itens retornam ao estoque (`ESTORNO`).
 - **RN04 — Preço congelado e promoções:** cada item do pedido grava o preço unitário vigente no momento da compra; promoções ativas são validadas antes do cálculo final, com valores persistidos em centavos (`Int`).
 - **RN05 — Idempotência no pagamento:** chamadas repetidas com a mesma `idempotencyKey` devolvem o resultado já processado sem alterar saldo ou pedido novamente.
-- **RN06 — Fidelidade sob consentimento:** acúmulo e resgate de pontos dependem de consentimento ativo; saldo e extrato são gravados juntos na mesma operação de banco.
+- **RN06 — Fidelidade sob consentimento e resgate futuro:** acúmulo e resgate de pontos dependem de consentimento ativo; pontos só podem ser usados como desconto em compras futuras (em `POST /pedidos`), e saldo/histórico são atualizados juntos na mesma operação de banco (com `ESTORNO` em cancelamento ou recusa).
 
 ---
 
@@ -84,3 +85,4 @@ A API REST unifica o recebimento de pedidos dos cinco canais da rede (**App**, *
 | **Valores monetários** | Inteiro em centavos (`Int`) | Evita erros de arredondamento de ponto flutuante no SQLite; convertido para decimal apenas nos DTOs da API. |
 | **Estoque** | Abate na criação + estorno após resultado | Evita vender o último item duas vezes em horários de pico sem deixar estoque bloqueado caso o pagamento seja recusado. |
 | **Fidelidade** | Saldo na conta + tabela de histórico | Permite consultar o saldo direto sem somar todo o histórico a cada requisição, mantendo rastreabilidade completa das movimentações atualizadas na mesma transação. |
+| **Escopo operacional** | Vínculo `unidadeId` para equipe + preço único na matriz | Garante que atendente, cozinha e gerente só alterem pedidos/estoque da própria loja sem duplicar tabelas de preço por unidade. |
