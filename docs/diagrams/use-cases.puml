@@ -1,0 +1,57 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Cliente\n(App / Web / Totem)" as Cliente
+actor "Atendente\n(Balcão)" as Atendente
+actor "Cozinha" as Cozinha
+actor "Gerente / Admin" as GerenteAdmin
+actor "Gateway de Pagamento\n(Mock)" as Gateway
+
+rectangle "API Raízes do Nordeste" {
+  usecase "UC01 - Cadastrar Cliente" as UC01
+  usecase "UC02 - Autenticar Usuário (JWT)" as UC02
+  usecase "UC03 - Consultar Unidades e Cardápio" as UC03
+  usecase "UC04 - Realizar Pedido (Multicanal)" as UC04
+  usecase "UC05 - Validar e Reservar Estoque" as UC05
+  usecase "UC06 - Aplicar Promoção / Resgatar Fidelidade" as UC06
+  usecase "UC07 - Solicitar Pagamento (Mock)" as UC07
+  usecase "UC08 - Consultar Pedidos e Status" as UC08
+  usecase "UC09 - Atualizar Status / Cancelar Pedido" as UC09
+  usecase "UC10 - Consultar Fila de Preparo da Unidade" as UC10
+  usecase "UC11 - Gerenciar Unidades, Cardápio e Promoções" as UC11
+  usecase "UC12 - Movimentar e Consultar Estoque" as UC12
+  usecase "UC13 - Gerenciar Fidelidade e Consentimento LGPD" as UC13
+  usecase "UC14 - Consultar Logs de Auditoria" as UC14
+}
+
+Cliente --> UC01
+Cliente --> UC02
+Cliente --> UC03
+Cliente --> UC04
+Cliente --> UC08
+Cliente --> UC09
+Cliente --> UC13
+
+Atendente --> UC02
+Atendente --> UC03
+Atendente --> UC04
+Atendente --> UC08
+Atendente --> UC09
+
+Cozinha --> UC02
+Cozinha --> UC09
+Cozinha --> UC10
+
+GerenteAdmin --> UC02
+GerenteAdmin --> UC08
+GerenteAdmin --> UC09
+GerenteAdmin --> UC11
+GerenteAdmin --> UC12
+GerenteAdmin --> UC14
+
+UC04 ..> UC05 : <<include>>
+UC04 ..> UC07 : <<include>>
+UC06 ..> UC04 : <<extend>>
+UC07 --> Gateway
+@enduml
