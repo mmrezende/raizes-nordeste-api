@@ -1,0 +1,257 @@
+// DER Lógico e Físico — Rede "Raízes do Nordeste"
+// Compatível com dbdiagram.io (DBML) e espelhado no prisma/schema.prisma (SQLite)
+
+Enum PerfilUsuario {
+  CLIENTE
+  ATENDENTE
+  COZINHA
+  GERENTE
+  ADMIN
+}
+
+Enum CanalPedido {
+  APP
+  TOTEM
+  BALCAO
+  PICKUP
+  WEB
+}
+
+Enum StatusPedido {
+  AGUARDANDO_PAGAMENTO
+  EM_PREPARO
+  PRONTO
+  ENTREGUE
+  PAGAMENTO_RECUSADO
+  CANCELADO
+}
+
+Enum TipoMovimentacaoEstoque {
+  ENTRADA
+  SAIDA
+  RESERVA
+  ESTORNO
+}
+
+Enum TipoDesconto {
+  PERCENTUAL
+  VALOR_FIXO
+}
+
+Enum StatusPagamento {
+  PENDENTE
+  APROVADO
+  RECUSADO
+}
+
+Enum FormaPagamento {
+  PIX
+  CARTAO_CREDITO
+  CARTAO_DEBITO
+  MOCK
+}
+
+Enum TipoMovimentacaoFidelidade {
+  ACUMULO
+  RESGATE
+  ESTORNO
+}
+
+Table unidades {
+  id varchar(36) [pk, note: 'UUIDv7']
+  codigo varchar(30) [not null, unique]
+  nome varchar(120) [not null]
+  endereco varchar(255) [not null]
+  ativo boolean [not null, default: true]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null]
+}
+
+Table usuarios {
+  id varchar(36) [pk, note: 'UUIDv7']
+  unidade_id varchar(36) [null, note: 'Obrigatório para ATENDENTE, COZINHA e GERENTE; null para CLIENTE e ADMIN']
+  nome varchar(120) [not null]
+  email varchar(160) [not null, unique]
+  senha_hash varchar(255) [not null]
+  perfil PerfilUsuario [not null, default: 'CLIENTE']
+  ativo boolean [not null, default: true]
+  anonimizado_em timestamp [null, note: 'Preenchido quando o titular solicita anonimização LGPD']
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null]
+
+  indexes {
+    (unidade_id)
+  }
+}
+
+Table produtos {
+  id varchar(36) [pk, note: 'UUIDv7']
+  nome varchar(120) [not null]
+  descricao text [null]
+  categoria varchar(60) [not null]
+  preco_centavos integer [not null, note: 'Preço padronizado da matriz em centavos']
+  ativo boolean [not null, default: true]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null]
+
+  indexes {
+    (categoria, ativo)
+  }
+}
+
+Table estoque_unidades {
+  id varchar(36) [pk, note: 'UUIDv7']
+  unidade_id varchar(36) [not null]
+  produto_id varchar(36) [not null]
+  quantidade_disponivel integer [not null, default: 0]
+  disponivel_venda boolean [not null, default: true]
+  updated_at timestamp [not null]
+
+  indexes {
+    (unidade_id, produto_id) [unique]
+  }
+}
+
+Table promocoes {
+  id varchar(36) [pk, note: 'UUIDv7']
+  unidade_id varchar(36) [null, note: 'Null = válida em toda a rede']
+  codigo varchar(40) [not null, unique]
+  descricao varchar(255) [not null]
+  tipo_desconto TipoDesconto [not null]
+  valor_desconto integer [not null, note: 'Percentual (1-100) ou valor fixo em centavos']
+  valor_minimo_centavos integer [not null, default: 0]
+  canal_aplicavel CanalPedido [null, note: 'Null = válida em todos os canais']
+  inicio_em timestamp [not null]
+  fim_em timestamp [not null]
+  ativo boolean [not null, default: true]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null]
+}
+
+Table pedidos {
+  id varchar(36) [pk, note: 'UUIDv7']
+  unidade_id varchar(36) [not null]
+  cliente_id varchar(36) [not null]
+  promocao_id varchar(36) [null]
+  canal_pedido CanalPedido [not null]
+  status StatusPedido [not null, default: 'AGUARDANDO_PAGAMENTO']
+  subtotal_centavos integer [not null]
+  desconto_promocao_centavos integer [not null, default: 0]
+  pontos_utilizados integer [not null, default: 0]
+  desconto_fidelidade_centavos integer [not null, default: 0]
+  valor_total_centavos integer [not null]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp [not null]
+
+  indexes {
+    (unidade_id, status)
+    (canal_pedido, status)
+    (cliente_id, created_at)
+  }
+}
+
+Table itens_pedido {
+  id varchar(36) [pk, note: 'UUIDv7']
+  pedido_id varchar(36) [not null]
+  produto_id varchar(36) [not null]
+  quantidade integer [not null]
+  preco_unitario_centavos integer [not null, note: 'Snapshot do preço no momento da compra']
+  subtotal_centavos integer [not null]
+
+  indexes {
+    (pedido_id, produto_id) [unique]
+  }
+}
+
+Table movimentacoes_estoque {
+  id varchar(36) [pk, note: 'UUIDv7']
+  estoque_unidade_id varchar(36) [not null]
+  usuario_id varchar(36) [not null]
+  pedido_id varchar(36) [null]
+  tipo TipoMovimentacaoEstoque [not null]
+  quantidade integer [not null]
+  motivo varchar(255) [null]
+  created_at timestamp [not null, default: `now()`]
+
+  indexes {
+    (estoque_unidade_id, created_at)
+    (pedido_id)
+  }
+}
+
+Table pagamentos {
+  id varchar(36) [pk, note: 'UUIDv7']
+  pedido_id varchar(36) [not null]
+  idempotency_key varchar(100) [not null, unique]
+  forma_pagamento FormaPagamento [not null]
+  status StatusPagamento [not null, default: 'PENDENTE']
+  valor_centavos integer [not null]
+  referencia_externa varchar(120) [null]
+  payload_retorno text [null, note: 'JSON simulado retornado pelo gateway mock']
+  processado_em timestamp [null]
+  created_at timestamp [not null, default: `now()`]
+
+  indexes {
+    (pedido_id)
+  }
+}
+
+Table contas_fidelidade {
+  id varchar(36) [pk, note: 'UUIDv7']
+  usuario_id varchar(36) [not null, unique]
+  saldo_pontos integer [not null, default: 0]
+  consentimento_ativo boolean [not null, default: false]
+  consentimento_em timestamp [null]
+  revogado_em timestamp [null]
+  updated_at timestamp [not null]
+}
+
+Table movimentacoes_fidelidade {
+  id varchar(36) [pk, note: 'UUIDv7']
+  conta_fidelidade_id varchar(36) [not null]
+  pedido_id varchar(36) [null]
+  tipo TipoMovimentacaoFidelidade [not null]
+  pontos integer [not null]
+  descricao varchar(255) [null]
+  created_at timestamp [not null, default: `now()`]
+
+  indexes {
+    (conta_fidelidade_id, created_at)
+    (pedido_id)
+  }
+}
+
+Table logs_auditoria {
+  id varchar(36) [pk, note: 'UUIDv7']
+  usuario_id varchar(36) [null]
+  acao varchar(80) [not null]
+  entidade varchar(80) [not null]
+  entidade_id varchar(36) [not null]
+  metadados text [null, note: 'JSON resumido sem exposição de dados sensíveis']
+  request_id varchar(64) [null]
+  created_at timestamp [not null, default: `now()`]
+
+  indexes {
+    (entidade, entidade_id)
+    (created_at)
+  }
+}
+
+// Relacionamentos (Chaves Estrangeiras e Cardinalidades)
+Ref: usuarios.unidade_id > unidades.id [delete: set null]
+Ref: estoque_unidades.unidade_id > unidades.id [delete: restrict]
+Ref: estoque_unidades.produto_id > produtos.id [delete: restrict]
+Ref: promocoes.unidade_id > unidades.id [delete: set null]
+Ref: pedidos.unidade_id > unidades.id [delete: restrict]
+Ref: pedidos.cliente_id > usuarios.id [delete: restrict]
+Ref: pedidos.promocao_id > promocoes.id [delete: set null]
+Ref: itens_pedido.pedido_id > pedidos.id [delete: cascade]
+Ref: itens_pedido.produto_id > produtos.id [delete: restrict]
+Ref: movimentacoes_estoque.estoque_unidade_id > estoque_unidades.id [delete: restrict]
+Ref: movimentacoes_estoque.usuario_id > usuarios.id [delete: restrict]
+Ref: movimentacoes_estoque.pedido_id > pedidos.id [delete: set null]
+Ref: pagamentos.pedido_id > pedidos.id [delete: restrict]
+Ref: contas_fidelidade.usuario_id - usuarios.id [delete: cascade]
+Ref: movimentacoes_fidelidade.conta_fidelidade_id > contas_fidelidade.id [delete: cascade]
+Ref: movimentacoes_fidelidade.pedido_id > pedidos.id [delete: set null]
+Ref: logs_auditoria.usuario_id > usuarios.id [delete: set null]
