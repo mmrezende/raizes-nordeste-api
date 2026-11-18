@@ -1,0 +1,36 @@
+flowchart LR
+  Canais["Canais de Acesso\n(App, Totem, Web, Balcão, Cozinha, Gestão)"]
+
+  subgraph Backend["Back-end Raízes do Nordeste (NestJS + TypeScript)"]
+    subgraph CamadaAPI["Camada 1 — API (Interface / Controllers)"]
+      direction TB
+      A1["Rotas REST e Controllers"] ~~~ A2["Validação de DTOs e Erros Padrão"] ~~~ A3["Autenticação JWT e RBAC"] ~~~ A4["Documentação Swagger / OpenAPI"]
+    end
+
+    subgraph CamadaApp["Camada 2 — Application (Casos de Uso)"]
+      direction TB
+      B1["Orquestração dos Fluxos\n(Pedidos, Estoque, Pagamento, Fidelidade)"] ~~~ B2["Interfaces de Serviços Externos\n(Pagamento, Hash, Auditoria, UUIDv7)"]
+    end
+
+    subgraph CamadaDomain["Camada 3 — Domain (Núcleo de Negócio)"]
+      direction TB
+      C1["Entidades e Enums\n(Pedido, Estoque, Promoção, Fidelidade)"] ~~~ C2["Regras de Negócio e Erros de Domínio"] ~~~ C3["Interfaces de Repositórios"]
+    end
+
+    subgraph CamadaInfra["Camada 4 — Infrastructure (Detalhes Técnicos)"]
+      direction TB
+      D1["Prisma ORM e Repositórios"] ~~~ D2["Segurança (Bcrypt, JWT) e UUIDv7"] ~~~ D3["Logs de Auditoria"] ~~~ D4["Adaptador de Pagamento Mock"]
+    end
+  end
+
+  subgraph Externos["Recursos Externos / Persistência"]
+    direction TB
+    DB[("Banco SQLite (dev.db)")] ~~~ Gateway["Gateway de Pagamento (Mock)"]
+  end
+
+  Canais -->|"HTTP / REST + JWT"| CamadaAPI
+  CamadaAPI -->|"chama casos de uso"| CamadaApp
+  CamadaApp -->|"executa regras"| CamadaDomain
+  CamadaApp -.->|"usa interfaces implementadas por"| CamadaInfra
+  CamadaDomain -.->|"repositórios implementados por"| CamadaInfra
+  CamadaInfra -->|"persiste dados, logs e simula cobrança"| Externos
