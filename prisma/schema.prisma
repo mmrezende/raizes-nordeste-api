@@ -1,5 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Schema Prisma — Rede "Raízes do Nordeste"
+// Espelhado 1:1 com docs/diagrams/der.dbml (SQLite, portável para PostgreSQL)
 
 generator client {
   provider = "prisma-client"
@@ -9,4 +9,283 @@ generator client {
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
+}
+
+enum PerfilUsuario {
+  CLIENTE
+  ATENDENTE
+  COZINHA
+  GERENTE
+  ADMIN
+}
+
+enum CanalPedido {
+  APP
+  TOTEM
+  BALCAO
+  PICKUP
+  WEB
+}
+
+enum StatusPedido {
+  AGUARDANDO_PAGAMENTO
+  EM_PREPARO
+  PRONTO
+  ENTREGUE
+  PAGAMENTO_RECUSADO
+  CANCELADO
+}
+
+enum TipoMovimentacaoEstoque {
+  ENTRADA
+  SAIDA
+  RESERVA
+  ESTORNO
+}
+
+enum TipoDesconto {
+  PERCENTUAL
+  VALOR_FIXO
+}
+
+enum StatusPagamento {
+  PENDENTE
+  APROVADO
+  RECUSADO
+}
+
+enum FormaPagamento {
+  PIX
+  CARTAO_CREDITO
+  CARTAO_DEBITO
+  MOCK
+}
+
+enum TipoMovimentacaoFidelidade {
+  ACUMULO
+  RESGATE
+  ESTORNO
+}
+
+model Unidade {
+  id        String   @id @default(uuid(7))
+  codigo    String   @unique
+  nome      String
+  endereco  String
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  usuarios  Usuario[]
+  estoques  EstoqueUnidade[]
+  promocoes Promocao[]
+  pedidos   Pedido[]
+
+  @@map("unidades")
+}
+
+model Usuario {
+  id            String        @id @default(uuid(7))
+  unidadeId     String?       @map("unidade_id")
+  nome          String
+  email         String        @unique
+  senhaHash     String        @map("senha_hash")
+  perfil        PerfilUsuario @default(CLIENTE)
+  ativo         Boolean       @default(true)
+  anonimizadoEm DateTime?     @map("anonimizado_em")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  unidade              Unidade?              @relation(fields: [unidadeId], references: [id], onDelete: SetNull)
+  pedidos              Pedido[]
+  movimentacoesEstoque MovimentacaoEstoque[]
+  contaFidelidade      ContaFidelidade?
+  logsAuditoria        LogAuditoria[]
+
+  @@index([unidadeId])
+  @@map("usuarios")
+}
+
+model Produto {
+  id            String   @id @default(uuid(7))
+  nome          String
+  descricao     String?
+  categoria     String
+  precoCentavos Int      @map("preco_centavos")
+  ativo         Boolean  @default(true)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  estoques    EstoqueUnidade[]
+  itensPedido ItemPedido[]
+
+  @@index([categoria, ativo])
+  @@map("produtos")
+}
+
+model EstoqueUnidade {
+  id                   String   @id @default(uuid(7))
+  unidadeId            String   @map("unidade_id")
+  produtoId            String   @map("produto_id")
+  quantidadeDisponivel Int      @default(0) @map("quantidade_disponivel")
+  disponivelVenda      Boolean  @default(true) @map("disponivel_venda")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  unidade       Unidade               @relation(fields: [unidadeId], references: [id], onDelete: Restrict)
+  produto       Produto               @relation(fields: [produtoId], references: [id], onDelete: Restrict)
+  movimentacoes MovimentacaoEstoque[]
+
+  @@unique([unidadeId, produtoId])
+  @@map("estoque_unidades")
+}
+
+model Promocao {
+  id                  String       @id @default(uuid(7))
+  unidadeId           String?      @map("unidade_id")
+  codigo              String       @unique
+  descricao           String
+  tipoDesconto        TipoDesconto @map("tipo_desconto")
+  valorDesconto       Int          @map("valor_desconto")
+  valorMinimoCentavos Int          @default(0) @map("valor_minimo_centavos")
+  canalAplicavel      CanalPedido? @map("canal_aplicavel")
+  inicioEm            DateTime     @map("inicio_em")
+  fimEm               DateTime     @map("fim_em")
+  ativo               Boolean      @default(true)
+  createdAt           DateTime     @default(now()) @map("created_at")
+  updatedAt           DateTime     @updatedAt @map("updated_at")
+
+  unidade Unidade? @relation(fields: [unidadeId], references: [id], onDelete: SetNull)
+  pedidos Pedido[]
+
+  @@map("promocoes")
+}
+
+model Pedido {
+  id                         String       @id @default(uuid(7))
+  unidadeId                  String       @map("unidade_id")
+  clienteId                  String       @map("cliente_id")
+  promocaoId                 String?      @map("promocao_id")
+  canalPedido                CanalPedido  @map("canal_pedido")
+  status                     StatusPedido @default(AGUARDANDO_PAGAMENTO)
+  subtotalCentavos           Int          @map("subtotal_centavos")
+  descontoPromocaoCentavos   Int          @default(0) @map("desconto_promocao_centavos")
+  pontosUtilizados           Int          @default(0) @map("pontos_utilizados")
+  descontoFidelidadeCentavos Int          @default(0) @map("desconto_fidelidade_centavos")
+  valorTotalCentavos         Int          @map("valor_total_centavos")
+  createdAt                  DateTime     @default(now()) @map("created_at")
+  updatedAt                  DateTime     @updatedAt @map("updated_at")
+
+  unidade                 Unidade                  @relation(fields: [unidadeId], references: [id], onDelete: Restrict)
+  cliente                 Usuario                  @relation(fields: [clienteId], references: [id], onDelete: Restrict)
+  promocao                Promocao?                @relation(fields: [promocaoId], references: [id], onDelete: SetNull)
+  itens                   ItemPedido[]
+  pagamentos              Pagamento[]
+  movimentacoesEstoque    MovimentacaoEstoque[]
+  movimentacoesFidelidade MovimentacaoFidelidade[]
+
+  @@index([unidadeId, status])
+  @@index([canalPedido, status])
+  @@index([clienteId, createdAt])
+  @@map("pedidos")
+}
+
+model ItemPedido {
+  id                    String @id @default(uuid(7))
+  pedidoId              String @map("pedido_id")
+  produtoId             String @map("produto_id")
+  quantidade            Int
+  precoUnitarioCentavos Int    @map("preco_unitario_centavos")
+  subtotalCentavos      Int    @map("subtotal_centavos")
+
+  pedido  Pedido  @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  produto Produto @relation(fields: [produtoId], references: [id], onDelete: Restrict)
+
+  @@unique([pedidoId, produtoId])
+  @@map("itens_pedido")
+}
+
+model MovimentacaoEstoque {
+  id               String                  @id @default(uuid(7))
+  estoqueUnidadeId String                  @map("estoque_unidade_id")
+  usuarioId        String                  @map("usuario_id")
+  pedidoId         String?                 @map("pedido_id")
+  tipo             TipoMovimentacaoEstoque
+  quantidade       Int
+  motivo           String?
+  createdAt        DateTime                @default(now()) @map("created_at")
+
+  estoqueUnidade EstoqueUnidade @relation(fields: [estoqueUnidadeId], references: [id], onDelete: Restrict)
+  usuario        Usuario        @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+  pedido         Pedido?        @relation(fields: [pedidoId], references: [id], onDelete: SetNull)
+
+  @@index([estoqueUnidadeId, createdAt])
+  @@index([pedidoId])
+  @@map("movimentacoes_estoque")
+}
+
+model Pagamento {
+  id                String          @id @default(uuid(7))
+  pedidoId          String          @map("pedido_id")
+  idempotencyKey    String          @unique @map("idempotency_key")
+  formaPagamento    FormaPagamento  @map("forma_pagamento")
+  status            StatusPagamento @default(PENDENTE)
+  valorCentavos     Int             @map("valor_centavos")
+  referenciaExterna String?         @map("referencia_externa")
+  payloadRetorno    String?         @map("payload_retorno")
+  processadoEm      DateTime?       @map("processado_em")
+  createdAt         DateTime        @default(now()) @map("created_at")
+
+  pedido Pedido @relation(fields: [pedidoId], references: [id], onDelete: Restrict)
+
+  @@index([pedidoId])
+  @@map("pagamentos")
+}
+
+model ContaFidelidade {
+  id                 String    @id @default(uuid(7))
+  usuarioId          String    @unique @map("usuario_id")
+  saldoPontos        Int       @default(0) @map("saldo_pontos")
+  consentimentoAtivo Boolean   @default(false) @map("consentimento_ativo")
+  consentimentoEm    DateTime? @map("consentimento_em")
+  revogadoEm         DateTime? @map("revogado_em")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  usuario       Usuario                  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  movimentacoes MovimentacaoFidelidade[]
+
+  @@map("contas_fidelidade")
+}
+
+model MovimentacaoFidelidade {
+  id                String                     @id @default(uuid(7))
+  contaFidelidadeId String                     @map("conta_fidelidade_id")
+  pedidoId          String?                    @map("pedido_id")
+  tipo              TipoMovimentacaoFidelidade
+  pontos            Int
+  descricao         String?
+  createdAt         DateTime                   @default(now()) @map("created_at")
+
+  contaFidelidade ContaFidelidade @relation(fields: [contaFidelidadeId], references: [id], onDelete: Cascade)
+  pedido          Pedido?         @relation(fields: [pedidoId], references: [id], onDelete: SetNull)
+
+  @@index([contaFidelidadeId, createdAt])
+  @@index([pedidoId])
+  @@map("movimentacoes_fidelidade")
+}
+
+model LogAuditoria {
+  id         String   @id @default(uuid(7))
+  usuarioId  String?  @map("usuario_id")
+  acao       String
+  entidade   String
+  entidadeId String   @map("entidade_id")
+  metadados  String?
+  requestId  String?  @map("request_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  usuario Usuario? @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+
+  @@index([entidade, entidadeId])
+  @@index([createdAt])
+  @@map("logs_auditoria")
 }
