@@ -1,0 +1,54 @@
+sequenceDiagram
+  autonumber
+  actor C as Cliente / Atendente
+  participant API as API
+  participant DB as Banco SQLite
+  participant GW as Gateway Mock
+
+  %% Etapa 1: Criação do Pedido + Reserva de Estoque
+  C->>API: POST /pedidos (unidadeId, canalPedido, itens, cupom?, pontos?)
+  Note over API: Valida JWT, RBAC/unidade e canalPedido obrigatório
+
+  API->>DB: Consulta unidade, produtos, estoque, cupom e conta fidelidade
+  alt Unidade ou produto inexistente
+    DB-->>API: Registro não encontrado
+    API-->>C: 404 Not Found (erro padrão)
+  else Estoque insuficiente na unidade
+    DB-->>API: Saldo menor que a quantidade solicitada
+    API-->>C: 409 Conflict (ESTOQUE_INSUFICIENTE)
+  else Cupom inválido/expirado ou pontos inválidos
+    DB-->>API: Regra de promoção ou fidelidade não atendida
+    API-->>C: 409 / 422 (erro padrão)
+  else Pedido válido
+    Note over API: Gera UUIDv7 (pedido, itens, movimentações, auditoria) e calcula totais em centavos
+    API->>DB: Transação: reserva estoque (RESERVA), debita pontos (RESGATE), cria pedido (AGUARDANDO_PAGAMENTO), itens e auditoria
+    DB-->>API: Commit confirmado
+    API-->>C: 201 Created (pedidoId, status, total)
+  end
+
+  %% Etapa 2: Pagamento Mock + Status + Fidelidade
+  C->>API: POST /pagamentos (pedidoId, formaPagamento, idempotencyKey)
+  Note over API: Valida JWT, RBAC e dono/unidade do pedido
+  API->>DB: Verifica idempotencyKey e busca pedido
+
+  alt Chave de idempotência já processada
+    DB-->>API: Pagamento já registrado
+    API-->>C: 200 OK (resultado existente, sem nova cobrança)
+  else Pedido inexistente ou status diferente de AGUARDANDO_PAGAMENTO
+    DB-->>API: Não encontrado ou status incompatível
+    API-->>C: 404 Not Found / 409 Conflict (erro padrão)
+  else Nova tentativa válida
+    Note over API: Gera UUIDv7 do pagamento e auditoria
+    API->>GW: Solicita cobrança (pedidoId, valorCentavos, formaPagamento)
+    GW-->>API: Retorno simulado (APROVADO ou RECUSADO + payload)
+
+    alt Pagamento APROVADO
+      API->>DB: Transação: grava pagamento (APROVADO), pedido -> EM_PREPARO, credita pontos (ACUMULO se consentimento ativo) e audita
+      DB-->>API: Commit confirmado
+      API-->>C: 201 Created (APROVADO / EM_PREPARO)
+    else Pagamento RECUSADO
+      API->>DB: Transação: grava pagamento (RECUSADO), pedido -> PAGAMENTO_RECUSADO, estorna estoque (ESTORNO), estorna pontos e audita
+      DB-->>API: Commit confirmado
+      API-->>C: 201 Created (RECUSADO / PAGAMENTO_RECUSADO)
+    end
+  end
