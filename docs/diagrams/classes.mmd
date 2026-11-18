@@ -1,0 +1,213 @@
+classDiagram
+  direction TB
+
+  namespace Identidade_e_Auditoria {
+    class PerfilUsuario {
+      <<enumeration>>
+      CLIENTE
+      ATENDENTE
+      COZINHA
+      GERENTE
+      ADMIN
+    }
+
+    class Usuario {
+      +string id
+      +string? unidadeId
+      +string nome
+      +string email
+      +PerfilUsuario perfil
+      +boolean ativo
+      +Date? anonimizadoEm
+      +criar(nome, email, perfil, unidadeId?) Usuario$
+      +podeOperarUnidade(unidadeId) boolean
+      +anonimizar() void
+    }
+
+    class LogAuditoria {
+      +string id
+      +string? usuarioId
+      +string acao
+      +string entidade
+      +string entidadeId
+      +string? requestId
+      +Date createdAt
+    }
+  }
+
+  namespace Rede_e_Estoque {
+    class Unidade {
+      +string id
+      +string codigo
+      +string nome
+      +string endereco
+      +boolean ativo
+      +ativar() void
+      +desativar() void
+    }
+
+    class Produto {
+      +string id
+      +string nome
+      +string categoria
+      +number precoCentavos
+      +boolean ativo
+      +atualizarPreco(precoCentavos) void
+    }
+
+    class EstoqueUnidade {
+      +string id
+      +string unidadeId
+      +string produtoId
+      +number quantidadeDisponivel
+      +boolean disponivelVenda
+      +possuiSaldo(qtd) boolean
+      +reservar(qtd) void
+      +estornar(qtd) void
+      +registrarEntrada(qtd) void
+    }
+
+    class MovimentacaoEstoque {
+      +string id
+      +string estoqueUnidadeId
+      +string usuarioId
+      +string? pedidoId
+      +string tipo
+      +number quantidade
+      +Date createdAt
+    }
+  }
+
+  namespace Pedidos_e_Promocoes {
+    class CanalPedido {
+      <<enumeration>>
+      APP
+      TOTEM
+      BALCAO
+      PICKUP
+      WEB
+    }
+
+    class StatusPedido {
+      <<enumeration>>
+      AGUARDANDO_PAGAMENTO
+      EM_PREPARO
+      PRONTO
+      ENTREGUE
+      PAGAMENTO_RECUSADO
+      CANCELADO
+    }
+
+    class Promocao {
+      +string id
+      +string? unidadeId
+      +string codigo
+      +string tipoDesconto
+      +number valorDesconto
+      +number valorMinimoCentavos
+      +CanalPedido? canalAplicavel
+      +Date inicioEm
+      +Date fimEm
+      +boolean ativo
+      +criar(codigo, tipo, valor, vigencia) Promocao$
+      +estaVigente(data, unidadeId, canal) boolean
+      +calcularDesconto(subtotalCentavos) number
+    }
+
+    class Pedido {
+      +string id
+      +string unidadeId
+      +string clienteId
+      +string? promocaoId
+      +CanalPedido canalPedido
+      +StatusPedido status
+      +number subtotalCentavos
+      +number descontoPromocaoCentavos
+      +number pontosUtilizados
+      +number descontoFidelidadeCentavos
+      +number valorTotalCentavos
+      +criar(unidadeId, clienteId, canal, itens) Pedido$
+      +calcularTotais() void
+      +podeTransicionarPara(novoStatus, perfil) boolean
+      +marcarComoEmPreparo() void
+      +marcarComoRecusado() void
+      +cancelar() void
+    }
+
+    class ItemPedido {
+      +string id
+      +string pedidoId
+      +string produtoId
+      +number quantidade
+      +number precoUnitarioCentavos
+      +number subtotalCentavos
+    }
+  }
+
+  namespace Pagamentos {
+    class StatusPagamento {
+      <<enumeration>>
+      PENDENTE
+      APROVADO
+      RECUSADO
+    }
+
+    class Pagamento {
+      +string id
+      +string pedidoId
+      +string idempotencyKey
+      +string formaPagamento
+      +StatusPagamento status
+      +number valorCentavos
+      +string? referenciaExterna
+      +aprovar(referencia, payload) void
+      +recusar(referencia, payload) void
+    }
+  }
+
+  namespace Fidelidade_LGPD {
+    class ContaFidelidade {
+      +string id
+      +string usuarioId
+      +number saldoPontos
+      +boolean consentimentoAtivo
+      +Date? consentimentoEm
+      +Date? revogadoEm
+      +ativarConsentimento() void
+      +revogarConsentimento() void
+      +acumular(pontos) void
+      +resgatar(pontos) void
+      +estornar(pontos) void
+    }
+
+    class MovimentacaoFidelidade {
+      +string id
+      +string contaFidelidadeId
+      +string? pedidoId
+      +string tipo
+      +number pontos
+      +Date createdAt
+    }
+  }
+
+  %% Rede e Estoque
+  Unidade "0..1" --> "0..*" Usuario : vincula equipe
+  Unidade "1" --> "0..*" EstoqueUnidade : mantém
+  Produto "1" --> "0..*" EstoqueUnidade : disponível em
+  EstoqueUnidade "1" --> "0..*" MovimentacaoEstoque : registra
+  Usuario "1" --> "0..*" MovimentacaoEstoque : executa
+
+  %% Pedidos e Promoções
+  Unidade "1" --> "0..*" Pedido : recebe
+  Usuario "1" --> "0..*" Pedido : realiza
+  Unidade "0..1" --> "0..*" Promocao : restringe
+  Promocao "0..1" --> "0..*" Pedido : aplica
+  Pedido "1" *-- "1..*" ItemPedido : contém
+  Produto "1" --> "0..*" ItemPedido : referencia
+
+  %% Pagamentos, Fidelidade e Auditoria
+  Pedido "1" --> "0..*" Pagamento : processa
+  Usuario "1" -- "0..1" ContaFidelidade : possui
+  ContaFidelidade "1" --> "0..*" MovimentacaoFidelidade : movimenta
+  Pedido "0..1" --> "0..*" MovimentacaoFidelidade : gera pontos
+  Usuario "0..1" --> "0..*" LogAuditoria : registra
