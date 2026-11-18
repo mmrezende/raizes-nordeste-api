@@ -210,4 +210,4 @@ classDiagram
   Usuario "1" -- "0..1" ContaFidelidade : possui
   ContaFidelidade "1" --> "0..*" MovimentacaoFidelidade : movimenta
   Pedido "0..1" --> "0..*" MovimentacaoFidelidade : gera pontos
-  Usuario "0..1" --> "0..*" LogAuditoria : registra
+  LogAuditoria "0..*" --> "0..1" Usuario : referencia autor
