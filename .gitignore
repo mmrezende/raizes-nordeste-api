@@ -2,6 +2,7 @@
 node_modules/
 dist/
 coverage/
+*.tsbuildinfo
 
 # Variáveis de ambiente locais
 .env
