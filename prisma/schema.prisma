@@ -2,8 +2,7 @@
 // Espelhado 1:1 com docs/diagrams/der.dbml (SQLite, portável para PostgreSQL)
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
