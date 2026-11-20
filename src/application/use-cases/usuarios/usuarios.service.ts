@@ -11,7 +11,6 @@ import {
   ValidationDomainError,
 } from '../../../domain/errors/domain.error';
 import { PrismaService } from '../../../infrastructure/database/prisma/prisma.service';
-import { AUDIT_LOGGER, type AuditLogger } from '../../ports/audit-logger.interface';
 import { ID_GENERATOR, type IdGenerator } from '../../ports/id-generator.interface';
 import { PASSWORD_HASHER, type PasswordHasher } from '../../ports/password-hasher.interface';
 import type { UsuarioSeguro } from '../auth/auth.service';
@@ -30,7 +29,6 @@ export class UsuariosService {
     private readonly prisma: PrismaService,
     @Inject(ID_GENERATOR) private readonly idGenerator: IdGenerator,
     @Inject(PASSWORD_HASHER) private readonly passwordHasher: PasswordHasher,
-    @Inject(AUDIT_LOGGER) private readonly auditLogger: AuditLogger,
   ) {}
 
   async buscarPerfil(usuarioId: string): Promise<UsuarioSeguro> {
@@ -61,7 +59,6 @@ export class UsuariosService {
   async criarUsuarioInterno(
     input: CriarUsuarioInternoInput,
     ator: AuthenticatedUser,
-    requestId?: string,
   ): Promise<UsuarioSeguro> {
     const exigeUnidade = PERFIS_VINCULADOS_UNIDADE.has(input.perfil);
 
@@ -154,18 +151,6 @@ export class UsuariosService {
       }
 
       return criado;
-    });
-
-    await this.auditLogger.registrar({
-      usuarioId: ator.id,
-      acao: 'USUARIO_CRIADO',
-      entidade: 'usuarios',
-      entidadeId: usuario.id,
-      metadados: {
-        perfil: input.perfil,
-        unidadeId: usuario.unidadeId,
-      },
-      requestId,
     });
 
     return {

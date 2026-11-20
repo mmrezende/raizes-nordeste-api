@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiConflictResponse,
@@ -13,10 +13,10 @@ import {
 } from '@nestjs/swagger';
 import { UsuariosService } from '../../../application/use-cases/usuarios/usuarios.service';
 import { PerfilUsuario } from '../../../domain/enums/perfil-usuario.enum';
+import { Auditable } from '../../common/decorators/auditable.decorator';
 import { type AuthenticatedUser, CurrentUser } from '../../common/decorators/current-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { ErrorResponseDto } from '../../common/dtos/error-response.dto';
-import type { RequestWithId } from '../../common/middlewares/request-id.middleware';
 import { CriarUsuarioDto } from './dto/criar-usuario.dto';
 import { UsuarioResponseDto } from './dto/usuario-response.dto';
 
@@ -36,6 +36,7 @@ export class UsuariosController {
 
   @Post()
   @Roles(PerfilUsuario.ADMIN, PerfilUsuario.GERENTE)
+  @Auditable('USUARIO_CRIADO', 'usuarios')
   @ApiOperation({ summary: 'Cadastra usuário interno (ADMIN ou GERENTE para própria unidade)' })
   @ApiCreatedResponse({ type: UsuarioResponseDto })
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })
@@ -46,8 +47,7 @@ export class UsuariosController {
   async criar(
     @Body() dto: CriarUsuarioDto,
     @CurrentUser() user: AuthenticatedUser,
-    @Req() req: RequestWithId,
   ): Promise<UsuarioResponseDto> {
-    return this.usuariosService.criarUsuarioInterno(dto, user, req.requestId);
+    return this.usuariosService.criarUsuarioInterno(dto, user);
   }
 }

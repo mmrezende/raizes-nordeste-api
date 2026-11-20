@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AUDIT_LOGGER, type AuditLogger } from '../../ports/audit-logger.interface';
 import { ID_GENERATOR, type IdGenerator } from '../../ports/id-generator.interface';
 import { PASSWORD_HASHER, type PasswordHasher } from '../../ports/password-hasher.interface';
 import { PerfilUsuario } from '../../../domain/enums/perfil-usuario.enum';
@@ -55,13 +54,9 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @Inject(ID_GENERATOR) private readonly idGenerator: IdGenerator,
     @Inject(PASSWORD_HASHER) private readonly passwordHasher: PasswordHasher,
-    @Inject(AUDIT_LOGGER) private readonly auditLogger: AuditLogger,
   ) {}
 
-  async registrarCliente(
-    input: RegistrarClienteInput,
-    requestId?: string,
-  ): Promise<UsuarioSeguro> {
+  async registrarCliente(input: RegistrarClienteInput): Promise<UsuarioSeguro> {
     const emailNormalizado = input.email.trim().toLowerCase();
 
     const existente = await this.prisma.usuario.findUnique({
@@ -116,18 +111,6 @@ export class AuthService {
       });
 
       return criado;
-    });
-
-    await this.auditLogger.registrar({
-      usuarioId: usuario.id,
-      acao: 'USUARIO_CADASTRADO',
-      entidade: 'usuarios',
-      entidadeId: usuario.id,
-      metadados: {
-        perfil: PerfilUsuario.CLIENTE,
-        consentimentoFidelidade: consentimentoAtivo,
-      },
-      requestId,
     });
 
     return {

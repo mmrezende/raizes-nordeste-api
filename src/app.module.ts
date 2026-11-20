@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { AuditInterceptor } from './api/common/interceptors/audit.interceptor';
 import { AuthModule } from './api/modules/auth.module';
 import { HealthModule } from './api/modules/health.module';
 import { UsuariosModule } from './api/modules/usuarios.module';
@@ -16,6 +18,12 @@ import { PrismaModule } from './infrastructure/database/prisma/prisma.module';
     HealthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AuditInterceptor,
+    },
+  ],
 })
 export class AppModule {}
