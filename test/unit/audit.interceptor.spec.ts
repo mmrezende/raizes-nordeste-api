@@ -2,7 +2,6 @@ import type { CallHandler, ExecutionContext } from '@nestjs/common';
 import type { Reflector } from '@nestjs/core';
 import { firstValueFrom, of } from 'rxjs';
 import { AuditInterceptor } from '@src/api/common/interceptors/audit.interceptor';
-import type { AuditLogger } from '@src/application/ports/audit-logger.interface';
 
 function createMockContext(options: {
   userId?: string;
@@ -28,14 +27,14 @@ function createMockContext(options: {
 describe('AuditInterceptor', () => {
   it('não deve registrar auditoria quando a rota não possui @Auditable', async () => {
     const reflector = { getAllAndOverride: jest.fn().mockReturnValue(undefined) };
-    const auditLogger: AuditLogger = { registrar: jest.fn().mockResolvedValue(undefined) };
-    const interceptor = new AuditInterceptor(reflector as unknown as Reflector, auditLogger);
+    const registrar = jest.fn().mockResolvedValue(undefined);
+    const interceptor = new AuditInterceptor(reflector as unknown as Reflector, { registrar });
 
     const next: CallHandler = { handle: () => of({ ok: true }) };
     const result = await firstValueFrom(interceptor.intercept(createMockContext({}), next));
 
     expect(result).toEqual({ ok: true });
-    expect(auditLogger.registrar).not.toHaveBeenCalled();
+    expect(registrar).not.toHaveBeenCalled();
   });
 
   it('deve registrar auditoria apenas com metadados seguros, omitindo campos sensíveis', async () => {
