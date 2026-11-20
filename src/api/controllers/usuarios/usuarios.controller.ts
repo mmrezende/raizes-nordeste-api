@@ -35,8 +35,8 @@ export class UsuariosController {
   }
 
   @Post()
-  @Roles(PerfilUsuario.ADMIN, PerfilUsuario.GERENTE)
-  @Auditable('USUARIO_CRIADO', 'usuarios')
+  @Roles([PerfilUsuario.ADMIN, PerfilUsuario.GERENTE])
+  @Auditable({ acao: 'USUARIO_CRIADO', entidade: 'usuarios' })
   @ApiOperation({ summary: 'Cadastra usuário interno (ADMIN ou GERENTE para própria unidade)' })
   @ApiCreatedResponse({ type: UsuarioResponseDto })
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })

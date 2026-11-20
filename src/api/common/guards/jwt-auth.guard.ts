@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { UnauthorizedDomainError } from '../../../domain/errors/domain.error';
 import type { AuthenticatedUser } from '../decorators/current-user.decorator';
-import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { Public } from '../decorators/public.decorator';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -12,7 +12,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   override canActivate(context: ExecutionContext) {
-    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+    const isPublic = this.reflector.getAllAndOverride(Public, [
       context.getHandler(),
       context.getClass(),
     ]);

@@ -1,11 +1,8 @@
-import { SetMetadata } from '@nestjs/common';
-
-export const AUDITABLE_KEY = 'auditable';
+import { Reflector } from '@nestjs/core';
 
 export interface AuditableMetadata {
   acao: string;
   entidade: string;
 }
 
-export const Auditable = (acao: string, entidade: string) =>
-  SetMetadata(AUDITABLE_KEY, { acao, entidade } satisfies AuditableMetadata);
+export const Auditable = Reflector.createDecorator<AuditableMetadata>();

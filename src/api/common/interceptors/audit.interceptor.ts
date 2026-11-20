@@ -8,7 +8,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { mergeMap, type Observable } from 'rxjs';
 import { AUDIT_LOGGER, type AuditLogger } from '../../../application/ports/audit-logger.interface';
-import { AUDITABLE_KEY, type AuditableMetadata } from '../decorators/auditable.decorator';
+import { Auditable } from '../decorators/auditable.decorator';
 import type { AuthenticatedUser } from '../decorators/current-user.decorator';
 import type { RequestWithId } from '../middlewares/request-id.middleware';
 
@@ -30,7 +30,7 @@ export class AuditInterceptor implements NestInterceptor {
   ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
-    const meta = this.reflector.getAllAndOverride<AuditableMetadata | undefined>(AUDITABLE_KEY, [
+    const meta = this.reflector.getAllAndOverride(Auditable, [
       context.getHandler(),
       context.getClass(),
     ]);
