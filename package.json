@@ -1,8 +1,8 @@
 {
   "name": "raizes-nordeste-api",
-  "version": "1.0.0-SNAPSHOT",
-  "description": "",
-  "author": "",
+  "version": "1.0.0",
+  "description": "API REST multicanal da rede Raizes do Nordeste",
+  "author": "Mateus Rezende",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

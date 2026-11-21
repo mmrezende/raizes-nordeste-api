@@ -27,14 +27,14 @@ async function main(): Promise<void> {
     where: { codigo: 'REC-01' },
     update: {
       nome: 'Raízes Boa Viagem',
-      endereco: 'Av. Boa Viagem, 1000 — Recife/PE',
+      endereco: 'Av. Boa Viagem, 1000 - Recife/PE',
       ativo: true,
     },
     create: {
       id: IDS.unidadeRecife,
       codigo: 'REC-01',
       nome: 'Raízes Boa Viagem',
-      endereco: 'Av. Boa Viagem, 1000 — Recife/PE',
+      endereco: 'Av. Boa Viagem, 1000 - Recife/PE',
       ativo: true,
     },
   });
@@ -43,14 +43,14 @@ async function main(): Promise<void> {
     where: { codigo: 'FOR-01' },
     update: {
       nome: 'Raízes Meireles',
-      endereco: 'Av. Beira Mar, 500 — Fortaleza/CE',
+      endereco: 'Av. Beira Mar, 500 - Fortaleza/CE',
       ativo: true,
     },
     create: {
       id: IDS.unidadeFortaleza,
       codigo: 'FOR-01',
       nome: 'Raízes Meireles',
-      endereco: 'Av. Beira Mar, 500 — Fortaleza/CE',
+      endereco: 'Av. Beira Mar, 500 - Fortaleza/CE',
       ativo: true,
     },
   });

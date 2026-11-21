@@ -14,8 +14,6 @@ import { PromocoesModule } from '@api/modules/promocoes.module';
 import { UnidadesModule } from '@api/modules/unidades.module';
 import { UsuariosModule } from '@api/modules/usuarios.module';
 import { PrismaModule } from '@infrastructure/database/prisma/prisma.module';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -33,9 +31,7 @@ import { AppService } from './app.service';
     AuditoriaModule,
     HealthModule,
   ],
-  controllers: [AppController],
   providers: [
-    AppService,
     {
       provide: APP_INTERCEPTOR,
       useClass: AuditInterceptor,
