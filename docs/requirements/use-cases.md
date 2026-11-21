@@ -52,7 +52,7 @@ Diagrama UML correspondente: [`docs/diagrams/use-cases.puml`](../diagrams/use-ca
   - *Cenário aprovado:* pedido atualizado para `EM_PREPARO`, pagamento salvo como `APROVADO`, estoque mantido abatido, pontos resgatados debitados (se usados), novos pontos creditados (`ACUMULO`) e ação registrada em `logs_auditoria`.
   - *Cenário recusado:* pagamento salvo como `RECUSADO`, pedido atualizado para `PAGAMENTO_RECUSADO`, estoque e pontos eventualmente resgatados estornados (`ESTORNO`) e ação registrada em `logs_auditoria`.
 - **Fluxo principal:**
-  1. Cliente/Atendente envia `POST /pedidos` informando `unidadeId`, `canalPedido`, `itens`, `formaPagamento` e, opcionalmente, `codigoPromocao` e `pontosResgate`.
+  1. Cliente/Atendente envia `POST /pedidos` informando `unidadeId`, `canalPedido`, `itens` e, opcionalmente, `codigoPromocao` e `pontosResgate`.
   2. API valida formato dos campos obrigatórios e `canalPedido` válido dentro do enum.
   3. Aplicação verifica existência da unidade e dos produtos ativos.
   4. Dentro de uma transação única de banco:
@@ -60,10 +60,10 @@ Diagrama UML correspondente: [`docs/diagrams/use-cases.puml`](../diagrams/use-ca
      - Valida cupom promocional (se informado) e calcula `descontoPromocaoCentavos`.
      - Valida consentimento/saldo de fidelidade (se `pontosResgate > 0`), abate o saldo e grava `RESGATE`.
      - Calcula `subtotalCentavos` e `valorTotalCentavos` e persiste `pedidos` (`AGUARDANDO_PAGAMENTO`) + `itens_pedido` + log `PEDIDO_CRIADO`.
-  5. Cliente/Atendente aciona `POST /pagamentos` com `pedidoId` e `idempotencyKey`.
-  6. API verifica se `idempotencyKey` já foi processada; caso negativo, chama o `PaymentGatewayPort` (mock).
+  5. Cliente/Atendente aciona `POST /pagamentos` com `pedidoId`, `formaPagamento` e `idempotencyKey`.
+  6. API verifica se `idempotencyKey` já foi processada; caso negativo, chama o `PaymentGateway` (mock).
   7. Gateway mock retorna `APROVADO` com `referenciaExterna` e payload simulado.
-  8. Transação persiste o registro em `pagamentos`, altera o pedido para `EM_PREPARO`, credita pontos de fidelidade (`floor(valorTotalCentavos / 1000)` se consentimento ativo) e grava `PAGAMENTO_APROVADO` em `logs_auditoria`.
+  8. Transação persiste o registro em `pagamentos`, altera o pedido para `EM_PREPARO`, credita pontos de fidelidade (`floor(valorTotalCentavos / 1000)` se consentimento ativo) e o `AuditInterceptor` grava `PAGAMENTO_PROCESSADO` em `logs_auditoria`.
 - **Fluxos alternativos e exceções:**
   - **401 / 403:** token ausente/inválido ou perfil sem permissão (ex.: Cozinha tentando criar pedido, ou Atendente criando pedido em outra unidade).
   - **422 Unprocessable Entity:** `canalPedido` ausente/inválido, lista de itens vazia, quantidade `<= 0` ou cupom inválido/expirado/abaixo do valor mínimo.
@@ -87,7 +87,7 @@ Diagrama UML correspondente: [`docs/diagrams/use-cases.puml`](../diagrams/use-ca
      - `COZINHA`: `EM_PREPARO → PRONTO`.
      - `ATENDENTE`: `PRONTO → ENTREGUE`.
      - `CLIENTE` (dono, antes de `ENTREGUE`), `ATENDENTE`, `GERENTE` ou `ADMIN`: `* → CANCELADO` (exceto se já `ENTREGUE` ou `CANCELADO`).
-  3. Transação atualiza `pedidos.status`, executa estorno de estoque/pontos quando for cancelamento e grava `STATUS_PEDIDO_ALTERADO` / `PEDIDO_CANCELADO` em `logs_auditoria`.
+  3. Transação atualiza `pedidos.status`, executa estorno de estoque/pontos quando for cancelamento e grava `PEDIDO_STATUS_ATUALIZADO` / `PEDIDO_CANCELADO` em `logs_auditoria`.
 - **Fluxos alternativos e exceções:**
   - **403 Forbidden:** perfil não autorizado para a transição (ex.: Cliente tentando marcar pedido como `PRONTO`) ou funcionário de outra unidade.
   - **404 Not Found:** pedido inexistente.
