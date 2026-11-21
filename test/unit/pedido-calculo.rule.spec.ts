@@ -2,6 +2,7 @@ import { CanalPedido, TipoDesconto } from '@prisma/client';
 import { ConflictDomainError, ValidationDomainError } from '@domain/errors/domain.error';
 import {
   calcularDescontoFidelidade,
+  calcularPontosAcumulo,
   validarECalcularDescontoPromocao,
   type PromocaoAplicavel,
 } from '@domain/rules/pedido-calculo.rule';
@@ -175,6 +176,15 @@ describe('pedido-calculo.rule', () => {
         valorRestanteCentavos: 130,
       });
       expect(limitado).toEqual({ pontosUtilizados: 2, descontoCentavos: 100 });
+    });
+  });
+
+  describe('calcularPontosAcumulo', () => {
+    it('deve acumular 1 ponto inteiro a cada R$ 10,00 pagos (1000 centavos)', () => {
+      expect(calcularPontosAcumulo(3500)).toBe(3);
+      expect(calcularPontosAcumulo(999)).toBe(0);
+      expect(calcularPontosAcumulo(0)).toBe(0);
+      expect(calcularPontosAcumulo(-500)).toBe(0);
     });
   });
 });

@@ -23,6 +23,13 @@ export interface CriarUsuarioInternoInput {
   unidadeId?: string | null;
 }
 
+export interface UsuarioAnonimizadoResultado {
+  id: string;
+  nome: string;
+  ativo: boolean;
+  anonimizadoEm: Date;
+}
+
 @Injectable()
 export class UsuariosService {
   constructor(
@@ -151,5 +158,53 @@ export class UsuariosService {
     });
 
     return usuario;
+  }
+
+  async anonimizar(usuarioId: string): Promise<UsuarioAnonimizadoResultado> {
+    const existente = await this.prisma.usuario.findUnique({
+      where: { id: usuarioId },
+      select: { id: true, ativo: true, anonimizadoEm: true },
+    });
+
+    if (!existente || !existente.ativo || existente.anonimizadoEm !== null) {
+      throw new NotFoundDomainError('Usuário não encontrado.', [], 'USUARIO_NAO_ENCONTRADO');
+    }
+
+    const agora = new Date();
+    const senhaInutilizada = await this.passwordHasher.hash(`anon-${this.idGenerator.generate()}`);
+
+    return this.prisma.$transaction(async (tx) => {
+      const atualizado = await tx.usuario.update({
+        where: { id: usuarioId },
+        data: {
+          nome: 'Usuário Anonimizado',
+          email: `anonimizado-${usuarioId}@anon.local`,
+          senhaHash: senhaInutilizada,
+          ativo: false,
+          anonimizadoEm: agora,
+        },
+        select: {
+          id: true,
+          nome: true,
+          ativo: true,
+          anonimizadoEm: true,
+        },
+      });
+
+      await tx.contaFidelidade.updateMany({
+        where: { usuarioId },
+        data: {
+          consentimentoAtivo: false,
+          revogadoEm: agora,
+        },
+      });
+
+      return {
+        id: atualizado.id,
+        nome: atualizado.nome,
+        ativo: atualizado.ativo,
+        anonimizadoEm: atualizado.anonimizadoEm ?? agora,
+      };
+    });
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiConflictResponse,
@@ -18,7 +18,7 @@ import { ErrorResponseDto } from '@api/common/dtos/error-response.dto';
 import { UsuariosService } from '@application/use-cases/usuarios/usuarios.service';
 import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
 import { CriarUsuarioDto } from './dto/criar-usuario.dto';
-import { UsuarioResponseDto } from './dto/usuario-response.dto';
+import { UsuarioAnonimizadoResponseDto, UsuarioResponseDto } from './dto/usuario-response.dto';
 
 @ApiTags('Usuarios')
 @ApiBearerAuth()
@@ -32,6 +32,20 @@ export class UsuariosController {
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })
   async me(@CurrentUser() user: AuthenticatedUser): Promise<UsuarioResponseDto> {
     return this.usuariosService.buscarPerfil(user.id);
+  }
+
+  @Delete('me')
+  @Auditable({ acao: 'USUARIO_ANONIMIZADO', entidade: 'usuarios' })
+  @ApiOperation({
+    summary: 'Anonimiza dados pessoais do titular autenticado conforme LGPD, preservando pedidos',
+  })
+  @ApiOkResponse({ type: UsuarioAnonimizadoResponseDto })
+  @ApiUnauthorizedResponse({ type: ErrorResponseDto })
+  @ApiNotFoundResponse({ type: ErrorResponseDto })
+  async anonimizarMe(
+    @CurrentUser() user: AuthenticatedUser,
+  ): Promise<UsuarioAnonimizadoResponseDto> {
+    return this.usuariosService.anonimizar(user.id);
   }
 
   @Post()

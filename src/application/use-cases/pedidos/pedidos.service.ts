@@ -16,8 +16,13 @@ import {
   calcularDescontoFidelidade,
   validarECalcularDescontoPromocao,
 } from '@domain/rules/pedido-calculo.rule';
+import {
+  podeCancelarPedido,
+  validarTransicaoStatusPedido,
+} from '@domain/rules/pedido-status.rule';
 import { centavosParaReais } from '@domain/utils/money.util';
 import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
+import { estornarReservasDoPedido } from './pedido-estorno.helper';
 
 export interface ItemPedidoInput {
   produtoId: string;
@@ -455,5 +460,99 @@ export class PedidosService {
     }
 
     return formatarPedido(pedido);
+  }
+
+  async atualizarStatus(
+    id: string,
+    novoStatus: StatusPedido,
+    ator: AuthenticatedUser,
+  ): Promise<PedidoResultado> {
+    const pedido = await this.prisma.pedido.findUnique({
+      where: { id },
+      include: { itens: true },
+    });
+
+    if (!pedido) {
+      throw new NotFoundDomainError('Pedido não encontrado.', [], 'PEDIDO_NAO_ENCONTRADO');
+    }
+
+    if (ator.perfil !== PerfilUsuario.ADMIN && pedido.unidadeId !== ator.unidadeId) {
+      throw new ForbiddenDomainError(
+        'Você só pode atualizar pedidos da sua própria unidade.',
+        [],
+        'ACESSO_NEGADO',
+      );
+    }
+
+    validarTransicaoStatusPedido({
+      statusAtual: pedido.status,
+      novoStatus,
+      perfil: ator.perfil,
+    });
+
+    const atualizado = await this.prisma.pedido.update({
+      where: { id },
+      data: { status: novoStatus },
+      include: { itens: true },
+    });
+
+    return formatarPedido(atualizado);
+  }
+
+  async cancelar(id: string, ator: AuthenticatedUser): Promise<PedidoResultado> {
+    const pedido = await this.prisma.pedido.findUnique({
+      where: { id },
+      include: { itens: true },
+    });
+
+    if (!pedido) {
+      throw new NotFoundDomainError('Pedido não encontrado.', [], 'PEDIDO_NAO_ENCONTRADO');
+    }
+
+    if (ator.perfil === PerfilUsuario.CLIENTE && pedido.clienteId !== ator.id) {
+      throw new ForbiddenDomainError(
+        'Você só pode cancelar seus próprios pedidos.',
+        [],
+        'ACESSO_NEGADO',
+      );
+    }
+
+    if (
+      ator.perfil !== PerfilUsuario.CLIENTE &&
+      ator.perfil !== PerfilUsuario.ADMIN &&
+      pedido.unidadeId !== ator.unidadeId
+    ) {
+      throw new ForbiddenDomainError(
+        'Você só pode cancelar pedidos da sua própria unidade.',
+        [],
+        'ACESSO_NEGADO',
+      );
+    }
+
+    if (!podeCancelarPedido(pedido.status)) {
+      throw new ConflictDomainError(
+        'O pedido não pode ser cancelado no status atual.',
+        [{ field: 'status', issue: `Status atual: ${pedido.status}` }],
+        'PEDIDO_NAO_CANCELAVEL',
+      );
+    }
+
+    const pedidoCancelado = await this.prisma.$transaction(async (tx) => {
+      const cancelado = await tx.pedido.update({
+        where: { id },
+        data: { status: StatusPedido.CANCELADO },
+        include: { itens: true },
+      });
+
+      await estornarReservasDoPedido(tx, this.idGenerator, {
+        pedido,
+        atorUsuarioId: ator.id,
+        motivo: 'Estorno automático por cancelamento do pedido',
+      });
+
+      return cancelado;
+    });
+
+    return formatarPedido(pedidoCancelado);
   }
 }

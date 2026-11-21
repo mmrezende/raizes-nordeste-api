@@ -134,3 +134,10 @@ export function calcularDescontoFidelidade(
     descontoCentavos: pontosUtilizados * CENTAVOS_POR_PONTO_FIDELIDADE,
   };
 }
+
+/**
+ * Calcula pontos inteiros acumulados após pagamento aprovado (1 ponto a cada R$ 10,00).
+ */
+export function calcularPontosAcumulo(valorTotalCentavos: number): number {
+  return Math.floor(Math.max(0, valorTotalCentavos) / CENTAVOS_POR_PONTO_ACUMULO);
+}

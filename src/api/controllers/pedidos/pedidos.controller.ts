@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiConflictResponse,
@@ -17,6 +17,7 @@ import { Roles } from '@api/common/decorators/roles.decorator';
 import { ErrorResponseDto } from '@api/common/dtos/error-response.dto';
 import { PedidosService } from '@application/use-cases/pedidos/pedidos.service';
 import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
+import { AtualizarStatusPedidoDto } from './dto/atualizar-status-pedido.dto';
 import { CriarPedidoDto } from './dto/criar-pedido.dto';
 import { ListarPedidosQueryDto } from './dto/listar-pedidos-query.dto';
 import { PedidoResponseDto, PedidosPaginadosResponseDto } from './dto/pedido-response.dto';
@@ -74,5 +75,52 @@ export class PedidosController {
     @CurrentUser() user: AuthenticatedUser,
   ): Promise<PedidoResponseDto> {
     return this.pedidosService.buscarPorId(id, user);
+  }
+
+  @Patch(':id/status')
+  @Roles([
+    PerfilUsuario.COZINHA,
+    PerfilUsuario.ATENDENTE,
+    PerfilUsuario.GERENTE,
+    PerfilUsuario.ADMIN,
+  ])
+  @Auditable({ acao: 'PEDIDO_STATUS_ATUALIZADO', entidade: 'pedidos' })
+  @ApiOperation({
+    summary: 'Avança status operacional do pedido (COZINHA: PRONTO; ATENDENTE: ENTREGUE)',
+  })
+  @ApiOkResponse({ type: PedidoResponseDto })
+  @ApiUnauthorizedResponse({ type: ErrorResponseDto })
+  @ApiForbiddenResponse({ type: ErrorResponseDto })
+  @ApiNotFoundResponse({ type: ErrorResponseDto })
+  @ApiConflictResponse({ type: ErrorResponseDto })
+  @ApiUnprocessableEntityResponse({ type: ErrorResponseDto })
+  async atualizarStatus(
+    @Param('id') id: string,
+    @Body() dto: AtualizarStatusPedidoDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ): Promise<PedidoResponseDto> {
+    return this.pedidosService.atualizarStatus(id, dto.status, user);
+  }
+
+  @Post(':id/cancelar')
+  @HttpCode(HttpStatus.OK)
+  @Roles([
+    PerfilUsuario.CLIENTE,
+    PerfilUsuario.ATENDENTE,
+    PerfilUsuario.GERENTE,
+    PerfilUsuario.ADMIN,
+  ])
+  @Auditable({ acao: 'PEDIDO_CANCELADO', entidade: 'pedidos' })
+  @ApiOperation({ summary: 'Cancela pedido antes da entrega e estorna estoque e pontos' })
+  @ApiOkResponse({ type: PedidoResponseDto })
+  @ApiUnauthorizedResponse({ type: ErrorResponseDto })
+  @ApiForbiddenResponse({ type: ErrorResponseDto })
+  @ApiNotFoundResponse({ type: ErrorResponseDto })
+  @ApiConflictResponse({ type: ErrorResponseDto })
+  async cancelar(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ): Promise<PedidoResponseDto> {
+    return this.pedidosService.cancelar(id, user);
   }
 }
