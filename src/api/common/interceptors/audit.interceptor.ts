@@ -22,6 +22,22 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+function extractResponseEntityId(data: unknown): string | null {
+  if (!isRecord(data)) {
+    return null;
+  }
+  if (typeof data.id === 'string') {
+    return data.id;
+  }
+  if (isRecord(data.saldo) && typeof data.saldo.id === 'string') {
+    return data.saldo.id;
+  }
+  if (isRecord(data.movimentacao) && typeof data.movimentacao.id === 'string') {
+    return data.movimentacao.id;
+  }
+  return null;
+}
+
 @Injectable()
 export class AuditInterceptor implements NestInterceptor {
   constructor(
@@ -43,8 +59,7 @@ export class AuditInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       mergeMap(async (responseData: unknown) => {
-        const responseId =
-          isRecord(responseData) && typeof responseData.id === 'string' ? responseData.id : null;
+        const responseId = extractResponseEntityId(responseData);
         const paramId = typeof request.params?.id === 'string' ? request.params.id : null;
         const entidadeId = responseId ?? paramId ?? 'N/A';
         const usuarioId = request.user?.id ?? (meta.entidade === 'usuarios' ? responseId : null);

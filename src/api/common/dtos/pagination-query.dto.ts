@@ -1,6 +1,20 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, Max, Min } from 'class-validator';
+
+export class PaginationMetaDto {
+  @ApiProperty({ example: 1 })
+  page: number;
+
+  @ApiProperty({ example: 10 })
+  limit: number;
+
+  @ApiProperty({ example: 1 })
+  total: number;
+
+  @ApiProperty({ example: 1 })
+  totalPages: number;
+}
 
 export class PaginationQueryDto {
   @ApiPropertyOptional({ default: 1, minimum: 1, example: 1 })
