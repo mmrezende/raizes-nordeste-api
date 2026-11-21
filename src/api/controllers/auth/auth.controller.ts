@@ -8,11 +8,11 @@ import {
   ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { AuthService } from '../../../application/use-cases/auth/auth.service';
-import { Auditable } from '../../common/decorators/auditable.decorator';
-import { Public } from '../../common/decorators/public.decorator';
-import { ErrorResponseDto } from '../../common/dtos/error-response.dto';
-import { UsuarioResponseDto } from '../usuarios/dto/usuario-response.dto';
+import { Auditable } from '@api/common/decorators/auditable.decorator';
+import { Public } from '@api/common/decorators/public.decorator';
+import { ErrorResponseDto } from '@api/common/dtos/error-response.dto';
+import { UsuarioResponseDto } from '@api/controllers/usuarios/dto/usuario-response.dto';
+import { AuthService } from '@application/use-cases/auth/auth.service';
 import { LoginResponseDto } from './dto/auth-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';

@@ -1,7 +1,8 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
-import { PrismaService } from '../../../infrastructure/database/prisma/prisma.service';
-import { Public } from '../../common/decorators/public.decorator';
+import { Public } from '@api/common/decorators/public.decorator';
+import { getAppVersion } from '@infrastructure/config/env.config';
+import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 
 export class HealthResponseDto {
   @ApiProperty({ enum: ['ok', 'degraded'], example: 'ok' })
@@ -13,7 +14,7 @@ export class HealthResponseDto {
   @ApiProperty({ example: '2026-11-21T22:00:00.000Z' })
   timestamp: string;
 
-  @ApiProperty({ example: '1.0.0' })
+  @ApiProperty({ example: '1.0.0-SNAPSHOT' })
   version: string;
 }
 
@@ -33,7 +34,7 @@ export class HealthController {
       status: isDatabaseUp ? 'ok' : 'degraded',
       database: isDatabaseUp ? 'up' : 'down',
       timestamp: new Date().toISOString(),
-      version: '0.1.0',
+      version: getAppVersion(),
     };
   }
 }

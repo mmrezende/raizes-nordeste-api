@@ -1,6 +1,6 @@
 import { type ArgumentsHost, Logger, NotFoundException } from '@nestjs/common';
-import { GlobalExceptionFilter } from '@src/api/common/filters/global-exception.filter';
-import { ConflictDomainError } from '@src/domain/errors/domain.error';
+import { GlobalExceptionFilter } from '@api/common/filters/global-exception.filter';
+import { ConflictDomainError } from '@domain/errors/domain.error';
 
 function createMockHost(requestId?: string) {
   const json = jest.fn();

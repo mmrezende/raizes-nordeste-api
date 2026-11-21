@@ -1,7 +1,7 @@
 import { ValidationPipe, type INestApplication } from '@nestjs/common';
 import type { ValidationError } from 'class-validator';
-import { ValidationDomainError, type ErrorDetail } from '../domain/errors/domain.error';
-import { getEnvConfig } from '../infrastructure/config/env.config';
+import { ValidationDomainError, type ErrorDetail } from '@domain/errors/domain.error';
+import { getEnvConfig } from '@infrastructure/config/env.config';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import { requestIdMiddleware } from './common/middlewares/request-id.middleware';
 import { setupSwagger } from './swagger/swagger.setup';

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { EstoqueService } from '../../application/use-cases/estoque/estoque.service';
-import { EstoqueController } from '../controllers/estoque/estoque.controller';
+import { EstoqueController } from '@api/controllers/estoque/estoque.controller';
+import { EstoqueService } from '@application/use-cases/estoque/estoque.service';
 
 @Module({
   controllers: [EstoqueController],

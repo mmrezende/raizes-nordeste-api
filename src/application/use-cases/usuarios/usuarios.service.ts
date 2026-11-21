@@ -1,19 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { AuthenticatedUser } from '../../../api/common/decorators/current-user.decorator';
+import type { AuthenticatedUser } from '@api/common/decorators/current-user.decorator';
+import { ID_GENERATOR, type IdGenerator } from '@application/ports/id-generator.interface';
+import { PASSWORD_HASHER, type PasswordHasher } from '@application/ports/password-hasher.interface';
+import type { UsuarioSeguro } from '@application/use-cases/auth/auth.service';
 import {
   PERFIS_VINCULADOS_UNIDADE,
   PerfilUsuario,
-} from '../../../domain/enums/perfil-usuario.enum';
+} from '@domain/enums/perfil-usuario.enum';
 import {
   ConflictDomainError,
   ForbiddenDomainError,
   NotFoundDomainError,
   ValidationDomainError,
-} from '../../../domain/errors/domain.error';
-import { PrismaService } from '../../../infrastructure/database/prisma/prisma.service';
-import { ID_GENERATOR, type IdGenerator } from '../../ports/id-generator.interface';
-import { PASSWORD_HASHER, type PasswordHasher } from '../../ports/password-hasher.interface';
-import type { UsuarioSeguro } from '../auth/auth.service';
+} from '@domain/errors/domain.error';
+import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 
 export interface CriarUsuarioInternoInput {
   nome: string;

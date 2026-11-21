@@ -11,16 +11,16 @@ import {
   ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { EstoqueService } from '../../../application/use-cases/estoque/estoque.service';
-import { UnidadesService } from '../../../application/use-cases/unidades/unidades.service';
-import { PerfilUsuario } from '../../../domain/enums/perfil-usuario.enum';
-import { Auditable } from '../../common/decorators/auditable.decorator';
-import { type AuthenticatedUser, CurrentUser } from '../../common/decorators/current-user.decorator';
-import { Public } from '../../common/decorators/public.decorator';
-import { Roles } from '../../common/decorators/roles.decorator';
-import { ErrorResponseDto } from '../../common/dtos/error-response.dto';
-import { PaginationQueryDto } from '../../common/dtos/pagination-query.dto';
-import { EstoquePaginadoResponseDto } from '../estoque/dto/estoque-response.dto';
+import { Auditable } from '@api/common/decorators/auditable.decorator';
+import { type AuthenticatedUser, CurrentUser } from '@api/common/decorators/current-user.decorator';
+import { Public } from '@api/common/decorators/public.decorator';
+import { Roles } from '@api/common/decorators/roles.decorator';
+import { ErrorResponseDto } from '@api/common/dtos/error-response.dto';
+import { PaginationQueryDto } from '@api/common/dtos/pagination-query.dto';
+import { EstoquePaginadoResponseDto } from '@api/controllers/estoque/dto/estoque-response.dto';
+import { EstoqueService } from '@application/use-cases/estoque/estoque.service';
+import { UnidadesService } from '@application/use-cases/unidades/unidades.service';
+import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
 import { CardapioPaginadoResponseDto } from './dto/cardapio-item-response.dto';
 import { CriarUnidadeDto } from './dto/criar-unidade.dto';
 import { UnidadeResponseDto, UnidadesPaginadasResponseDto } from './dto/unidade-response.dto';

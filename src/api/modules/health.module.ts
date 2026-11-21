@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { HealthController } from '../controllers/health/health.controller';
+import { HealthController } from '@api/controllers/health/health.controller';
 
 @Module({
   controllers: [HealthController],

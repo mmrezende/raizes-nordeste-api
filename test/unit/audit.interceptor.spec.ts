@@ -1,7 +1,7 @@
 import type { CallHandler, ExecutionContext } from '@nestjs/common';
 import type { Reflector } from '@nestjs/core';
 import { firstValueFrom, of } from 'rxjs';
-import { AuditInterceptor } from '@src/api/common/interceptors/audit.interceptor';
+import { AuditInterceptor } from '@api/common/interceptors/audit.interceptor';
 
 function createMockContext(options: {
   userId?: string;

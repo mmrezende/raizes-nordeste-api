@@ -1,9 +1,9 @@
 import type { ExecutionContext } from '@nestjs/common';
 import type { Reflector } from '@nestjs/core';
-import type { AuthenticatedUser } from '@src/api/common/decorators/current-user.decorator';
-import { RolesGuard } from '@src/api/common/guards/roles.guard';
-import { PerfilUsuario } from '@src/domain/enums/perfil-usuario.enum';
-import { ForbiddenDomainError, UnauthorizedDomainError } from '@src/domain/errors/domain.error';
+import type { AuthenticatedUser } from '@api/common/decorators/current-user.decorator';
+import { RolesGuard } from '@api/common/guards/roles.guard';
+import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
+import { ForbiddenDomainError, UnauthorizedDomainError } from '@domain/errors/domain.error';
 
 function createMockContext(user?: AuthenticatedUser): ExecutionContext {
   return {

@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
-import type { IdGenerator } from '../../application/ports/id-generator.interface';
+import type { IdGenerator } from '@application/ports/id-generator.interface';
 
 @Injectable()
 export class UuidV7Generator implements IdGenerator {

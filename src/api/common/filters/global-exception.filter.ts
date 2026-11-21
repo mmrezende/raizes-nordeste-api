@@ -8,8 +8,8 @@ import {
   Logger,
 } from '@nestjs/common';
 import type { Response } from 'express';
-import { DomainError, type ErrorDetail } from '../../../domain/errors/domain.error';
-import type { RequestWithId } from '../middlewares/request-id.middleware';
+import type { RequestWithId } from '@api/common/middlewares/request-id.middleware';
+import { DomainError, type ErrorDetail } from '@domain/errors/domain.error';
 
 interface ParsedError {
   status: number;

@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { getAppVersion } from '@infrastructure/config/env.config';
 import { createTestApp, type TestAppContext } from './helpers/test-app.helper';
 
 describe('Health, Swagger e Contrato de Erro (e2e)', () => {
@@ -20,7 +21,7 @@ describe('Health, Swagger e Contrato de Erro (e2e)', () => {
       status: 'ok',
       database: 'up',
       timestamp: expect.any(String),
-      version: '0.1.0',
+      version: getAppVersion(),
     });
   });
 

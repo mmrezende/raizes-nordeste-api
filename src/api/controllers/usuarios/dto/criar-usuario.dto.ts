@@ -9,7 +9,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { PerfilUsuario } from '../../../../domain/enums/perfil-usuario.enum';
+import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
 
 export class CriarUsuarioDto {
   @ApiProperty({ example: 'Carlos Balcão', minLength: 2, maxLength: 120 })

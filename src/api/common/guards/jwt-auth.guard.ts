@@ -1,9 +1,9 @@
 import { type ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
-import { UnauthorizedDomainError } from '../../../domain/errors/domain.error';
-import type { AuthenticatedUser } from '../decorators/current-user.decorator';
-import { Public } from '../decorators/public.decorator';
+import type { AuthenticatedUser } from '@api/common/decorators/current-user.decorator';
+import { Public } from '@api/common/decorators/public.decorator';
+import { UnauthorizedDomainError } from '@domain/errors/domain.error';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {

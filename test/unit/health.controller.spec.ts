@@ -1,5 +1,6 @@
-import { HealthController } from '@src/api/controllers/health/health.controller';
-import type { PrismaService } from '@src/infrastructure/database/prisma/prisma.service';
+import { HealthController } from '@api/controllers/health/health.controller';
+import { getAppVersion } from '@infrastructure/config/env.config';
+import type { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 
 describe('HealthController', () => {
   it('deve retornar status ok e database up quando SELECT 1 tiver sucesso', async () => {
@@ -12,7 +13,7 @@ describe('HealthController', () => {
       status: 'ok',
       database: 'up',
       timestamp: expect.any(String),
-      version: '0.1.0',
+      version: getAppVersion(),
     });
   });
 
@@ -26,7 +27,7 @@ describe('HealthController', () => {
       status: 'degraded',
       database: 'down',
       timestamp: expect.any(String),
-      version: '0.1.0',
+      version: getAppVersion(),
     });
   });
 });

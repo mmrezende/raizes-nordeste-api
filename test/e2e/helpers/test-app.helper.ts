@@ -1,9 +1,9 @@
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import type { App } from 'supertest/types';
-import { configureApp } from '@src/api/app.setup';
+import { configureApp } from '@api/app.setup';
+import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 import { AppModule } from '@src/app.module';
-import { PrismaService } from '@src/infrastructure/database/prisma/prisma.service';
 
 export interface TestAppContext {
   app: INestApplication<App>;

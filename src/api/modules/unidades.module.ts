@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { UnidadesService } from '../../application/use-cases/unidades/unidades.service';
-import { UnidadesController } from '../controllers/unidades/unidades.controller';
+import { UnidadesController } from '@api/controllers/unidades/unidades.controller';
+import { UnidadesService } from '@application/use-cases/unidades/unidades.service';
 import { EstoqueModule } from './estoque.module';
 
 @Module({

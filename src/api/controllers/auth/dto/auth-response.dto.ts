@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PerfilUsuario } from '../../../../domain/enums/perfil-usuario.enum';
+import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
 
 export class AuthUserSummaryDto {
   @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f55' })

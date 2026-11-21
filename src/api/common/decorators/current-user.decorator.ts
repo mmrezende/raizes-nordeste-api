@@ -1,5 +1,5 @@
 import { createParamDecorator, type ExecutionContext } from '@nestjs/common';
-import type { PerfilUsuario } from '../../../domain/enums/perfil-usuario.enum';
+import type { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
 
 export interface AuthenticatedUser {
   id: string;

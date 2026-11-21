@@ -7,10 +7,10 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { mergeMap, type Observable } from 'rxjs';
-import { AUDIT_LOGGER, type AuditLogger } from '../../../application/ports/audit-logger.interface';
-import { Auditable } from '../decorators/auditable.decorator';
-import type { AuthenticatedUser } from '../decorators/current-user.decorator';
-import type { RequestWithId } from '../middlewares/request-id.middleware';
+import { Auditable } from '@api/common/decorators/auditable.decorator';
+import type { AuthenticatedUser } from '@api/common/decorators/current-user.decorator';
+import type { RequestWithId } from '@api/common/middlewares/request-id.middleware';
+import { AUDIT_LOGGER, type AuditLogger } from '@application/ports/audit-logger.interface';
 
 interface AuditableRequest extends RequestWithId {
   user?: AuthenticatedUser;

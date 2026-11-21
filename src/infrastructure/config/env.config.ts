@@ -1,31 +1,33 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 const DEFAULT_JWT_EXPIRES_IN_MS = 3_600_000;
+let cachedAppVersion: string | null = null;
 
-function parseDurationToMs(raw: string): number {
-  const normalized = raw.trim().toLowerCase();
-  const match = /^(\d+)(ms|s|m|h|d)?$/.exec(normalized);
-  if (!match) {
-    return DEFAULT_JWT_EXPIRES_IN_MS;
+export function getAppVersion(): string {
+  if (cachedAppVersion !== null) {
+    return cachedAppVersion;
   }
 
-  const amount = Number(match[1]);
-  if (!Number.isFinite(amount) || amount <= 0) {
-    return DEFAULT_JWT_EXPIRES_IN_MS;
+  const fromEnv = process.env.npm_package_version;
+  if (typeof fromEnv === 'string' && fromEnv.trim().length > 0) {
+    cachedAppVersion = fromEnv.trim();
+    return cachedAppVersion;
   }
 
-  switch (match[2]) {
-    case 'ms':
-      return amount;
-    case 's':
-      return amount * 1_000;
-    case 'm':
-      return amount * 60_000;
-    case 'h':
-      return amount * 3_600_000;
-    case 'd':
-      return amount * 86_400_000;
-    default:
-      return amount;
+  try {
+    const raw = readFileSync(join(process.cwd(), 'package.json'), 'utf8');
+    const parsed = JSON.parse(raw) as { version?: unknown };
+    if (typeof parsed.version === 'string' && parsed.version.trim().length > 0) {
+      cachedAppVersion = parsed.version.trim();
+      return cachedAppVersion;
+    }
+  } catch {
+    // Fallback caso package.json não esteja acessível no cwd
   }
+
+  cachedAppVersion = '0.0.0';
+  return cachedAppVersion;
 }
 
 export interface EnvConfig {
@@ -33,7 +35,6 @@ export interface EnvConfig {
   port: number;
   databaseUrl: string;
   jwtSecret: string;
-  jwtExpiresIn: string;
   jwtExpiresInMs: number;
   swaggerPath: string;
 }
@@ -41,16 +42,21 @@ export interface EnvConfig {
 export function getEnvConfig(): EnvConfig {
   const parsedPort = Number(process.env.PORT ?? 3000);
   const port = Number.isInteger(parsedPort) && parsedPort > 0 ? parsedPort : 3000;
+
+  const parsedJwtExpiresInMs = Number(process.env.JWT_EXPIRES_IN_MS ?? DEFAULT_JWT_EXPIRES_IN_MS);
+  const jwtExpiresInMs =
+    Number.isInteger(parsedJwtExpiresInMs) && parsedJwtExpiresInMs > 0
+      ? parsedJwtExpiresInMs
+      : DEFAULT_JWT_EXPIRES_IN_MS;
+
   const rawSwaggerPath = (process.env.SWAGGER_PATH ?? 'docs').trim().replace(/^\/+|\/+$/g, '');
-  const jwtExpiresIn = process.env.JWT_EXPIRES_IN ?? '1h';
 
   return {
     nodeEnv: process.env.NODE_ENV ?? 'development',
     port,
     databaseUrl: process.env.DATABASE_URL ?? 'file:./dev.db',
     jwtSecret: process.env.JWT_SECRET ?? 'dev-secret-change-me',
-    jwtExpiresIn,
-    jwtExpiresInMs: parseDurationToMs(jwtExpiresIn),
+    jwtExpiresInMs,
     swaggerPath: rawSwaggerPath || 'docs',
   };
 }

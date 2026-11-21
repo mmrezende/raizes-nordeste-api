@@ -1,10 +1,10 @@
 import { Global, Module } from '@nestjs/common';
-import { AUDIT_LOGGER } from '../../../application/ports/audit-logger.interface';
-import { ID_GENERATOR } from '../../../application/ports/id-generator.interface';
-import { PASSWORD_HASHER } from '../../../application/ports/password-hasher.interface';
-import { PrismaAuditLogger } from '../../audit/prisma-audit.logger';
-import { BcryptPasswordHasher } from '../../security/bcrypt-password.hasher';
-import { UuidV7Generator } from '../../security/uuid-v7.generator';
+import { AUDIT_LOGGER } from '@application/ports/audit-logger.interface';
+import { ID_GENERATOR } from '@application/ports/id-generator.interface';
+import { PASSWORD_HASHER } from '@application/ports/password-hasher.interface';
+import { PrismaAuditLogger } from '@infrastructure/audit/prisma-audit.logger';
+import { BcryptPasswordHasher } from '@infrastructure/security/bcrypt-password.hasher';
+import { UuidV7Generator } from '@infrastructure/security/uuid-v7.generator';
 import { PrismaService } from './prisma.service';
 
 @Global()

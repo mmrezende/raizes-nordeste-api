@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ID_GENERATOR, type IdGenerator } from '../../ports/id-generator.interface';
-import { PASSWORD_HASHER, type PasswordHasher } from '../../ports/password-hasher.interface';
-import { PerfilUsuario } from '../../../domain/enums/perfil-usuario.enum';
+import { ID_GENERATOR, type IdGenerator } from '@application/ports/id-generator.interface';
+import { PASSWORD_HASHER, type PasswordHasher } from '@application/ports/password-hasher.interface';
+import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
 import {
   ConflictDomainError,
   UnauthorizedDomainError,
-} from '../../../domain/errors/domain.error';
-import { getEnvConfig } from '../../../infrastructure/config/env.config';
-import { PrismaService } from '../../../infrastructure/database/prisma/prisma.service';
-import type { JwtPayload } from '../../../infrastructure/security/jwt.strategy';
+} from '@domain/errors/domain.error';
+import { getEnvConfig } from '@infrastructure/config/env.config';
+import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
+import type { JwtPayload } from '@infrastructure/security/jwt.strategy';
 
 export interface RegistrarClienteInput {
   nome: string;

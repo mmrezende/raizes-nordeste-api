@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { AuditLogger, AuditLogInput } from '../../application/ports/audit-logger.interface';
-import { ID_GENERATOR, type IdGenerator } from '../../application/ports/id-generator.interface';
-import { PrismaService } from '../database/prisma/prisma.service';
+import type { AuditLogger, AuditLogInput } from '@application/ports/audit-logger.interface';
+import { ID_GENERATOR, type IdGenerator } from '@application/ports/id-generator.interface';
+import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 
 @Injectable()
 export class PrismaAuditLogger implements AuditLogger {

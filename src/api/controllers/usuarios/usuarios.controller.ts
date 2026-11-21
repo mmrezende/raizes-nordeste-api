@@ -11,12 +11,12 @@ import {
   ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { UsuariosService } from '../../../application/use-cases/usuarios/usuarios.service';
-import { PerfilUsuario } from '../../../domain/enums/perfil-usuario.enum';
-import { Auditable } from '../../common/decorators/auditable.decorator';
-import { type AuthenticatedUser, CurrentUser } from '../../common/decorators/current-user.decorator';
-import { Roles } from '../../common/decorators/roles.decorator';
-import { ErrorResponseDto } from '../../common/dtos/error-response.dto';
+import { Auditable } from '@api/common/decorators/auditable.decorator';
+import { type AuthenticatedUser, CurrentUser } from '@api/common/decorators/current-user.decorator';
+import { Roles } from '@api/common/decorators/roles.decorator';
+import { ErrorResponseDto } from '@api/common/dtos/error-response.dto';
+import { UsuariosService } from '@application/use-cases/usuarios/usuarios.service';
+import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
 import { CriarUsuarioDto } from './dto/criar-usuario.dto';
 import { UsuarioResponseDto } from './dto/usuario-response.dto';
 

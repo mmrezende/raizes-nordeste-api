@@ -1,16 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { AuthenticatedUser } from '../../../api/common/decorators/current-user.decorator';
-import { PerfilUsuario } from '../../../domain/enums/perfil-usuario.enum';
-import { TipoMovimentacaoManualEstoque } from '../../../domain/enums/tipo-movimentacao-estoque.enum';
+import type { AuthenticatedUser } from '@api/common/decorators/current-user.decorator';
+import { ID_GENERATOR, type IdGenerator } from '@application/ports/id-generator.interface';
+import type { PaginacaoInput, ResultadoPaginado } from '@application/use-cases/unidades/unidades.service';
+import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
+import { TipoMovimentacaoManualEstoque } from '@domain/enums/tipo-movimentacao-estoque.enum';
 import {
   ConflictDomainError,
   ForbiddenDomainError,
   NotFoundDomainError,
-} from '../../../domain/errors/domain.error';
-import { centavosParaReais } from '../../../domain/utils/money.util';
-import { PrismaService } from '../../../infrastructure/database/prisma/prisma.service';
-import { ID_GENERATOR, type IdGenerator } from '../../ports/id-generator.interface';
-import type { PaginacaoInput, ResultadoPaginado } from '../unidades/unidades.service';
+} from '@domain/errors/domain.error';
+import { centavosParaReais } from '@domain/utils/money.util';
+import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 
 export interface MovimentarEstoqueInput {
   unidadeId: string;

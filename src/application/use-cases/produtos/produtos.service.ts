@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { centavosParaReais } from '../../../domain/utils/money.util';
-import { PrismaService } from '../../../infrastructure/database/prisma/prisma.service';
-import { ID_GENERATOR, type IdGenerator } from '../../ports/id-generator.interface';
-import type { PaginacaoInput, ResultadoPaginado } from '../unidades/unidades.service';
+import { ID_GENERATOR, type IdGenerator } from '@application/ports/id-generator.interface';
+import type { PaginacaoInput, ResultadoPaginado } from '@application/use-cases/unidades/unidades.service';
+import { centavosParaReais } from '@domain/utils/money.util';
+import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 
 export interface CriarProdutoInput {
   nome: string;

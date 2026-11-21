@@ -9,12 +9,12 @@ import {
   ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { ProdutosService } from '../../../application/use-cases/produtos/produtos.service';
-import { PerfilUsuario } from '../../../domain/enums/perfil-usuario.enum';
-import { Auditable } from '../../common/decorators/auditable.decorator';
-import { Public } from '../../common/decorators/public.decorator';
-import { Roles } from '../../common/decorators/roles.decorator';
-import { ErrorResponseDto } from '../../common/dtos/error-response.dto';
+import { Auditable } from '@api/common/decorators/auditable.decorator';
+import { Public } from '@api/common/decorators/public.decorator';
+import { Roles } from '@api/common/decorators/roles.decorator';
+import { ErrorResponseDto } from '@api/common/dtos/error-response.dto';
+import { ProdutosService } from '@application/use-cases/produtos/produtos.service';
+import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
 import { CriarProdutoDto } from './dto/criar-produto.dto';
 import { ListarProdutosQueryDto } from './dto/listar-produtos-query.dto';
 import { ProdutoResponseDto, ProdutosPaginadosResponseDto } from './dto/produto-response.dto';

@@ -10,12 +10,12 @@ import {
   ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { EstoqueService } from '../../../application/use-cases/estoque/estoque.service';
-import { PerfilUsuario } from '../../../domain/enums/perfil-usuario.enum';
-import { Auditable } from '../../common/decorators/auditable.decorator';
-import { type AuthenticatedUser, CurrentUser } from '../../common/decorators/current-user.decorator';
-import { Roles } from '../../common/decorators/roles.decorator';
-import { ErrorResponseDto } from '../../common/dtos/error-response.dto';
+import { Auditable } from '@api/common/decorators/auditable.decorator';
+import { type AuthenticatedUser, CurrentUser } from '@api/common/decorators/current-user.decorator';
+import { Roles } from '@api/common/decorators/roles.decorator';
+import { ErrorResponseDto } from '@api/common/dtos/error-response.dto';
+import { EstoqueService } from '@application/use-cases/estoque/estoque.service';
+import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
 import { MovimentarEstoqueResponseDto } from './dto/estoque-response.dto';
 import { MovimentarEstoqueDto } from './dto/movimentar-estoque.dto';
 

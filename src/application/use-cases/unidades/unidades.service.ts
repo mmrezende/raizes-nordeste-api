@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { ID_GENERATOR, type IdGenerator } from '@application/ports/id-generator.interface';
 import {
   ConflictDomainError,
   NotFoundDomainError,
-} from '../../../domain/errors/domain.error';
-import { centavosParaReais } from '../../../domain/utils/money.util';
-import { PrismaService } from '../../../infrastructure/database/prisma/prisma.service';
-import { ID_GENERATOR, type IdGenerator } from '../../ports/id-generator.interface';
+} from '@domain/errors/domain.error';
+import { centavosParaReais } from '@domain/utils/money.util';
+import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 
 export interface CriarUnidadeInput {
   codigo: string;

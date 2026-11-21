@@ -1,8 +1,8 @@
 import { type CanActivate, type ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ForbiddenDomainError, UnauthorizedDomainError } from '../../../domain/errors/domain.error';
-import type { AuthenticatedUser } from '../decorators/current-user.decorator';
-import { Roles } from '../decorators/roles.decorator';
+import type { AuthenticatedUser } from '@api/common/decorators/current-user.decorator';
+import { Roles } from '@api/common/decorators/roles.decorator';
+import { ForbiddenDomainError, UnauthorizedDomainError } from '@domain/errors/domain.error';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
