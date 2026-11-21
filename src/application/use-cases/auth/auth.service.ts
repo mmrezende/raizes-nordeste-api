@@ -113,10 +113,7 @@ export class AuthService {
       return criado;
     });
 
-    return {
-      ...usuario,
-      perfil: usuario.perfil as PerfilUsuario,
-    };
+    return usuario;
   }
 
   async login(input: LoginInput): Promise<LoginOutput> {
@@ -143,11 +140,10 @@ export class AuthService {
       );
     }
 
-    const perfil = usuario.perfil as PerfilUsuario;
     const payload: JwtPayload = {
       sub: usuario.id,
       email: usuario.email,
-      perfil,
+      perfil: usuario.perfil,
       unidadeId: usuario.unidadeId,
     };
 
@@ -161,7 +157,7 @@ export class AuthService {
         id: usuario.id,
         nome: usuario.nome,
         email: usuario.email,
-        perfil,
+        perfil: usuario.perfil,
         unidadeId: usuario.unidadeId,
       },
     };

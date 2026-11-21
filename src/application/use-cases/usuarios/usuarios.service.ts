@@ -50,10 +50,7 @@ export class UsuariosService {
       throw new NotFoundDomainError('Usuário não encontrado.', [], 'USUARIO_NAO_ENCONTRADO');
     }
 
-    return {
-      ...usuario,
-      perfil: usuario.perfil as PerfilUsuario,
-    };
+    return usuario;
   }
 
   async criarUsuarioInterno(
@@ -153,9 +150,6 @@ export class UsuariosService {
       return criado;
     });
 
-    return {
-      ...usuario,
-      perfil: usuario.perfil as PerfilUsuario,
-    };
+    return usuario;
   }
 }

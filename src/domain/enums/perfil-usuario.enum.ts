@@ -1,10 +1,6 @@
-export enum PerfilUsuario {
-  CLIENTE = 'CLIENTE',
-  ATENDENTE = 'ATENDENTE',
-  COZINHA = 'COZINHA',
-  GERENTE = 'GERENTE',
-  ADMIN = 'ADMIN',
-}
+import { PerfilUsuario } from '@prisma/client';
+
+export { PerfilUsuario };
 
 export const PERFIS_VINCULADOS_UNIDADE: ReadonlySet<PerfilUsuario> = new Set([
   PerfilUsuario.ATENDENTE,

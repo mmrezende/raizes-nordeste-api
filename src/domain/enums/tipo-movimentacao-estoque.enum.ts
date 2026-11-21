@@ -1,11 +1,11 @@
-export enum TipoMovimentacaoEstoque {
-  ENTRADA = 'ENTRADA',
-  SAIDA = 'SAIDA',
-  RESERVA = 'RESERVA',
-  ESTORNO = 'ESTORNO',
-}
+import { TipoMovimentacaoEstoque } from '@prisma/client';
 
-export enum TipoMovimentacaoManualEstoque {
-  ENTRADA = 'ENTRADA',
-  SAIDA = 'SAIDA',
-}
+export { TipoMovimentacaoEstoque };
+
+export const TipoMovimentacaoManualEstoque = {
+  ENTRADA: TipoMovimentacaoEstoque.ENTRADA,
+  SAIDA: TipoMovimentacaoEstoque.SAIDA,
+} as const;
+
+export type TipoMovimentacaoManualEstoque =
+  (typeof TipoMovimentacaoManualEstoque)[keyof typeof TipoMovimentacaoManualEstoque];
