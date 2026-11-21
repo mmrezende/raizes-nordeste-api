@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { StatusPagamento } from '@prisma/client';
+import { StatusPagamento } from '@domain/enums/pagamento.enum';
 import type {
   PaymentGateway,
   ProcessarPagamentoGatewayInput,

@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import type { Prisma } from '@prisma/client';
-import type { PaginacaoInput, ResultadoPaginado } from '@application/use-cases/unidades/unidades.service';
+import {
+  calcularOffset,
+  montarResultadoPaginado,
+  type PaginacaoInput,
+  type ResultadoPaginado,
+} from '@application/common/paginacao.util';
 import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 
 export interface ListarAuditoriaInput extends PaginacaoInput {
@@ -39,8 +44,7 @@ export class AuditoriaService {
   constructor(private readonly prisma: PrismaService) {}
 
   async listar(query: ListarAuditoriaInput): Promise<ResultadoPaginado<LogAuditoriaItem>> {
-    const { page, limit } = query;
-    const skip = (page - 1) * limit;
+    const skip = calcularOffset(query);
 
     const where: Prisma.LogAuditoriaWhereInput = {};
     if (query.entidade?.trim()) {
@@ -56,12 +60,12 @@ export class AuditoriaService {
         where,
         orderBy: { createdAt: 'desc' },
         skip,
-        take: limit,
+        take: query.limit,
       }),
     ]);
 
-    return {
-      data: registros.map((item) => ({
+    return montarResultadoPaginado(
+      registros.map((item) => ({
         id: item.id,
         usuarioId: item.usuarioId,
         acao: item.acao,
@@ -71,12 +75,8 @@ export class AuditoriaService {
         requestId: item.requestId,
         createdAt: item.createdAt,
       })),
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: total === 0 ? 0 : Math.ceil(total / limit),
-      },
-    };
+      total,
+      query,
+    );
   }
 }

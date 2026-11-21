@@ -11,7 +11,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import { CanalPedido, TipoDesconto } from '@prisma/client';
+import { CanalPedido, TipoDesconto } from '@domain/enums/pedido.enum';
 
 export class CriarPromocaoDto {
   @ApiProperty({ example: 'TOTEM10', maxLength: 50 })

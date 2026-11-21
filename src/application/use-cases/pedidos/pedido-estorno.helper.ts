@@ -1,5 +1,6 @@
-import { type Prisma, TipoMovimentacaoFidelidade } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import type { IdGenerator } from '@application/ports/id-generator.interface';
+import { TipoMovimentacaoFidelidade } from '@domain/enums/fidelidade.enum';
 import { TipoMovimentacaoEstoque } from '@domain/enums/tipo-movimentacao-estoque.enum';
 
 export interface EstornoPedidoContext {
@@ -14,9 +15,6 @@ export interface EstornoPedidoContext {
   motivo: string;
 }
 
-/**
- * Devolve itens reservados ao estoque da unidade e restitui pontos de fidelidade resgatados.
- */
 export async function estornarReservasDoPedido(
   tx: Prisma.TransactionClient,
   idGenerator: IdGenerator,

@@ -1,4 +1,4 @@
-import { StatusPedido } from '@prisma/client';
+import { StatusPedido } from '@domain/enums/pedido.enum';
 import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
 import {
   ConflictDomainError,
@@ -30,9 +30,6 @@ export interface ValidarTransicaoStatusInput {
   perfil: PerfilUsuario;
 }
 
-/**
- * Valida autorização por perfil e máquina de estados operacional do pedido.
- */
 export function validarTransicaoStatusPedido(input: ValidarTransicaoStatusInput): void {
   if (input.novoStatus === StatusPedido.PRONTO) {
     if (!PERFIS_COZINHA_OPERACAO.has(input.perfil)) {

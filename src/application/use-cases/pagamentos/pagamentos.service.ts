@@ -1,21 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
-import {
-  type FormaPagamento,
-  type Pagamento,
-  StatusPagamento,
-  StatusPedido,
-  TipoMovimentacaoFidelidade,
-} from '@prisma/client';
-import type { AuthenticatedUser } from '@api/common/decorators/current-user.decorator';
+import type { Pagamento } from '@prisma/client';
+import { validarAcessoPedido } from '@application/common/acesso-escopo.util';
+import type { UsuarioAutenticado } from '@application/common/usuario-autenticado.type';
 import { ID_GENERATOR, type IdGenerator } from '@application/ports/id-generator.interface';
 import { PAYMENT_GATEWAY, type PaymentGateway } from '@application/ports/payment-gateway.interface';
 import { estornarReservasDoPedido } from '@application/use-cases/pedidos/pedido-estorno.helper';
-import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
-import {
-  ConflictDomainError,
-  ForbiddenDomainError,
-  NotFoundDomainError,
-} from '@domain/errors/domain.error';
+import { TipoMovimentacaoFidelidade } from '@domain/enums/fidelidade.enum';
+import { type FormaPagamento, StatusPagamento } from '@domain/enums/pagamento.enum';
+import { StatusPedido } from '@domain/enums/pedido.enum';
+import { ConflictDomainError, NotFoundDomainError } from '@domain/errors/domain.error';
 import { calcularPontosAcumulo } from '@domain/rules/pedido-calculo.rule';
 import { centavosParaReais } from '@domain/utils/money.util';
 import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
@@ -60,30 +53,10 @@ function formatarPagamento(pagamento: Pagamento): PagamentoResultado {
   };
 }
 
-function validarAcessoAoPedido(
-  pedido: { clienteId: string; unidadeId: string },
-  ator: AuthenticatedUser,
-): void {
-  if (ator.perfil === PerfilUsuario.CLIENTE && pedido.clienteId !== ator.id) {
-    throw new ForbiddenDomainError(
-      'Você só pode pagar seus próprios pedidos.',
-      [],
-      'ACESSO_NEGADO',
-    );
-  }
-
-  if (
-    ator.perfil !== PerfilUsuario.CLIENTE &&
-    ator.perfil !== PerfilUsuario.ADMIN &&
-    pedido.unidadeId !== ator.unidadeId
-  ) {
-    throw new ForbiddenDomainError(
-      'Você só pode operar pagamentos da sua própria unidade.',
-      [],
-      'ACESSO_NEGADO',
-    );
-  }
-}
+const MENSAGENS_ACESSO_PAGAMENTO = {
+  cliente: 'Você só pode pagar seus próprios pedidos.',
+  unidade: 'Você só pode operar pagamentos da sua própria unidade.',
+};
 
 @Injectable()
 export class PagamentosService {
@@ -95,7 +68,7 @@ export class PagamentosService {
 
   async processar(
     input: ProcessarPagamentoInput,
-    ator: AuthenticatedUser,
+    ator: UsuarioAutenticado,
   ): Promise<ProcessarPagamentoOutput> {
     const existente = await this.prisma.pagamento.findUnique({
       where: { idempotencyKey: input.idempotencyKey },
@@ -115,7 +88,7 @@ export class PagamentosService {
         );
       }
 
-      validarAcessoAoPedido(existente.pedido, ator);
+      validarAcessoPedido(existente.pedido, ator, MENSAGENS_ACESSO_PAGAMENTO);
       return {
         pagamento: formatarPagamento(existente),
         jaProcessado: true,
@@ -131,7 +104,7 @@ export class PagamentosService {
       throw new NotFoundDomainError('Pedido não encontrado.', [], 'PEDIDO_NAO_ENCONTRADO');
     }
 
-    validarAcessoAoPedido(pedido, ator);
+    validarAcessoPedido(pedido, ator, MENSAGENS_ACESSO_PAGAMENTO);
 
     if (pedido.status !== StatusPedido.AGUARDANDO_PAGAMENTO) {
       throw new ConflictDomainError(

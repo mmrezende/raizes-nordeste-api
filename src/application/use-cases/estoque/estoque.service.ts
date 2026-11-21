@@ -1,15 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { AuthenticatedUser } from '@api/common/decorators/current-user.decorator';
-import { ID_GENERATOR, type IdGenerator } from '@application/ports/id-generator.interface';
-import type { PaginacaoInput, ResultadoPaginado } from '@application/use-cases/unidades/unidades.service';
-import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
-import { TipoMovimentacaoManualEstoque } from '@domain/enums/tipo-movimentacao-estoque.enum';
+import { validarEscopoUnidade } from '@application/common/acesso-escopo.util';
+import { type EstoqueItemBase, mapearItemEstoque } from '@application/common/estoque-item.mapper';
 import {
-  ConflictDomainError,
-  ForbiddenDomainError,
-  NotFoundDomainError,
-} from '@domain/errors/domain.error';
-import { centavosParaReais } from '@domain/utils/money.util';
+  calcularOffset,
+  montarResultadoPaginado,
+  type PaginacaoInput,
+  type ResultadoPaginado,
+} from '@application/common/paginacao.util';
+import type { UsuarioAutenticado } from '@application/common/usuario-autenticado.type';
+import { ID_GENERATOR, type IdGenerator } from '@application/ports/id-generator.interface';
+import { TipoMovimentacaoManualEstoque } from '@domain/enums/tipo-movimentacao-estoque.enum';
+import { ConflictDomainError, NotFoundDomainError } from '@domain/errors/domain.error';
 import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 
 export interface MovimentarEstoqueInput {
@@ -39,15 +40,7 @@ export interface MovimentacaoEstoqueResultado {
   };
 }
 
-export interface EstoqueUnidadeItem {
-  produtoId: string;
-  nome: string;
-  categoria: string;
-  precoCentavos: number;
-  preco: number;
-  quantidadeDisponivel: number;
-  disponivelVenda: boolean;
-}
+export type EstoqueUnidadeItem = EstoqueItemBase;
 
 @Injectable()
 export class EstoqueService {
@@ -58,9 +51,13 @@ export class EstoqueService {
 
   async movimentar(
     input: MovimentarEstoqueInput,
-    ator: AuthenticatedUser,
+    ator: UsuarioAutenticado,
   ): Promise<MovimentacaoEstoqueResultado> {
-    this.validarEscopoUnidade(ator, input.unidadeId);
+    validarEscopoUnidade(
+      ator,
+      input.unidadeId,
+      'Você só pode operar no estoque da sua própria unidade.',
+    );
 
     const [unidade, produto] = await Promise.all([
       this.prisma.unidade.findUnique({ where: { id: input.unidadeId }, select: { id: true } }),
@@ -149,10 +146,14 @@ export class EstoqueService {
 
   async listarPorUnidade(
     unidadeId: string,
-    ator: AuthenticatedUser,
+    ator: UsuarioAutenticado,
     paginacao: PaginacaoInput,
   ): Promise<ResultadoPaginado<EstoqueUnidadeItem>> {
-    this.validarEscopoUnidade(ator, unidadeId);
+    validarEscopoUnidade(
+      ator,
+      unidadeId,
+      'Você só pode consultar o estoque da sua própria unidade.',
+    );
 
     const unidade = await this.prisma.unidade.findUnique({
       where: { id: unidadeId },
@@ -163,8 +164,7 @@ export class EstoqueService {
       throw new NotFoundDomainError('Unidade não encontrada.', [], 'UNIDADE_NAO_ENCONTRADA');
     }
 
-    const { page, limit } = paginacao;
-    const skip = (page - 1) * limit;
+    const skip = calcularOffset(paginacao);
     const where = { unidadeId };
 
     const [total, registros] = await Promise.all([
@@ -174,36 +174,10 @@ export class EstoqueService {
         include: { produto: true },
         orderBy: { produto: { nome: 'asc' } },
         skip,
-        take: limit,
+        take: paginacao.limit,
       }),
     ]);
 
-    return {
-      data: registros.map((item) => ({
-        produtoId: item.produto.id,
-        nome: item.produto.nome,
-        categoria: item.produto.categoria,
-        precoCentavos: item.produto.precoCentavos,
-        preco: centavosParaReais(item.produto.precoCentavos),
-        quantidadeDisponivel: item.quantidadeDisponivel,
-        disponivelVenda: item.disponivelVenda,
-      })),
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: total === 0 ? 0 : Math.ceil(total / limit),
-      },
-    };
-  }
-
-  private validarEscopoUnidade(ator: AuthenticatedUser, unidadeId: string): void {
-    if (ator.perfil !== PerfilUsuario.ADMIN && ator.unidadeId !== unidadeId) {
-      throw new ForbiddenDomainError(
-        'Você só pode operar no estoque da sua própria unidade.',
-        [],
-        'ACESSO_NEGADO',
-      );
-    }
+    return montarResultadoPaginado(registros.map(mapearItemEstoque), total, paginacao);
   }
 }

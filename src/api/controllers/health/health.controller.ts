@@ -1,8 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { Public } from '@api/common/decorators/public.decorator';
-import { getAppVersion } from '@infrastructure/config/env.config';
-import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
+import { HealthService } from '@application/use-cases/health/health.service';
 
 export class HealthResponseDto {
   @ApiProperty({ enum: ['ok', 'degraded'], example: 'ok' })
@@ -14,7 +13,7 @@ export class HealthResponseDto {
   @ApiProperty({ example: '2026-11-21T22:00:00.000Z' })
   timestamp: string;
 
-  @ApiProperty({ example: '1.0.0-SNAPSHOT' })
+  @ApiProperty({ example: '1.0.0' })
   version: string;
 }
 
@@ -22,19 +21,12 @@ export class HealthResponseDto {
 @Public()
 @Controller('health')
 export class HealthController {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly healthService: HealthService) {}
 
   @Get()
   @ApiOperation({ summary: 'Verifica disponibilidade da API e conexão com o banco de dados' })
   @ApiOkResponse({ type: HealthResponseDto })
   async check(): Promise<HealthResponseDto> {
-    const isDatabaseUp = await this.prismaService.checkHealth();
-
-    return {
-      status: isDatabaseUp ? 'ok' : 'degraded',
-      database: isDatabaseUp ? 'up' : 'down',
-      timestamp: new Date().toISOString(),
-      version: getAppVersion(),
-    };
+    return this.healthService.verificar();
   }
 }

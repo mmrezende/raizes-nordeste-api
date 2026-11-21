@@ -12,9 +12,10 @@ import {
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { Auditable } from '@api/common/decorators/auditable.decorator';
-import { type AuthenticatedUser, CurrentUser } from '@api/common/decorators/current-user.decorator';
+import { CurrentUser } from '@api/common/decorators/current-user.decorator';
 import { Roles } from '@api/common/decorators/roles.decorator';
 import { ErrorResponseDto } from '@api/common/dtos/error-response.dto';
+import type { UsuarioAutenticado } from '@application/common/usuario-autenticado.type';
 import { PedidosService } from '@application/use-cases/pedidos/pedidos.service';
 import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
 import { AtualizarStatusPedidoDto } from './dto/atualizar-status-pedido.dto';
@@ -47,7 +48,7 @@ export class PedidosController {
   @ApiUnprocessableEntityResponse({ type: ErrorResponseDto })
   async criar(
     @Body() dto: CriarPedidoDto,
-    @CurrentUser() user: AuthenticatedUser,
+    @CurrentUser() user: UsuarioAutenticado,
   ): Promise<PedidoResponseDto> {
     return this.pedidosService.criar(dto, user);
   }
@@ -59,7 +60,7 @@ export class PedidosController {
   @ApiForbiddenResponse({ type: ErrorResponseDto })
   async listar(
     @Query() query: ListarPedidosQueryDto,
-    @CurrentUser() user: AuthenticatedUser,
+    @CurrentUser() user: UsuarioAutenticado,
   ): Promise<PedidosPaginadosResponseDto> {
     return this.pedidosService.listar(query, user);
   }
@@ -72,7 +73,7 @@ export class PedidosController {
   @ApiNotFoundResponse({ type: ErrorResponseDto })
   async buscarPorId(
     @Param('id') id: string,
-    @CurrentUser() user: AuthenticatedUser,
+    @CurrentUser() user: UsuarioAutenticado,
   ): Promise<PedidoResponseDto> {
     return this.pedidosService.buscarPorId(id, user);
   }
@@ -97,7 +98,7 @@ export class PedidosController {
   async atualizarStatus(
     @Param('id') id: string,
     @Body() dto: AtualizarStatusPedidoDto,
-    @CurrentUser() user: AuthenticatedUser,
+    @CurrentUser() user: UsuarioAutenticado,
   ): Promise<PedidoResponseDto> {
     return this.pedidosService.atualizarStatus(id, dto.status, user);
   }
@@ -119,7 +120,7 @@ export class PedidosController {
   @ApiConflictResponse({ type: ErrorResponseDto })
   async cancelar(
     @Param('id') id: string,
-    @CurrentUser() user: AuthenticatedUser,
+    @CurrentUser() user: UsuarioAutenticado,
   ): Promise<PedidoResponseDto> {
     return this.pedidosService.cancelar(id, user);
   }

@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsUUID } from 'class-validator';
 import { PaginationQueryDto } from '@api/common/dtos/pagination-query.dto';
-import { CanalPedido, StatusPedido } from '@prisma/client';
+import { CanalPedido, StatusPedido } from '@domain/enums/pedido.enum';
 
 export class ListarPedidosQueryDto extends PaginationQueryDto {
   @ApiPropertyOptional({ enum: CanalPedido, example: CanalPedido.TOTEM })

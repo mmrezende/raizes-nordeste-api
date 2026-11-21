@@ -1,4 +1,3 @@
-import { randomUUID } from 'node:crypto';
 import {
   type ArgumentsHost,
   Catch,
@@ -9,13 +8,41 @@ import {
 } from '@nestjs/common';
 import type { Response } from 'express';
 import type { RequestWithId } from '@api/common/middlewares/request-id.middleware';
-import { DomainError, type ErrorDetail } from '@domain/errors/domain.error';
+import {
+  ConflictDomainError,
+  DomainError,
+  type ErrorDetail,
+  ForbiddenDomainError,
+  NotFoundDomainError,
+  UnauthorizedDomainError,
+  ValidationDomainError,
+} from '@domain/errors/domain.error';
+import { gerarUuidV7 } from '@infrastructure/security/uuid-v7.generator';
 
 interface ParsedError {
   status: number;
   error: string;
   message: string;
   details: ErrorDetail[];
+}
+
+function mapDomainErrorToStatus(error: DomainError): number {
+  if (error instanceof ValidationDomainError) {
+    return HttpStatus.UNPROCESSABLE_ENTITY;
+  }
+  if (error instanceof UnauthorizedDomainError) {
+    return HttpStatus.UNAUTHORIZED;
+  }
+  if (error instanceof ForbiddenDomainError) {
+    return HttpStatus.FORBIDDEN;
+  }
+  if (error instanceof NotFoundDomainError) {
+    return HttpStatus.NOT_FOUND;
+  }
+  if (error instanceof ConflictDomainError) {
+    return HttpStatus.CONFLICT;
+  }
+  return HttpStatus.BAD_REQUEST;
 }
 
 function mapStatusToErrorCode(status: number): string {
@@ -75,14 +102,14 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       details: parsed.details,
       timestamp: new Date().toISOString(),
       path: request.originalUrl || request.url,
-      requestId: request.requestId ?? randomUUID(),
+      requestId: request.requestId ?? gerarUuidV7(),
     });
   }
 
   private parseException(exception: unknown): ParsedError {
     if (exception instanceof DomainError) {
       return {
-        status: exception.httpStatus,
+        status: mapDomainErrorToStatus(exception),
         error: exception.code,
         message: exception.message,
         details: exception.details,
@@ -99,7 +126,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       };
     }
 
-    const trace = exception instanceof Error ? (exception.stack ?? exception.message) : String(exception);
+    const trace =
+      exception instanceof Error ? (exception.stack ?? exception.message) : String(exception);
     this.logger.error(`Erro inesperado não tratado: ${trace}`);
 
     return {

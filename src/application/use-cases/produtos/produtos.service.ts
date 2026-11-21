@@ -1,6 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
+import {
+  calcularOffset,
+  montarResultadoPaginado,
+  type PaginacaoInput,
+  type ResultadoPaginado,
+} from '@application/common/paginacao.util';
 import { ID_GENERATOR, type IdGenerator } from '@application/ports/id-generator.interface';
-import type { PaginacaoInput, ResultadoPaginado } from '@application/use-cases/unidades/unidades.service';
 import { centavosParaReais } from '@domain/utils/money.util';
 import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 
@@ -52,11 +57,10 @@ export class ProdutosService {
   }
 
   async listar(input: ListarProdutosInput): Promise<ResultadoPaginado<ProdutoItem>> {
-    const { page, limit, categoria } = input;
-    const skip = (page - 1) * limit;
+    const skip = calcularOffset(input);
     const where = {
       ativo: true,
-      ...(categoria ? { categoria: categoria.trim().toUpperCase() } : {}),
+      ...(input.categoria ? { categoria: input.categoria.trim().toUpperCase() } : {}),
     };
 
     const [total, produtos] = await Promise.all([
@@ -65,21 +69,17 @@ export class ProdutosService {
         where,
         orderBy: { nome: 'asc' },
         skip,
-        take: limit,
+        take: input.limit,
       }),
     ]);
 
-    return {
-      data: produtos.map((produto) => ({
+    return montarResultadoPaginado(
+      produtos.map((produto) => ({
         ...produto,
         preco: centavosParaReais(produto.precoCentavos),
       })),
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: total === 0 ? 0 : Math.ceil(total / limit),
-      },
-    };
+      total,
+      input,
+    );
   }
 }

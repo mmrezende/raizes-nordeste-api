@@ -1,4 +1,4 @@
-import { StatusPedido } from '@prisma/client';
+import { StatusPedido } from '@domain/enums/pedido.enum';
 import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
 import {
   ConflictDomainError,

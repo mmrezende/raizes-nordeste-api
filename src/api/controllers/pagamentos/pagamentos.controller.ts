@@ -13,9 +13,10 @@ import {
 } from '@nestjs/swagger';
 import type { Response } from 'express';
 import { Auditable } from '@api/common/decorators/auditable.decorator';
-import { type AuthenticatedUser, CurrentUser } from '@api/common/decorators/current-user.decorator';
+import { CurrentUser } from '@api/common/decorators/current-user.decorator';
 import { Roles } from '@api/common/decorators/roles.decorator';
 import { ErrorResponseDto } from '@api/common/dtos/error-response.dto';
+import type { UsuarioAutenticado } from '@application/common/usuario-autenticado.type';
 import { PagamentosService } from '@application/use-cases/pagamentos/pagamentos.service';
 import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
 import { CriarPagamentoDto } from './dto/criar-pagamento.dto';
@@ -47,7 +48,7 @@ export class PagamentosController {
   @ApiUnprocessableEntityResponse({ type: ErrorResponseDto })
   async processar(
     @Body() dto: CriarPagamentoDto,
-    @CurrentUser() user: AuthenticatedUser,
+    @CurrentUser() user: UsuarioAutenticado,
     @Res({ passthrough: true }) res: Response,
   ): Promise<PagamentoResponseDto> {
     const { pagamento, jaProcessado } = await this.pagamentosService.processar(dto, user);

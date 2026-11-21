@@ -1,7 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { TipoMovimentacaoFidelidade } from '@prisma/client';
+import {
+  calcularOffset,
+  montarResultadoPaginado,
+  type PaginacaoInput,
+  type ResultadoPaginado,
+} from '@application/common/paginacao.util';
 import { ID_GENERATOR, type IdGenerator } from '@application/ports/id-generator.interface';
-import type { PaginacaoInput, ResultadoPaginado } from '@application/use-cases/unidades/unidades.service';
+import type { TipoMovimentacaoFidelidade } from '@domain/enums/fidelidade.enum';
 import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 
 export interface ContaFidelidadeItem {
@@ -77,8 +82,7 @@ export class FidelidadeService {
     paginacao: PaginacaoInput,
   ): Promise<ResultadoPaginado<MovimentacaoFidelidadeItem>> {
     const conta = await this.buscarConta(usuarioId);
-    const { page, limit } = paginacao;
-    const skip = (page - 1) * limit;
+    const skip = calcularOffset(paginacao);
     const where = { contaFidelidadeId: conta.id };
 
     const [total, data] = await Promise.all([
@@ -87,18 +91,10 @@ export class FidelidadeService {
         where,
         orderBy: { createdAt: 'desc' },
         skip,
-        take: limit,
+        take: paginacao.limit,
       }),
     ]);
 
-    return {
-      data,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: total === 0 ? 0 : Math.ceil(total / limit),
-      },
-    };
+    return montarResultadoPaginado(data, total, paginacao);
   }
 }

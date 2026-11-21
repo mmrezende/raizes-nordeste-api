@@ -2,7 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsBoolean, IsEnum, IsOptional, IsUUID } from 'class-validator';
 import { PaginationQueryDto } from '@api/common/dtos/pagination-query.dto';
-import { CanalPedido } from '@prisma/client';
+import { CanalPedido } from '@domain/enums/pedido.enum';
 
 function parseOptionalBoolean(raw: unknown): unknown {
   if (raw === 'true' || raw === true) {

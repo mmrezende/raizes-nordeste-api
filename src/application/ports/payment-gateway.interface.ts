@@ -1,4 +1,4 @@
-import type { FormaPagamento, StatusPagamento } from '@prisma/client';
+import type { FormaPagamento, StatusPagamento } from '@domain/enums/pagamento.enum';
 
 export const PAYMENT_GATEWAY = Symbol('PAYMENT_GATEWAY');
 

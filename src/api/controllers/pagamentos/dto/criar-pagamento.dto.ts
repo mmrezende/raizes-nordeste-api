@@ -1,5 +1,4 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { FormaPagamento } from '@prisma/client';
 import {
   IsBoolean,
   IsEnum,
@@ -9,6 +8,7 @@ import {
   IsUUID,
   MaxLength,
 } from 'class-validator';
+import { FormaPagamento } from '@domain/enums/pagamento.enum';
 
 export class CriarPagamentoDto {
   @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f77' })

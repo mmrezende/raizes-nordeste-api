@@ -12,12 +12,13 @@ import {
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { Auditable } from '@api/common/decorators/auditable.decorator';
-import { type AuthenticatedUser, CurrentUser } from '@api/common/decorators/current-user.decorator';
+import { CurrentUser } from '@api/common/decorators/current-user.decorator';
 import { Public } from '@api/common/decorators/public.decorator';
 import { Roles } from '@api/common/decorators/roles.decorator';
 import { ErrorResponseDto } from '@api/common/dtos/error-response.dto';
 import { PaginationQueryDto } from '@api/common/dtos/pagination-query.dto';
 import { EstoquePaginadoResponseDto } from '@api/controllers/estoque/dto/estoque-response.dto';
+import type { UsuarioAutenticado } from '@application/common/usuario-autenticado.type';
 import { EstoqueService } from '@application/use-cases/estoque/estoque.service';
 import { UnidadesService } from '@application/use-cases/unidades/unidades.service';
 import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
@@ -83,7 +84,7 @@ export class UnidadesController {
   async estoque(
     @Param('id') unidadeId: string,
     @Query() query: PaginationQueryDto,
-    @CurrentUser() user: AuthenticatedUser,
+    @CurrentUser() user: UsuarioAutenticado,
   ): Promise<EstoquePaginadoResponseDto> {
     return this.estoqueService.listarPorUnidade(unidadeId, user, query);
   }

@@ -1,4 +1,4 @@
-import { type CanalPedido, TipoDesconto } from '@prisma/client';
+import { type CanalPedido, TipoDesconto } from '@domain/enums/pedido.enum';
 import { ConflictDomainError, ValidationDomainError } from '@domain/errors/domain.error';
 
 export const CENTAVOS_POR_PONTO_FIDELIDADE = 50;
@@ -36,9 +36,6 @@ export interface CalculoFidelidadeResultado {
   descontoCentavos: number;
 }
 
-/**
- * Valida elegibilidade do cupom promocional para o pedido e calcula o desconto em centavos.
- */
 export function validarECalcularDescontoPromocao(
   promocao: PromocaoAplicavel,
   contexto: ContextoPromocaoPedido,
@@ -98,9 +95,6 @@ export function validarECalcularDescontoPromocao(
   return Math.min(Math.max(0, descontoBruto), contexto.subtotalCentavos);
 }
 
-/**
- * Valida consentimento e saldo de fidelidade, limitando os pontos ao valor restante do pedido.
- */
 export function calcularDescontoFidelidade(
   params: CalculoFidelidadeInput,
 ): CalculoFidelidadeResultado {
@@ -135,9 +129,6 @@ export function calcularDescontoFidelidade(
   };
 }
 
-/**
- * Calcula pontos inteiros acumulados após pagamento aprovado (1 ponto a cada R$ 10,00).
- */
 export function calcularPontosAcumulo(valorTotalCentavos: number): number {
   return Math.floor(Math.max(0, valorTotalCentavos) / CENTAVOS_POR_PONTO_ACUMULO);
 }

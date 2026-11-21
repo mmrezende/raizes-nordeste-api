@@ -1,8 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { AuthenticatedUser } from '@api/common/decorators/current-user.decorator';
+import type { UsuarioAutenticado } from '@application/common/usuario-autenticado.type';
+import {
+  USUARIO_SEGURO_SELECT,
+  type UsuarioSeguro,
+} from '@application/common/usuario-seguro.select';
 import { ID_GENERATOR, type IdGenerator } from '@application/ports/id-generator.interface';
 import { PASSWORD_HASHER, type PasswordHasher } from '@application/ports/password-hasher.interface';
-import type { UsuarioSeguro } from '@application/use-cases/auth/auth.service';
 import {
   PERFIS_VINCULADOS_UNIDADE,
   PerfilUsuario,
@@ -41,16 +44,7 @@ export class UsuariosService {
   async buscarPerfil(usuarioId: string): Promise<UsuarioSeguro> {
     const usuario = await this.prisma.usuario.findUnique({
       where: { id: usuarioId },
-      select: {
-        id: true,
-        nome: true,
-        email: true,
-        perfil: true,
-        unidadeId: true,
-        ativo: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: USUARIO_SEGURO_SELECT,
     });
 
     if (!usuario || !usuario.ativo) {
@@ -62,7 +56,7 @@ export class UsuariosService {
 
   async criarUsuarioInterno(
     input: CriarUsuarioInternoInput,
-    ator: AuthenticatedUser,
+    ator: UsuarioAutenticado,
   ): Promise<UsuarioSeguro> {
     const exigeUnidade = PERFIS_VINCULADOS_UNIDADE.has(input.perfil);
 
@@ -131,16 +125,7 @@ export class UsuariosService {
           perfil: input.perfil,
           unidadeId: unidadeIdFinal,
         },
-        select: {
-          id: true,
-          nome: true,
-          email: true,
-          perfil: true,
-          unidadeId: true,
-          ativo: true,
-          createdAt: true,
-          updatedAt: true,
-        },
+        select: USUARIO_SEGURO_SELECT,
       });
 
       if (input.perfil === PerfilUsuario.CLIENTE) {

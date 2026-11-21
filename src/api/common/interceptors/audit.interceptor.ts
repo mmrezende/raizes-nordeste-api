@@ -8,12 +8,12 @@ import {
 import { Reflector } from '@nestjs/core';
 import { mergeMap, type Observable } from 'rxjs';
 import { Auditable } from '@api/common/decorators/auditable.decorator';
-import type { AuthenticatedUser } from '@api/common/decorators/current-user.decorator';
 import type { RequestWithId } from '@api/common/middlewares/request-id.middleware';
+import type { UsuarioAutenticado } from '@application/common/usuario-autenticado.type';
 import { AUDIT_LOGGER, type AuditLogger } from '@application/ports/audit-logger.interface';
 
 interface AuditableRequest extends RequestWithId {
-  user?: AuthenticatedUser;
+  user?: UsuarioAutenticado;
 }
 
 const SAFE_RESPONSE_FIELDS = ['status', 'canalPedido', 'perfil', 'unidadeId', 'tipo'] as const;

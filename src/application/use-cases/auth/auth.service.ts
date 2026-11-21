@@ -1,5 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import {
+  USUARIO_SEGURO_SELECT,
+  type UsuarioSeguro,
+} from '@application/common/usuario-seguro.select';
 import { ID_GENERATOR, type IdGenerator } from '@application/ports/id-generator.interface';
 import { PASSWORD_HASHER, type PasswordHasher } from '@application/ports/password-hasher.interface';
 import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
@@ -21,17 +25,6 @@ export interface RegistrarClienteInput {
 export interface LoginInput {
   email: string;
   senha: string;
-}
-
-export interface UsuarioSeguro {
-  id: string;
-  nome: string;
-  email: string;
-  perfil: PerfilUsuario;
-  unidadeId: string | null;
-  ativo: boolean;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export interface LoginOutput {
@@ -88,16 +81,7 @@ export class AuthService {
           perfil: PerfilUsuario.CLIENTE,
           unidadeId: null,
         },
-        select: {
-          id: true,
-          nome: true,
-          email: true,
-          perfil: true,
-          unidadeId: true,
-          ativo: true,
-          createdAt: true,
-          updatedAt: true,
-        },
+        select: USUARIO_SEGURO_SELECT,
       });
 
       await tx.contaFidelidade.create({

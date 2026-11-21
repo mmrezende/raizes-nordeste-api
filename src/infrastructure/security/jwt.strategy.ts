@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import type { AuthenticatedUser } from '@api/common/decorators/current-user.decorator';
+import type { UsuarioAutenticado } from '@application/common/usuario-autenticado.type';
 import type { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
 import { getEnvConfig } from '@infrastructure/config/env.config';
 
@@ -22,7 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  validate(payload: JwtPayload): AuthenticatedUser {
+  validate(payload: JwtPayload): UsuarioAutenticado {
     return {
       id: payload.sub,
       email: payload.email,

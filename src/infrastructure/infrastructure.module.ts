@@ -3,9 +3,9 @@ import { AUDIT_LOGGER } from '@application/ports/audit-logger.interface';
 import { ID_GENERATOR } from '@application/ports/id-generator.interface';
 import { PASSWORD_HASHER } from '@application/ports/password-hasher.interface';
 import { PrismaAuditLogger } from '@infrastructure/audit/prisma-audit.logger';
+import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 import { BcryptPasswordHasher } from '@infrastructure/security/bcrypt-password.hasher';
 import { UuidV7Generator } from '@infrastructure/security/uuid-v7.generator';
-import { PrismaService } from './prisma.service';
 
 @Global()
 @Module({
@@ -26,4 +26,4 @@ import { PrismaService } from './prisma.service';
   ],
   exports: [PrismaService, ID_GENERATOR, PASSWORD_HASHER, AUDIT_LOGGER],
 })
-export class PrismaModule {}
+export class InfrastructureModule {}

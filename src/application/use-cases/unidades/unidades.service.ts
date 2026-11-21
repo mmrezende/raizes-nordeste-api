@@ -1,21 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ID_GENERATOR, type IdGenerator } from '@application/ports/id-generator.interface';
+import { type EstoqueItemBase, mapearItemEstoque } from '@application/common/estoque-item.mapper';
 import {
-  ConflictDomainError,
-  NotFoundDomainError,
-} from '@domain/errors/domain.error';
-import { centavosParaReais } from '@domain/utils/money.util';
+  calcularOffset,
+  montarResultadoPaginado,
+  type PaginacaoInput,
+  type ResultadoPaginado,
+} from '@application/common/paginacao.util';
+import { ID_GENERATOR, type IdGenerator } from '@application/ports/id-generator.interface';
+import { ConflictDomainError, NotFoundDomainError } from '@domain/errors/domain.error';
 import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 
 export interface CriarUnidadeInput {
   codigo: string;
   nome: string;
   endereco: string;
-}
-
-export interface PaginacaoInput {
-  page: number;
-  limit: number;
 }
 
 export interface UnidadeItem {
@@ -28,25 +26,8 @@ export interface UnidadeItem {
   updatedAt: Date;
 }
 
-export interface CardapioItem {
-  produtoId: string;
-  nome: string;
+export interface CardapioItem extends EstoqueItemBase {
   descricao: string | null;
-  categoria: string;
-  precoCentavos: number;
-  preco: number;
-  quantidadeDisponivel: number;
-  disponivelVenda: boolean;
-}
-
-export interface ResultadoPaginado<T> {
-  data: T[];
-  meta: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
 }
 
 @Injectable()
@@ -83,8 +64,7 @@ export class UnidadesService {
   }
 
   async listar(paginacao: PaginacaoInput): Promise<ResultadoPaginado<UnidadeItem>> {
-    const { page, limit } = paginacao;
-    const skip = (page - 1) * limit;
+    const skip = calcularOffset(paginacao);
 
     const [total, data] = await Promise.all([
       this.prisma.unidade.count({ where: { ativo: true } }),
@@ -92,19 +72,11 @@ export class UnidadesService {
         where: { ativo: true },
         orderBy: { createdAt: 'asc' },
         skip,
-        take: limit,
+        take: paginacao.limit,
       }),
     ]);
 
-    return {
-      data,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: total === 0 ? 0 : Math.ceil(total / limit),
-      },
-    };
+    return montarResultadoPaginado(data, total, paginacao);
   }
 
   async buscarCardapio(
@@ -120,9 +92,7 @@ export class UnidadesService {
       throw new NotFoundDomainError('Unidade não encontrada.', [], 'UNIDADE_NAO_ENCONTRADA');
     }
 
-    const { page, limit } = paginacao;
-    const skip = (page - 1) * limit;
-
+    const skip = calcularOffset(paginacao);
     const where = {
       unidadeId,
       disponivelVenda: true,
@@ -137,27 +107,17 @@ export class UnidadesService {
         include: { produto: true },
         orderBy: { produto: { nome: 'asc' } },
         skip,
-        take: limit,
+        take: paginacao.limit,
       }),
     ]);
 
-    return {
-      data: registros.map((item) => ({
-        produtoId: item.produto.id,
-        nome: item.produto.nome,
+    return montarResultadoPaginado(
+      registros.map((item) => ({
+        ...mapearItemEstoque(item),
         descricao: item.produto.descricao,
-        categoria: item.produto.categoria,
-        precoCentavos: item.produto.precoCentavos,
-        preco: centavosParaReais(item.produto.precoCentavos),
-        quantidadeDisponivel: item.quantidadeDisponivel,
-        disponivelVenda: item.disponivelVenda,
       })),
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: total === 0 ? 0 : Math.ceil(total / limit),
-      },
-    };
+      total,
+      paginacao,
+    );
   }
 }

@@ -8,9 +8,10 @@ import {
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { Auditable } from '@api/common/decorators/auditable.decorator';
-import { type AuthenticatedUser, CurrentUser } from '@api/common/decorators/current-user.decorator';
+import { CurrentUser } from '@api/common/decorators/current-user.decorator';
 import { ErrorResponseDto } from '@api/common/dtos/error-response.dto';
 import { PaginationQueryDto } from '@api/common/dtos/pagination-query.dto';
+import type { UsuarioAutenticado } from '@application/common/usuario-autenticado.type';
 import { FidelidadeService } from '@application/use-cases/fidelidade/fidelidade.service';
 import { AtualizarConsentimentoDto } from './dto/atualizar-consentimento.dto';
 import {
@@ -28,7 +29,7 @@ export class FidelidadeController {
   @ApiOperation({ summary: 'Consulta saldo e status de consentimento LGPD do programa de fidelidade' })
   @ApiOkResponse({ type: ContaFidelidadeResponseDto })
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })
-  async buscarConta(@CurrentUser() user: AuthenticatedUser): Promise<ContaFidelidadeResponseDto> {
+  async buscarConta(@CurrentUser() user: UsuarioAutenticado): Promise<ContaFidelidadeResponseDto> {
     return this.fidelidadeService.buscarConta(user.id);
   }
 
@@ -40,7 +41,7 @@ export class FidelidadeController {
   @ApiUnprocessableEntityResponse({ type: ErrorResponseDto })
   async atualizarConsentimento(
     @Body() dto: AtualizarConsentimentoDto,
-    @CurrentUser() user: AuthenticatedUser,
+    @CurrentUser() user: UsuarioAutenticado,
   ): Promise<ContaFidelidadeResponseDto> {
     return this.fidelidadeService.atualizarConsentimento(user.id, dto.consentimentoAtivo);
   }
@@ -51,7 +52,7 @@ export class FidelidadeController {
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })
   async listarMovimentacoes(
     @Query() query: PaginationQueryDto,
-    @CurrentUser() user: AuthenticatedUser,
+    @CurrentUser() user: UsuarioAutenticado,
   ): Promise<MovimentacoesFidelidadePaginadasResponseDto> {
     return this.fidelidadeService.listarMovimentacoes(user.id, query);
   }

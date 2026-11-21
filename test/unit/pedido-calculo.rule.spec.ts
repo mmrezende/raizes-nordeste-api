@@ -1,4 +1,4 @@
-import { CanalPedido, TipoDesconto } from '@prisma/client';
+import { CanalPedido, TipoDesconto } from '@domain/enums/pedido.enum';
 import { ConflictDomainError, ValidationDomainError } from '@domain/errors/domain.error';
 import {
   calcularDescontoFidelidade,

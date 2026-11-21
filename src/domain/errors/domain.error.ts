@@ -5,14 +5,12 @@ export interface ErrorDetail {
 
 export class DomainError extends Error {
   readonly code: string;
-  readonly httpStatus: number;
   readonly details: ErrorDetail[];
 
-  constructor(code: string, message: string, httpStatus: number, details: ErrorDetail[] = []) {
+  constructor(code: string, message: string, details: ErrorDetail[] = []) {
     super(message);
     this.name = new.target.name;
     this.code = code;
-    this.httpStatus = httpStatus;
     this.details = details;
   }
 }
@@ -23,7 +21,7 @@ export class ValidationDomainError extends DomainError {
     details: ErrorDetail[] = [],
     code = 'ERRO_VALIDACAO',
   ) {
-    super(code, message, 422, details);
+    super(code, message, details);
   }
 }
 
@@ -33,7 +31,7 @@ export class UnauthorizedDomainError extends DomainError {
     details: ErrorDetail[] = [],
     code = 'NAO_AUTENTICADO',
   ) {
-    super(code, message, 401, details);
+    super(code, message, details);
   }
 }
 
@@ -43,7 +41,7 @@ export class ForbiddenDomainError extends DomainError {
     details: ErrorDetail[] = [],
     code = 'ACESSO_NEGADO',
   ) {
-    super(code, message, 403, details);
+    super(code, message, details);
   }
 }
 
@@ -53,7 +51,7 @@ export class NotFoundDomainError extends DomainError {
     details: ErrorDetail[] = [],
     code = 'RECURSO_NAO_ENCONTRADO',
   ) {
-    super(code, message, 404, details);
+    super(code, message, details);
   }
 }
 
@@ -63,6 +61,6 @@ export class ConflictDomainError extends DomainError {
     details: ErrorDetail[] = [],
     code = 'CONFLITO_NEGOCIO',
   ) {
-    super(code, message, 409, details);
+    super(code, message, details);
   }
 }

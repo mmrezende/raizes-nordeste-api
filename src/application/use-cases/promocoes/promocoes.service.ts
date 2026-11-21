@@ -1,7 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { type CanalPedido, type Prisma, type Promocao, TipoDesconto } from '@prisma/client';
+import type { Prisma, Promocao } from '@prisma/client';
+import {
+  calcularOffset,
+  montarResultadoPaginado,
+  type PaginacaoInput,
+  type ResultadoPaginado,
+} from '@application/common/paginacao.util';
 import { ID_GENERATOR, type IdGenerator } from '@application/ports/id-generator.interface';
-import type { PaginacaoInput, ResultadoPaginado } from '@application/use-cases/unidades/unidades.service';
+import { type CanalPedido, TipoDesconto } from '@domain/enums/pedido.enum';
 import {
   ConflictDomainError,
   NotFoundDomainError,
@@ -135,8 +141,7 @@ export class PromocoesService {
   }
 
   async listar(query: ListarPromocoesInput): Promise<ResultadoPaginado<PromocaoItem>> {
-    const { page, limit } = query;
-    const skip = (page - 1) * limit;
+    const skip = calcularOffset(query);
 
     const where: Prisma.PromocaoWhereInput = {};
     if (query.ativo !== undefined) {
@@ -155,18 +160,10 @@ export class PromocoesService {
         where,
         orderBy: { createdAt: 'desc' },
         skip,
-        take: limit,
+        take: query.limit,
       }),
     ]);
 
-    return {
-      data: registros.map(mapearPromocao),
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: total === 0 ? 0 : Math.ceil(total / limit),
-      },
-    };
+    return montarResultadoPaginado(registros.map(mapearPromocao), total, query);
   }
 }

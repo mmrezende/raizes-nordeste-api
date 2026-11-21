@@ -13,12 +13,12 @@ import { ProdutosModule } from '@api/modules/produtos.module';
 import { PromocoesModule } from '@api/modules/promocoes.module';
 import { UnidadesModule } from '@api/modules/unidades.module';
 import { UsuariosModule } from '@api/modules/usuarios.module';
-import { PrismaModule } from '@infrastructure/database/prisma/prisma.module';
+import { InfrastructureModule } from '@infrastructure/infrastructure.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    PrismaModule,
+    InfrastructureModule,
     AuthModule,
     UsuariosModule,
     UnidadesModule,

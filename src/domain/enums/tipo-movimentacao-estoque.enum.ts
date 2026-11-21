@@ -1,6 +1,12 @@
-import { TipoMovimentacaoEstoque } from '@prisma/client';
+export const TipoMovimentacaoEstoque = {
+  ENTRADA: 'ENTRADA',
+  SAIDA: 'SAIDA',
+  RESERVA: 'RESERVA',
+  ESTORNO: 'ESTORNO',
+} as const;
 
-export { TipoMovimentacaoEstoque };
+export type TipoMovimentacaoEstoque =
+  (typeof TipoMovimentacaoEstoque)[keyof typeof TipoMovimentacaoEstoque];
 
 export const TipoMovimentacaoManualEstoque = {
   ENTRADA: TipoMovimentacaoEstoque.ENTRADA,

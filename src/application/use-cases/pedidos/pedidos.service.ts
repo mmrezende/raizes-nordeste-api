@@ -1,14 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { type CanalPedido, type Prisma, StatusPedido } from '@prisma/client';
-import type { AuthenticatedUser } from '@api/common/decorators/current-user.decorator';
+import type { Prisma } from '@prisma/client';
+import { validarAcessoPedido, validarEscopoUnidade } from '@application/common/acesso-escopo.util';
+import {
+  calcularOffset,
+  montarResultadoPaginado,
+  type PaginacaoInput,
+  type ResultadoPaginado,
+} from '@application/common/paginacao.util';
+import type { UsuarioAutenticado } from '@application/common/usuario-autenticado.type';
 import { ID_GENERATOR, type IdGenerator } from '@application/ports/id-generator.interface';
-import type { PaginacaoInput, ResultadoPaginado } from '@application/use-cases/unidades/unidades.service';
+import { type CanalPedido, StatusPedido } from '@domain/enums/pedido.enum';
 import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
 import { TipoMovimentacaoEstoque } from '@domain/enums/tipo-movimentacao-estoque.enum';
 import {
   ConflictDomainError,
   type ErrorDetail,
-  ForbiddenDomainError,
   NotFoundDomainError,
   ValidationDomainError,
 } from '@domain/errors/domain.error';
@@ -115,16 +121,12 @@ export class PedidosService {
     @Inject(ID_GENERATOR) private readonly idGenerator: IdGenerator,
   ) {}
 
-  async criar(input: CriarPedidoInput, ator: AuthenticatedUser): Promise<PedidoResultado> {
-    if (
-      ator.perfil !== PerfilUsuario.CLIENTE &&
-      ator.perfil !== PerfilUsuario.ADMIN &&
-      ator.unidadeId !== input.unidadeId
-    ) {
-      throw new ForbiddenDomainError(
+  async criar(input: CriarPedidoInput, ator: UsuarioAutenticado): Promise<PedidoResultado> {
+    if (ator.perfil !== PerfilUsuario.CLIENTE) {
+      validarEscopoUnidade(
+        ator,
+        input.unidadeId,
         'Você só pode criar pedidos para a sua própria unidade.',
-        [],
-        'ACESSO_NEGADO',
       );
     }
 
@@ -378,18 +380,18 @@ export class PedidosService {
 
   async listar(
     query: ListarPedidosInput,
-    ator: AuthenticatedUser,
+    ator: UsuarioAutenticado,
   ): Promise<ResultadoPaginado<PedidoResultado>> {
     const where: Prisma.PedidoWhereInput = {};
 
     if (ator.perfil === PerfilUsuario.CLIENTE) {
       where.clienteId = ator.id;
     } else if (ator.perfil !== PerfilUsuario.ADMIN) {
-      if (query.unidadeId && query.unidadeId !== ator.unidadeId) {
-        throw new ForbiddenDomainError(
+      if (query.unidadeId) {
+        validarEscopoUnidade(
+          ator,
+          query.unidadeId,
           'Você só pode consultar pedidos da sua própria unidade.',
-          [],
-          'ACESSO_NEGADO',
         );
       }
       where.unidadeId = ator.unidadeId ?? '__sem_unidade__';
@@ -404,8 +406,7 @@ export class PedidosService {
       where.status = query.status;
     }
 
-    const { page, limit } = query;
-    const skip = (page - 1) * limit;
+    const skip = calcularOffset(query);
 
     const [total, registros] = await Promise.all([
       this.prisma.pedido.count({ where }),
@@ -414,22 +415,14 @@ export class PedidosService {
         include: { itens: true },
         orderBy: { createdAt: 'desc' },
         skip,
-        take: limit,
+        take: query.limit,
       }),
     ]);
 
-    return {
-      data: registros.map(formatarPedido),
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: total === 0 ? 0 : Math.ceil(total / limit),
-      },
-    };
+    return montarResultadoPaginado(registros.map(formatarPedido), total, query);
   }
 
-  async buscarPorId(id: string, ator: AuthenticatedUser): Promise<PedidoResultado> {
+  async buscarPorId(id: string, ator: UsuarioAutenticado): Promise<PedidoResultado> {
     const pedido = await this.prisma.pedido.findUnique({
       where: { id },
       include: { itens: true },
@@ -439,25 +432,10 @@ export class PedidosService {
       throw new NotFoundDomainError('Pedido não encontrado.', [], 'PEDIDO_NAO_ENCONTRADO');
     }
 
-    if (ator.perfil === PerfilUsuario.CLIENTE && pedido.clienteId !== ator.id) {
-      throw new ForbiddenDomainError(
-        'Você só pode visualizar seus próprios pedidos.',
-        [],
-        'ACESSO_NEGADO',
-      );
-    }
-
-    if (
-      ator.perfil !== PerfilUsuario.CLIENTE &&
-      ator.perfil !== PerfilUsuario.ADMIN &&
-      pedido.unidadeId !== ator.unidadeId
-    ) {
-      throw new ForbiddenDomainError(
-        'Você só pode visualizar pedidos da sua própria unidade.',
-        [],
-        'ACESSO_NEGADO',
-      );
-    }
+    validarAcessoPedido(pedido, ator, {
+      cliente: 'Você só pode visualizar seus próprios pedidos.',
+      unidade: 'Você só pode visualizar pedidos da sua própria unidade.',
+    });
 
     return formatarPedido(pedido);
   }
@@ -465,7 +443,7 @@ export class PedidosService {
   async atualizarStatus(
     id: string,
     novoStatus: StatusPedido,
-    ator: AuthenticatedUser,
+    ator: UsuarioAutenticado,
   ): Promise<PedidoResultado> {
     const pedido = await this.prisma.pedido.findUnique({
       where: { id },
@@ -476,13 +454,11 @@ export class PedidosService {
       throw new NotFoundDomainError('Pedido não encontrado.', [], 'PEDIDO_NAO_ENCONTRADO');
     }
 
-    if (ator.perfil !== PerfilUsuario.ADMIN && pedido.unidadeId !== ator.unidadeId) {
-      throw new ForbiddenDomainError(
-        'Você só pode atualizar pedidos da sua própria unidade.',
-        [],
-        'ACESSO_NEGADO',
-      );
-    }
+    validarEscopoUnidade(
+      ator,
+      pedido.unidadeId,
+      'Você só pode atualizar pedidos da sua própria unidade.',
+    );
 
     validarTransicaoStatusPedido({
       statusAtual: pedido.status,
@@ -499,7 +475,7 @@ export class PedidosService {
     return formatarPedido(atualizado);
   }
 
-  async cancelar(id: string, ator: AuthenticatedUser): Promise<PedidoResultado> {
+  async cancelar(id: string, ator: UsuarioAutenticado): Promise<PedidoResultado> {
     const pedido = await this.prisma.pedido.findUnique({
       where: { id },
       include: { itens: true },
@@ -509,25 +485,10 @@ export class PedidosService {
       throw new NotFoundDomainError('Pedido não encontrado.', [], 'PEDIDO_NAO_ENCONTRADO');
     }
 
-    if (ator.perfil === PerfilUsuario.CLIENTE && pedido.clienteId !== ator.id) {
-      throw new ForbiddenDomainError(
-        'Você só pode cancelar seus próprios pedidos.',
-        [],
-        'ACESSO_NEGADO',
-      );
-    }
-
-    if (
-      ator.perfil !== PerfilUsuario.CLIENTE &&
-      ator.perfil !== PerfilUsuario.ADMIN &&
-      pedido.unidadeId !== ator.unidadeId
-    ) {
-      throw new ForbiddenDomainError(
-        'Você só pode cancelar pedidos da sua própria unidade.',
-        [],
-        'ACESSO_NEGADO',
-      );
-    }
+    validarAcessoPedido(pedido, ator, {
+      cliente: 'Você só pode cancelar seus próprios pedidos.',
+      unidade: 'Você só pode cancelar pedidos da sua própria unidade.',
+    });
 
     if (!podeCancelarPedido(pedido.status)) {
       throw new ConflictDomainError(

@@ -1,11 +1,11 @@
 import type { ExecutionContext } from '@nestjs/common';
 import type { Reflector } from '@nestjs/core';
-import type { AuthenticatedUser } from '@api/common/decorators/current-user.decorator';
+import type { UsuarioAutenticado } from '@application/common/usuario-autenticado.type';
 import { RolesGuard } from '@api/common/guards/roles.guard';
 import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
 import { ForbiddenDomainError, UnauthorizedDomainError } from '@domain/errors/domain.error';
 
-function createMockContext(user?: AuthenticatedUser): ExecutionContext {
+function createMockContext(user?: UsuarioAutenticado): ExecutionContext {
   return {
     getHandler: () => jest.fn(),
     getClass: () => jest.fn(),

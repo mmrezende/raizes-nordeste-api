@@ -1,6 +1,6 @@
 import { type CanActivate, type ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import type { AuthenticatedUser } from '@api/common/decorators/current-user.decorator';
+import type { UsuarioAutenticado } from '@application/common/usuario-autenticado.type';
 import { Roles } from '@api/common/decorators/roles.decorator';
 import { ForbiddenDomainError, UnauthorizedDomainError } from '@domain/errors/domain.error';
 
@@ -18,7 +18,7 @@ export class RolesGuard implements CanActivate {
       return true;
     }
 
-    const request = context.switchToHttp().getRequest<{ user?: AuthenticatedUser }>();
+    const request = context.switchToHttp().getRequest<{ user?: UsuarioAutenticado }>();
     const user = request.user;
 
     if (!user) {

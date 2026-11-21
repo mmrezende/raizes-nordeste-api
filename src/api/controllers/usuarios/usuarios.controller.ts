@@ -12,9 +12,10 @@ import {
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { Auditable } from '@api/common/decorators/auditable.decorator';
-import { type AuthenticatedUser, CurrentUser } from '@api/common/decorators/current-user.decorator';
+import { CurrentUser } from '@api/common/decorators/current-user.decorator';
 import { Roles } from '@api/common/decorators/roles.decorator';
 import { ErrorResponseDto } from '@api/common/dtos/error-response.dto';
+import type { UsuarioAutenticado } from '@application/common/usuario-autenticado.type';
 import { UsuariosService } from '@application/use-cases/usuarios/usuarios.service';
 import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
 import { CriarUsuarioDto } from './dto/criar-usuario.dto';
@@ -30,7 +31,7 @@ export class UsuariosController {
   @ApiOperation({ summary: 'Retorna dados do usuário autenticado (sem senhaHash)' })
   @ApiOkResponse({ type: UsuarioResponseDto })
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })
-  async me(@CurrentUser() user: AuthenticatedUser): Promise<UsuarioResponseDto> {
+  async me(@CurrentUser() user: UsuarioAutenticado): Promise<UsuarioResponseDto> {
     return this.usuariosService.buscarPerfil(user.id);
   }
 
@@ -43,7 +44,7 @@ export class UsuariosController {
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })
   @ApiNotFoundResponse({ type: ErrorResponseDto })
   async anonimizarMe(
-    @CurrentUser() user: AuthenticatedUser,
+    @CurrentUser() user: UsuarioAutenticado,
   ): Promise<UsuarioAnonimizadoResponseDto> {
     return this.usuariosService.anonimizar(user.id);
   }
@@ -60,7 +61,7 @@ export class UsuariosController {
   @ApiUnprocessableEntityResponse({ type: ErrorResponseDto })
   async criar(
     @Body() dto: CriarUsuarioDto,
-    @CurrentUser() user: AuthenticatedUser,
+    @CurrentUser() user: UsuarioAutenticado,
   ): Promise<UsuarioResponseDto> {
     return this.usuariosService.criarUsuarioInterno(dto, user);
   }

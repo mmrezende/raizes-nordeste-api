@@ -1,16 +1,9 @@
 import { createParamDecorator, type ExecutionContext } from '@nestjs/common';
-import type { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
-
-export interface AuthenticatedUser {
-  id: string;
-  email: string;
-  perfil: PerfilUsuario;
-  unidadeId: string | null;
-}
+import type { UsuarioAutenticado } from '@application/common/usuario-autenticado.type';
 
 export const CurrentUser = createParamDecorator(
-  (_data: unknown, ctx: ExecutionContext): AuthenticatedUser => {
-    const request = ctx.switchToHttp().getRequest<{ user: AuthenticatedUser }>();
+  (_data: unknown, ctx: ExecutionContext): UsuarioAutenticado => {
+    const request = ctx.switchToHttp().getRequest<{ user: UsuarioAutenticado }>();
     return request.user;
   },
 );
