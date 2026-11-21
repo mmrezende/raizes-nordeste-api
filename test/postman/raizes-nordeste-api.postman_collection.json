@@ -1,0 +1,663 @@
+{
+  "info": {
+    "_postman_id": "0193514c-8d12-7000-8000-111111111111",
+    "name": "Raízes do Nordeste API",
+    "description": "Coleção reproduzível do Plano de Testes (T01–T16) da API multicanal Raízes do Nordeste. Execute as pastas na ordem numérica após rodar `npm run prisma:seed`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "unidadeRecifeId", "value": "0193514c-8d12-7000-8000-000000000101" },
+    { "key": "produtoTapiocaId", "value": "0193514c-8d12-7000-8000-000000000201" },
+    { "key": "produtoBoloRoloId", "value": "0193514c-8d12-7000-8000-000000000204" },
+    { "key": "clienteToken", "value": "" },
+    { "key": "cozinhaToken", "value": "" },
+    { "key": "atendenteToken", "value": "" },
+    { "key": "gerenteToken", "value": "" },
+    { "key": "pedidoId", "value": "" },
+    { "key": "pedidoRecusaId", "value": "" },
+    { "key": "idempotencyAprovadoKey", "value": "" },
+    { "key": "idempotencyRecusaKey", "value": "" },
+    { "key": "pagamentoId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. Auth",
+      "item": [
+        {
+          "name": "T01 - Login cliente válido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 OK com accessToken', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.accessToken).to.be.a('string');",
+                  "  pm.expect(json.user.perfil).to.eql('CLIENTE');",
+                  "  pm.collectionVariables.set('clienteToken', json.accessToken);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"cliente@exemplo.com\",\n  \"senha\": \"Senha@123\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Setup - Login cozinha REC-01",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login cozinha 200 OK', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  pm.collectionVariables.set('cozinhaToken', pm.response.json().accessToken);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"cozinha.rec@raizes.com\",\n  \"senha\": \"Senha@123\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Setup - Login atendente REC-01",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login atendente 200 OK', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  pm.collectionVariables.set('atendenteToken', pm.response.json().accessToken);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"atendente.rec@raizes.com\",\n  \"senha\": \"Senha@123\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Setup - Login gerente REC-01",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login gerente 200 OK', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  pm.collectionVariables.set('gerenteToken', pm.response.json().accessToken);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"gerente.rec@raizes.com\",\n  \"senha\": \"Senha@123\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Unidades e Cardápio",
+      "item": [
+        {
+          "name": "T02 - Consultar cardápio da unidade REC-01",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Cardápio retornado com paginação', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.data.length).to.be.greaterThan(0);",
+                  "  pm.expect(json.meta.page).to.eql(1);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/unidades/{{unidadeRecifeId}}/cardapio?page=1&limit=10"
+          }
+        },
+        {
+          "name": "T03 - Consultar estoque sem token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Retorna 401 NAO_AUTENTICADO', function () {",
+                  "  pm.response.to.have.status(401);",
+                  "  pm.expect(pm.response.json().error).to.eql('NAO_AUTENTICADO');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/unidades/{{unidadeRecifeId}}/estoque"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Pedidos e Multicanalidade",
+      "item": [
+        {
+          "name": "T04 - Criar pedido TOTEM com cupom e pontos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Pedido criado (201) com canal TOTEM', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.canalPedido).to.eql('TOTEM');",
+                  "  pm.expect(json.status).to.eql('AGUARDANDO_PAGAMENTO');",
+                  "  pm.collectionVariables.set('pedidoId', json.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{clienteToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"unidadeId\": \"{{unidadeRecifeId}}\",\n  \"canalPedido\": \"TOTEM\",\n  \"codigoPromocao\": \"TOTEM10\",\n  \"pontosResgate\": 5,\n  \"itens\": [\n    { \"produtoId\": \"{{produtoTapiocaId}}\", \"quantidade\": 2 }\n  ]\n}"
+            },
+            "url": "{{baseUrl}}/pedidos"
+          }
+        },
+        {
+          "name": "T05 - Filtrar pedidos por canalPedido=TOTEM",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Lista apenas pedidos do canal TOTEM', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.data.length).to.be.greaterThan(0);",
+                  "  pm.expect(json.data[0].canalPedido).to.eql('TOTEM');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{clienteToken}}" }],
+            "url": "{{baseUrl}}/pedidos?canalPedido=TOTEM&status=AGUARDANDO_PAGAMENTO"
+          }
+        },
+        {
+          "name": "T06 - Criar pedido sem canalPedido (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Retorna 422 ERRO_VALIDACAO', function () {",
+                  "  pm.response.to.have.status(422);",
+                  "  pm.expect(pm.response.json().error).to.eql('ERRO_VALIDACAO');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{clienteToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"unidadeId\": \"{{unidadeRecifeId}}\",\n  \"itens\": [\n    { \"produtoId\": \"{{produtoTapiocaId}}\", \"quantidade\": 1 }\n  ]\n}"
+            },
+            "url": "{{baseUrl}}/pedidos"
+          }
+        },
+        {
+          "name": "T07 - Criar pedido com quantidade negativa (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Retorna 422 ERRO_VALIDACAO para quantidade negativa', function () {",
+                  "  pm.response.to.have.status(422);",
+                  "  pm.expect(pm.response.json().error).to.eql('ERRO_VALIDACAO');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{clienteToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"unidadeId\": \"{{unidadeRecifeId}}\",\n  \"canalPedido\": \"APP\",\n  \"itens\": [\n    { \"produtoId\": \"{{produtoTapiocaId}}\", \"quantidade\": -1 }\n  ]\n}"
+            },
+            "url": "{{baseUrl}}/pedidos"
+          }
+        },
+        {
+          "name": "T08 - Criar pedido com produto inexistente (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Retorna 404 PRODUTO_NAO_ENCONTRADO', function () {",
+                  "  pm.response.to.have.status(404);",
+                  "  pm.expect(pm.response.json().error).to.eql('PRODUTO_NAO_ENCONTRADO');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{clienteToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"unidadeId\": \"{{unidadeRecifeId}}\",\n  \"canalPedido\": \"APP\",\n  \"itens\": [\n    { \"produtoId\": \"0193514c-8d12-7a00-8f41-9c2a1b3e4fff\", \"quantidade\": 1 }\n  ]\n}"
+            },
+            "url": "{{baseUrl}}/pedidos"
+          }
+        },
+        {
+          "name": "T09 - Criar pedido com estoque insuficiente (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Retorna 409 ESTOQUE_INSUFICIENTE', function () {",
+                  "  pm.response.to.have.status(409);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.error).to.eql('ESTOQUE_INSUFICIENTE');",
+                  "  pm.expect(json.details.length).to.be.greaterThan(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{clienteToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"unidadeId\": \"{{unidadeRecifeId}}\",\n  \"canalPedido\": \"WEB\",\n  \"itens\": [\n    { \"produtoId\": \"{{produtoBoloRoloId}}\", \"quantidade\": 5 }\n  ]\n}"
+            },
+            "url": "{{baseUrl}}/pedidos"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Pagamentos Mock",
+      "item": [
+        {
+          "name": "T10 - Processar pagamento aprovado",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('idempotencyAprovadoKey', 'pm-ok-' + Date.now());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Pagamento aprovado (201)', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.status).to.eql('APROVADO');",
+                  "  pm.collectionVariables.set('pagamentoId', json.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{clienteToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pedidoId\": \"{{pedidoId}}\",\n  \"formaPagamento\": \"PIX\",\n  \"idempotencyKey\": \"{{idempotencyAprovadoKey}}\"\n}"
+            },
+            "url": "{{baseUrl}}/pagamentos"
+          }
+        },
+        {
+          "name": "T11 - Reenviar pagamento idempotente (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Retentativa devolve 200 OK com mesmo pagamento', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  pm.expect(pm.response.json().id).to.eql(pm.collectionVariables.get('pagamentoId'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{clienteToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pedidoId\": \"{{pedidoId}}\",\n  \"formaPagamento\": \"PIX\",\n  \"idempotencyKey\": \"{{idempotencyAprovadoKey}}\"\n}"
+            },
+            "url": "{{baseUrl}}/pagamentos"
+          }
+        },
+        {
+          "name": "Setup - Criar pedido APP para testar recusa",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Pedido APP criado (201)', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "  pm.collectionVariables.set('pedidoRecusaId', pm.response.json().id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{clienteToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"unidadeId\": \"{{unidadeRecifeId}}\",\n  \"canalPedido\": \"APP\",\n  \"itens\": [\n    { \"produtoId\": \"{{produtoTapiocaId}}\", \"quantidade\": 1 }\n  ]\n}"
+            },
+            "url": "{{baseUrl}}/pedidos"
+          }
+        },
+        {
+          "name": "T12 - Processar pagamento recusado com estorno",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('idempotencyRecusaKey', 'pm-fail-' + Date.now());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Pagamento recusado (201 RECUSADO)', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "  pm.expect(pm.response.json().status).to.eql('RECUSADO');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{clienteToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pedidoId\": \"{{pedidoRecusaId}}\",\n  \"formaPagamento\": \"CARTAO_CREDITO\",\n  \"idempotencyKey\": \"{{idempotencyRecusaKey}}\",\n  \"simularRecusa\": true\n}"
+            },
+            "url": "{{baseUrl}}/pagamentos"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Ciclo de Status",
+      "item": [
+        {
+          "name": "T13 - Cliente tenta atualizar status (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Bloqueia perfil sem permissão (403)', function () {",
+                  "  pm.response.to.have.status(403);",
+                  "  pm.expect(pm.response.json().error).to.eql('ACESSO_NEGADO');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{clienteToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PRONTO\"\n}"
+            },
+            "url": "{{baseUrl}}/pedidos/{{pedidoId}}/status"
+          }
+        },
+        {
+          "name": "T14 - Cozinha marca pedido como PRONTO",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Pedido atualizado para PRONTO (200)', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  pm.expect(pm.response.json().status).to.eql('PRONTO');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{cozinhaToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PRONTO\"\n}"
+            },
+            "url": "{{baseUrl}}/pedidos/{{pedidoId}}/status"
+          }
+        },
+        {
+          "name": "T15 - Atendente marca pedido como ENTREGUE",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Pedido atualizado para ENTREGUE (200)', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  pm.expect(pm.response.json().status).to.eql('ENTREGUE');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{atendenteToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ENTREGUE\"\n}"
+            },
+            "url": "{{baseUrl}}/pedidos/{{pedidoId}}/status"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Fidelidade e LGPD",
+      "item": [
+        {
+          "name": "Consultar conta e saldo de fidelidade",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{clienteToken}}" }],
+            "url": "{{baseUrl}}/fidelidade/conta"
+          }
+        },
+        {
+          "name": "Atualizar consentimento LGPD",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{clienteToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"consentimentoAtivo\": true\n}"
+            },
+            "url": "{{baseUrl}}/fidelidade/consentimento"
+          }
+        },
+        {
+          "name": "Consultar movimentações de fidelidade",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{clienteToken}}" }],
+            "url": "{{baseUrl}}/fidelidade/movimentacoes?page=1&limit=10"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Auditoria",
+      "item": [
+        {
+          "name": "T16 - Consultar logs de auditoria de pedidos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Auditoria retorna eventos de pedidos (200)', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.data.length).to.be.greaterThan(0);",
+                  "  pm.expect(json.data[0].entidade).to.eql('pedidos');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{gerenteToken}}" }],
+            "url": "{{baseUrl}}/auditoria?page=1&limit=10&entidade=pedidos"
+          }
+        }
+      ]
+    }
+  ]
+}
