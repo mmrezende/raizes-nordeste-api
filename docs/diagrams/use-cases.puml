@@ -41,24 +41,26 @@ rectangle "API Raízes do Nordeste" {
 
 actor "Gateway de Pagamento\n(Mock)" as Gateway
 actor "Cozinha" as Cozinha
-actor "Gerente / Admin" as GerenteAdmin
+actor "Gerente" as Gerente
+actor "Administrador" as Admin
 
 Cliente -- UC01
 Cliente -- UC13
 Cliente -- UC03
 Cliente -- UC04
+Cliente -- UC07
 Cliente -- UC02
 Cliente -- UC08
 Cliente -- UC09
 
 Atendente -- UC03
 Atendente -- UC04
+Atendente -- UC07
 Atendente -- UC02
 Atendente -- UC08
 Atendente -- UC09
 
 UC04 ..> UC05 : <<include>>
-UC04 ..> UC07 : <<include>>
 UC04 <.. UC06 : <<extend>>
 
 UC07 -- Gateway
@@ -67,10 +69,20 @@ UC02 -- Cozinha
 UC09 -- Cozinha
 UC10 -- Cozinha
 
-UC02 -- GerenteAdmin
-UC08 -- GerenteAdmin
-UC09 -- GerenteAdmin
-UC11 -- GerenteAdmin
-UC12 -- GerenteAdmin
-UC14 -- GerenteAdmin
+UC02 -- Gerente
+UC04 -- Gerente
+UC07 -- Gerente
+UC08 -- Gerente
+UC09 -- Gerente
+UC12 -- Gerente
+UC14 -- Gerente
+
+UC02 -- Admin
+UC04 -- Admin
+UC07 -- Admin
+UC08 -- Admin
+UC09 -- Admin
+UC11 -- Admin
+UC12 -- Admin
+UC14 -- Admin
 @enduml

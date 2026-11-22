@@ -599,6 +599,22 @@
       "item": [
         {
           "name": "Consultar conta e saldo de fidelidade",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Retorna conta de fidelidade (200)', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.saldoPontos).to.be.a('number');",
+                  "  pm.expect(json.consentimentoAtivo).to.be.a('boolean');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [{ "key": "Authorization", "value": "Bearer {{clienteToken}}" }],
@@ -607,6 +623,22 @@
         },
         {
           "name": "Atualizar consentimento LGPD",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Atualiza consentimento LGPD (200)', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.consentimentoAtivo).to.eql(true);",
+                  "  pm.expect(json.consentimentoEm).to.be.a('string');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "PATCH",
             "header": [
@@ -622,6 +654,22 @@
         },
         {
           "name": "Consultar movimentações de fidelidade",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Lista movimentações de fidelidade paginadas (200)', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.data).to.be.an('array');",
+                  "  pm.expect(json.meta.page).to.eql(1);",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [{ "key": "Authorization", "value": "Bearer {{clienteToken}}" }],

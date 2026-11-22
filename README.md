@@ -139,6 +139,8 @@ npm test
 npm run test:e2e
 ```
 
+A suíte E2E utiliza um banco SQLite isolado (`prisma/test-e2e.db`), preservando os dados do seed em `prisma/dev.db`. Para alterar a expiração do token, ajuste `JWT_EXPIRES_IN_SECONDS=3600` no `.env`.
+
 Para testar manualmente com Postman:
 
 1. Aplique o seed e inicie a API (`npm run prisma:seed && npm run start:dev`).

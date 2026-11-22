@@ -22,7 +22,7 @@ Diagrama UML: [`docs/diagrams/use-cases.puml`](../diagrams/use-cases.puml).
 | `UC04` | Realizar Pedido (Multicanal) | Cliente, Atendente, Gerente, Admin | Pedidos |
 | `UC05` | Validar e Reservar Estoque da Unidade | *(incluído por UC04)* | Estoque |
 | `UC06` | Aplicar Promoção / Resgatar Fidelidade | *(estende UC04)* | Promoções / Fidelidade |
-| `UC07` | Solicitar Pagamento (Mock) | *(incluído por UC04)*, Gateway Mock | Pagamentos |
+| `UC07` | Solicitar Pagamento (Mock) | Cliente, Atendente, Gerente, Admin, Gateway Mock | Pagamentos |
 | `UC08` | Consultar Pedidos e Filtros por Canal | Cliente, Equipe da loja, Admin | Pedidos |
 | `UC09` | Atualizar Status / Cancelar Pedido | Cliente, Atendente, Cozinha, Gerente, Admin | Pedidos |
 | `UC10` | Consultar Fila de Preparo da Unidade | Cozinha | Pedidos |
