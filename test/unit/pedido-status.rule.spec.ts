@@ -7,6 +7,7 @@ import {
 } from '@domain/errors/domain.error';
 import {
   podeCancelarPedido,
+  validarCancelamentoPedido,
   validarTransicaoStatusPedido,
 } from '@domain/rules/pedido-status.rule';
 
@@ -105,6 +106,40 @@ describe('pedido-status.rule', () => {
       expect(podeCancelarPedido(StatusPedido.ENTREGUE)).toBe(false);
       expect(podeCancelarPedido(StatusPedido.PAGAMENTO_RECUSADO)).toBe(false);
       expect(podeCancelarPedido(StatusPedido.CANCELADO)).toBe(false);
+    });
+  });
+
+  describe('validarCancelamentoPedido', () => {
+    it('deve bloquear CLIENTE de cancelar pedido PRONTO com ForbiddenDomainError (403)', () => {
+      const erro = capturarErro(() =>
+        validarCancelamentoPedido({
+          statusAtual: StatusPedido.PRONTO,
+          perfil: PerfilUsuario.CLIENTE,
+        }),
+      );
+      expect(erro).toBeInstanceOf(ForbiddenDomainError);
+    });
+
+    it('deve permitir equipe operacional cancelar pedido PRONTO', () => {
+      for (const perfil of [PerfilUsuario.ATENDENTE, PerfilUsuario.GERENTE, PerfilUsuario.ADMIN]) {
+        expect(() =>
+          validarCancelamentoPedido({
+            statusAtual: StatusPedido.PRONTO,
+            perfil,
+          }),
+        ).not.toThrow();
+      }
+    });
+
+    it('deve lançar ConflictDomainError ao tentar cancelar pedido entregue', () => {
+      const erro = capturarErro(() =>
+        validarCancelamentoPedido({
+          statusAtual: StatusPedido.ENTREGUE,
+          perfil: PerfilUsuario.ADMIN,
+        }),
+      );
+      expect(erro).toBeInstanceOf(ConflictDomainError);
+      expect((erro as ConflictDomainError).code).toBe('PEDIDO_NAO_CANCELAVEL');
     });
   });
 });

@@ -23,10 +23,7 @@ import {
   calcularDescontoFidelidade,
   validarECalcularDescontoPromocao,
 } from '@domain/rules/pedido-calculo.rule';
-import {
-  podeCancelarPedido,
-  validarTransicaoStatusPedido,
-} from '@domain/rules/pedido-status.rule';
+import { validarTransicaoStatusPedido, validarCancelamentoPedido } from '@domain/rules/pedido-status.rule';
 import { centavosParaReais } from '@domain/utils/money.util';
 import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 import { estornarReservasDoPedido } from './pedido-estorno.helper';
@@ -489,13 +486,10 @@ export class PedidosService {
       unidade: 'Você só pode cancelar pedidos da sua própria unidade.',
     });
 
-    if (!podeCancelarPedido(pedido.status)) {
-      throw new ConflictDomainError(
-        'O pedido não pode ser cancelado no status atual.',
-        [{ field: 'status', issue: `Status atual: ${pedido.status}` }],
-        'PEDIDO_NAO_CANCELAVEL',
-      );
-    }
+    validarCancelamentoPedido({
+      statusAtual: pedido.status,
+      perfil: ator.perfil,
+    });
 
     const pedidoCancelado = await this.prisma.$transaction(async (tx) => {
       const cancelado = await tx.pedido.update({

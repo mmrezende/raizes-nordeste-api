@@ -77,4 +77,41 @@ export async function estornarReservasDoPedido(
       });
     }
   }
+
+  const movimentacoesAcumulo = await tx.movimentacaoFidelidade.findMany({
+    where: {
+      pedidoId: pedido.id,
+      tipo: TipoMovimentacaoFidelidade.ACUMULO,
+    },
+    select: { pontos: true },
+  });
+  const totalAcumulado = movimentacoesAcumulo.reduce((acc, mov) => acc + mov.pontos, 0);
+
+  if (totalAcumulado > 0) {
+    const conta = await tx.contaFidelidade.findUnique({
+      where: { usuarioId: pedido.clienteId },
+      select: { id: true, saldoPontos: true },
+    });
+
+    if (conta) {
+      const pontosAReverter = Math.min(conta.saldoPontos, totalAcumulado);
+      if (pontosAReverter > 0) {
+        await tx.contaFidelidade.update({
+          where: { id: conta.id },
+          data: { saldoPontos: { decrement: pontosAReverter } },
+        });
+
+        await tx.movimentacaoFidelidade.create({
+          data: {
+            id: idGenerator.generate(),
+            contaFidelidadeId: conta.id,
+            pedidoId: pedido.id,
+            tipo: TipoMovimentacaoFidelidade.ESTORNO,
+            pontos: pontosAReverter,
+            descricao: 'Estorno de pontos acumulados por cancelamento do pedido',
+          },
+        });
+      }
+    }
+  }
 }

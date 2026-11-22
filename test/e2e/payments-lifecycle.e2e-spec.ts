@@ -485,5 +485,105 @@ describe('Pagamentos Simulados e Ciclo de Vida de Pedidos (e2e)', () => {
         .expect(409);
       expect(recancelarRes.body.error).toBe('PEDIDO_NAO_CANCELAVEL');
     });
+
+    it('deve estornar pontos acumulados no cancelamento em EM_PREPARO e bloquear CLIENTE cancelar PRONTO', async () => {
+      const unidade = await criarUnidade(ctx.prisma);
+      const { produto } = await criarProdutoComEstoque(ctx.prisma, unidade.id, {
+        nome: 'Carne de Sol',
+        categoria: 'PRATOS',
+        precoCentavos: 3500,
+      });
+
+      const cliente = await criarUsuarioELogar(ctx, {
+        nome: 'Cliente Pontos',
+        email: 'clientepontos@exemplo.com',
+        perfil: PerfilUsuario.CLIENTE,
+      });
+      await criarContaFidelidade(ctx.prisma, cliente.id, {
+        saldoPontos: 0,
+        consentimentoAtivo: true,
+      });
+
+      const cozinha = await criarUsuarioELogar(ctx, {
+        nome: 'Cozinha',
+        email: 'cozinhapronta@raizes.com',
+        perfil: PerfilUsuario.COZINHA,
+        unidadeId: unidade.id,
+      });
+
+      // Pedido 1: pago e cancelado em EM_PREPARO -> reverte os 3 pontos acumulados
+      const pedido1Res = await request(ctx.app.getHttpServer())
+        .post('/pedidos')
+        .set('Authorization', `Bearer ${cliente.token}`)
+        .send({
+          unidadeId: unidade.id,
+          canalPedido: 'APP',
+          itens: [{ produtoId: produto.id, quantidade: 1 }],
+        })
+        .expect(201);
+
+      await request(ctx.app.getHttpServer())
+        .post('/pagamentos')
+        .set('Authorization', `Bearer ${cliente.token}`)
+        .send({
+          pedidoId: pedido1Res.body.id,
+          formaPagamento: 'PIX',
+          idempotencyKey: 'pay-cancel-pts-001',
+        })
+        .expect(201);
+
+      const contaAposPagamento = await ctx.prisma.contaFidelidade.findUniqueOrThrow({
+        where: { usuarioId: cliente.id },
+      });
+      expect(contaAposPagamento.saldoPontos).toBe(3);
+
+      await request(ctx.app.getHttpServer())
+        .post(`/pedidos/${pedido1Res.body.id}/cancelar`)
+        .set('Authorization', `Bearer ${cliente.token}`)
+        .expect(200);
+
+      const contaAposCancelamento = await ctx.prisma.contaFidelidade.findUniqueOrThrow({
+        where: { usuarioId: cliente.id },
+      });
+      expect(contaAposCancelamento.saldoPontos).toBe(0);
+
+      const movEstornoAcumulo = await ctx.prisma.movimentacaoFidelidade.findFirst({
+        where: { pedidoId: pedido1Res.body.id, tipo: 'ESTORNO' },
+      });
+      expect(movEstornoAcumulo?.pontos).toBe(3);
+
+      // Pedido 2: avançado para PRONTO -> cliente não pode cancelar (403)
+      const pedido2Res = await request(ctx.app.getHttpServer())
+        .post('/pedidos')
+        .set('Authorization', `Bearer ${cliente.token}`)
+        .send({
+          unidadeId: unidade.id,
+          canalPedido: 'TOTEM',
+          itens: [{ produtoId: produto.id, quantidade: 1 }],
+        })
+        .expect(201);
+
+      await request(ctx.app.getHttpServer())
+        .post('/pagamentos')
+        .set('Authorization', `Bearer ${cliente.token}`)
+        .send({
+          pedidoId: pedido2Res.body.id,
+          formaPagamento: 'PIX',
+          idempotencyKey: 'pay-cancel-pronto-002',
+        })
+        .expect(201);
+
+      await request(ctx.app.getHttpServer())
+        .patch(`/pedidos/${pedido2Res.body.id}/status`)
+        .set('Authorization', `Bearer ${cozinha.token}`)
+        .send({ status: 'PRONTO' })
+        .expect(200);
+
+      const clienteProntoCancelRes = await request(ctx.app.getHttpServer())
+        .post(`/pedidos/${pedido2Res.body.id}/cancelar`)
+        .set('Authorization', `Bearer ${cliente.token}`)
+        .expect(403);
+      expect(clienteProntoCancelRes.body.error).toBe('ACESSO_NEGADO');
+    });
   });
 });

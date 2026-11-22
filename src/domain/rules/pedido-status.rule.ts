@@ -80,3 +80,24 @@ export function validarTransicaoStatusPedido(input: ValidarTransicaoStatusInput)
 export function podeCancelarPedido(statusAtual: StatusPedido): boolean {
   return STATUS_CANCELAVEIS.has(statusAtual);
 }
+
+export function validarCancelamentoPedido(input: {
+  statusAtual: StatusPedido;
+  perfil: PerfilUsuario;
+}): void {
+  if (!podeCancelarPedido(input.statusAtual)) {
+    throw new ConflictDomainError(
+      'O pedido não pode ser cancelado no status atual.',
+      [{ field: 'status', issue: `Status atual: ${input.statusAtual}` }],
+      'PEDIDO_NAO_CANCELAVEL',
+    );
+  }
+
+  if (input.statusAtual === StatusPedido.PRONTO && input.perfil === PerfilUsuario.CLIENTE) {
+    throw new ForbiddenDomainError(
+      'Pedidos prontos só podem ser cancelados pela equipe da unidade.',
+      [],
+      'ACESSO_NEGADO',
+    );
+  }
+}
