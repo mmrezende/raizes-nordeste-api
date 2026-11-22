@@ -1,0 +1,17 @@
+{
+  "tables": {
+    "contas_fidelidade": { "x": 420, "y": 0 },
+    "movimentacoes_fidelidade": { "x": 860, "y": 0 },
+    "logs_auditoria": { "x": 0, "y": 290 },
+    "usuarios": { "x": 420, "y": 290 },
+    "pedidos": { "x": 860, "y": 290 },
+    "pagamentos": { "x": 1320, "y": 290 },
+    "unidades": { "x": 0, "y": 670 },
+    "movimentacoes_estoque": { "x": 440, "y": 730 },
+    "itens_pedido": { "x": 940, "y": 760 },
+    "promocoes": { "x": 0, "y": 1060 },
+    "estoque_unidades": { "x": 440, "y": 1160 },
+    "produtos": { "x": 940, "y": 1160 }
+  },
+  "version": 1
+}
