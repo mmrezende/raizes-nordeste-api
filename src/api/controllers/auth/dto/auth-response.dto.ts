@@ -25,7 +25,7 @@ export class LoginResponseDto {
   @ApiProperty({ example: 'Bearer' })
   tokenType: string;
 
-  @ApiProperty({ example: 3600000, description: 'Tempo de expiração do token em milissegundos' })
+  @ApiProperty({ example: 3600, description: 'Tempo de expiração do token em segundos' })
   expiresIn: number;
 
   @ApiProperty({ type: () => AuthUserSummaryDto })

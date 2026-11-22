@@ -127,7 +127,7 @@ describe('Auth, Usuários e RBAC (e2e)', () => {
           unidadeId: null,
         },
       });
-      expect(res.body.expiresIn).toBeGreaterThan(0);
+      expect(res.body.expiresIn).toBe(3600);
       expect(res.body.user.senhaHash).toBeUndefined();
     });
 

@@ -136,7 +136,7 @@ export class AuthService {
     return {
       accessToken,
       tokenType: 'Bearer',
-      expiresIn: getEnvConfig().jwtExpiresInMs,
+      expiresIn: getEnvConfig().jwtExpiresInSeconds,
       user: {
         id: usuario.id,
         nome: usuario.nome,

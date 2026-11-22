@@ -18,7 +18,7 @@ import { JwtStrategy } from '@infrastructure/security/jwt.strategy';
         return {
           secret: env.jwtSecret,
           signOptions: {
-            expiresIn: Math.max(1, Math.floor(env.jwtExpiresInMs / 1000)),
+            expiresIn: env.jwtExpiresInSeconds,
           },
         };
       },
