@@ -3,7 +3,7 @@
 **Instituição:** Centro Universitário Internacional UNINTER - Escola Superior Politécnica (ESP)  
 **Disciplina:** Projeto Multidisciplinar - Trilha Back-End (Análise e Desenvolvimento de Sistemas)  
 **Aluno:** Mateus Mendonça Dias Rezende (RU: `4841127`)  
-**Professora:** Prof. Me. Luciane Yanase Kanashiro | **Ano:** 2026 | **Entrega:** `4841127_Projeto_Back_End.PDF`
+**Professora:** Prof. Me. Luciane Yanase Kanashiro | **Ano:** 2026
 
 ## Sumário
 
@@ -19,6 +19,8 @@
 
 ---
 
+<br>
+
 ## 1. Introdução e Objetivos
 
 O estudo de caso da rede de lanchonetes **Raízes do Nordeste** retrata um problema recorrente no varejo de alimentação em expansão: com a abertura de novas unidades e a venda simultânea por aplicativo, totem de autoatendimento, balcão, web e retirada rápida, controles locais descentralizados passam a gerar divergência de preços no cardápio, venda de itens sem saldo na cozinha, aplicação incorreta de promoções e falta de rastreabilidade sobre os dados de clientes no programa de fidelidade.
@@ -26,6 +28,8 @@ O estudo de caso da rede de lanchonetes **Raízes do Nordeste** retrata um probl
 Para resolver esse cenário, este projeto implementa uma API REST centralizada em **NestJS 12, TypeScript e Prisma ORM (SQLite)**. O objetivo do serviço é unificar o catálogo de produtos, as campanhas promocionais e a pontuação de fidelidade na matriz, mantendo o saldo de estoque e a fila de preparo isolados por unidade física, com validação estrita do canal de origem, processamento de pagamento simulado e conformidade com a LGPD.
 
 ---
+
+<br>
 
 ## 2. Análise e Requisitos
 
@@ -59,6 +63,8 @@ Dois fluxos concentram as regras críticas de negócio:
 O esquema relacional possui 12 tabelas no SQLite com chaves primárias UUIDv7, que mantêm ordenação cronológica em índices B-tree sem expor contadores sequenciais. As restrições `unique(unidade_id, produto_id)` em `estoque_unidades`, `unique(pedido_id, produto_id)` em `itens_pedido` e `unique(idempotency_key)` em `pagamentos` garantem a consistência estrutural das operações concorrentes.
 
 ![Diagrama Entidade-Relacionamento](./docs/diagrams/img/der.svg)
+
+<div style="page-break-before: always;"></div>
 
 ### 3.3 Arquitetura em 4 Camadas
 
@@ -157,6 +163,8 @@ Para assegurar o direito de eliminação sem comprometer o histórico fiscal dos
 
 ---
 
+<br>
+
 ## 6. Entrega Técnica e Execução
 
 - **Repositório público (GitHub):** https://github.com/mmrezende/raizes-nordeste-api
@@ -206,7 +214,7 @@ No Postman, com a API em execução após o seed, basta importar a coleção JSO
 | `T15` | Balcão confirma entrega | `PATCH /pedidos/:id/status` | Token `ATENDENTE` enviando `ENTREGUE` | `200 OK` com status `ENTREGUE` (`5. Status / T15`) |
 | `T16` | Auditoria filtrada por loja | `GET /auditoria` | Token `GERENTE` com `?entidade=pedidos` | `200 OK` com eventos de `REC-01` (`7. Auditoria / T16`) |
 
----
+<div style="page-break-before: always;"></div>
 
 ## 8. Conclusão
 
@@ -215,6 +223,8 @@ O desenvolvimento da API da rede **Raízes do Nordeste** permitiu converter os g
 A organização em quatro camadas manteve o cálculo de descontos, a matriz de transição de status e as validações de domínio desacoplados de protocolo HTTP e banco de dados. Essa estrutura facilitou a substituição do adquirente real pela porta `PaymentGateway`, a aplicação consistente de consentimento e anonimização previstos na LGPD e a comprovação dos fluxos positivos e negativos pelas suítes automatizadas e pela coleção Postman.
 
 ---
+
+<br>
 
 ## 9. Referências
 
