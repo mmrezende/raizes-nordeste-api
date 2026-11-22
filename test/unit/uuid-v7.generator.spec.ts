@@ -9,7 +9,7 @@ describe('UuidV7Generator', () => {
     jest.useRealTimers();
   });
 
-  it('deve gerar UUIDv7 válido conforme RFC 9562 e único por chamada', () => {
+  it('deve gerar UUIDv7 válido e único por chamada', () => {
     const ids = new Set<string>();
 
     for (let i = 0; i < 100; i += 1) {
