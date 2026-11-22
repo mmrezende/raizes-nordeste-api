@@ -54,8 +54,8 @@ Diagrama UML: [`docs/diagrams/use-cases.puml`](../diagrams/use-cases.puml).
   7. Em transação única: persiste o pagamento, muda o pedido para `EM_PREPARO` e credita pontos (`floor(valorTotalCentavos / 1000)` se consentimento ativo).
   8. O `AuditInterceptor` grava `PAGAMENTO_PROCESSADO` em `logs_auditoria` quando o status HTTP for `201`.
 - **Exceções e fluxos alternativos:**
-  - `401` / `403`: token ausente/inválido, `COZINHA` tentando criar pedido ou funcionário operando em outra unidade.
-  - `404`: unidade, produto, cliente (inclusive anonimizado) ou pedido inexistente.
+  - `401` / `403`: token ausente/inválido (inclusive após anonimização), `COZINHA` tentando criar pedido ou funcionário operando em outra unidade.
+  - `404`: unidade, produto, cliente ou pedido inexistente.
   - `422`: `canalPedido` ausente/inválido, itens vazios, quantidade menor que `1` ou cupom inelegível.
   - `409`: estoque insuficiente (`ESTOQUE_INSUFICIENTE`), ausência de consentimento (`FIDELIDADE_SEM_CONSENTIMENTO`), saldo de pontos insuficiente, pedido fora de `AGUARDANDO_PAGAMENTO` ou `idempotencyKey` já usada em outro pedido.
   - *Idempotência:* repetição de `POST /pagamentos` com a mesma `idempotencyKey` para o mesmo pedido devolve `200 OK` com o pagamento original e o `AuditInterceptor` ignora o registro para não duplicar log.

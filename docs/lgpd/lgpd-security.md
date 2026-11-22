@@ -28,7 +28,7 @@ O titular autenticado pode solicitar a anonimização dos seus dados preservando
 - `ativo` é alterado para `false` e `anonimizado_em` recebe a data/hora da operação;
 - `contas_fidelidade.consentimento_ativo` é desativado com registro de `revogado_em`.
 
-Após a anonimização, tentativas de login retornam `401 CREDENCIAIS_INVALIDAS` e tentativas de criação de pedido mesmo com token ainda não expirado são bloqueadas na validação do cliente (`404 USUARIO_NAO_ENCONTRADO`).
+Após a anonimização, tentativas de login retornam `401 CREDENCIAIS_INVALIDAS` e requisições autenticadas com token ainda não expirado são bloqueadas na validação do usuário ativo (`401 NAO_AUTENTICADO`).
 
 ## 4. Controles de Segurança Aplicados
 

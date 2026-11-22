@@ -194,8 +194,15 @@ describe('Fidelidade, LGPD e Auditoria (e2e)', () => {
           canalPedido: 'APP',
           itens: [{ produtoId: produto.id, quantidade: 1 }],
         })
-        .expect(404);
-      expect(pedidoPosAnonRes.body.error).toBe('USUARIO_NAO_ENCONTRADO');
+        .expect(401);
+      expect(pedidoPosAnonRes.body.error).toBe('NAO_AUTENTICADO');
+
+      const consentPosAnonRes = await request(ctx.app.getHttpServer())
+        .patch('/fidelidade/consentimento')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ consentimentoAtivo: true })
+        .expect(401);
+      expect(consentPosAnonRes.body.error).toBe('NAO_AUTENTICADO');
 
       const logsAnon = await ctx.prisma.logAuditoria.count({
         where: {
