@@ -75,6 +75,13 @@ describe('Fidelidade, LGPD e Auditoria (e2e)', () => {
       expect(revogarRes.body.consentimentoAtivo).toBe(false);
       expect(typeof revogarRes.body.revogadoEm).toBe('string');
 
+      const stringBooleanRes = await request(ctx.app.getHttpServer())
+        .patch('/fidelidade/consentimento')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ consentimentoAtivo: 'false' })
+        .expect(422);
+      expect(stringBooleanRes.body.error).toBe('ERRO_VALIDACAO');
+
       const logsConsent = await ctx.prisma.logAuditoria.count({
         where: {
           acao: 'FIDELIDADE_CONSENTIMENTO_ATUALIZADO',

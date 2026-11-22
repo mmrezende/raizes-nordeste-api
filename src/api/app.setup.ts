@@ -37,7 +37,6 @@ export function configureApp(app: INestApplication): void {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
-      transformOptions: { enableImplicitConversion: true },
       exceptionFactory: (errors: ValidationError[]) =>
         new ValidationDomainError('Dados de entrada inválidos.', flattenValidationErrors(errors)),
     }),

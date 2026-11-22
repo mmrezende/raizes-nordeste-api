@@ -85,11 +85,14 @@ export class UnidadesService {
   ): Promise<ResultadoPaginado<CardapioItem>> {
     const unidade = await this.prisma.unidade.findUnique({
       where: { id: unidadeId },
-      select: { id: true },
+      select: { id: true, ativo: true },
     });
 
     if (!unidade) {
       throw new NotFoundDomainError('Unidade não encontrada.', [], 'UNIDADE_NAO_ENCONTRADA');
+    }
+    if (!unidade.ativo) {
+      throw new ConflictDomainError('Unidade inativa.', [], 'UNIDADE_INATIVA');
     }
 
     const skip = calcularOffset(paginacao);

@@ -382,6 +382,9 @@ export class PedidosService {
 
     if (ator.perfil === PerfilUsuario.CLIENTE) {
       where.clienteId = ator.id;
+      if (query.unidadeId) {
+        where.unidadeId = query.unidadeId;
+      }
     } else if (ator.perfil !== PerfilUsuario.ADMIN) {
       if (query.unidadeId) {
         validarEscopoUnidade(

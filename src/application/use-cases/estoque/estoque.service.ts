@@ -60,15 +60,27 @@ export class EstoqueService {
     );
 
     const [unidade, produto] = await Promise.all([
-      this.prisma.unidade.findUnique({ where: { id: input.unidadeId }, select: { id: true } }),
-      this.prisma.produto.findUnique({ where: { id: input.produtoId }, select: { id: true } }),
+      this.prisma.unidade.findUnique({
+        where: { id: input.unidadeId },
+        select: { id: true, ativo: true },
+      }),
+      this.prisma.produto.findUnique({
+        where: { id: input.produtoId },
+        select: { id: true, ativo: true },
+      }),
     ]);
 
     if (!unidade) {
       throw new NotFoundDomainError('Unidade não encontrada.', [], 'UNIDADE_NAO_ENCONTRADA');
     }
+    if (!unidade.ativo) {
+      throw new ConflictDomainError('Unidade inativa.', [], 'UNIDADE_INATIVA');
+    }
     if (!produto) {
       throw new NotFoundDomainError('Produto não encontrado.', [], 'PRODUTO_NAO_ENCONTRADO');
+    }
+    if (!produto.ativo) {
+      throw new ConflictDomainError('Produto inativo.', [], 'PRODUTO_INATIVO');
     }
 
     return this.prisma.$transaction(async (tx) => {

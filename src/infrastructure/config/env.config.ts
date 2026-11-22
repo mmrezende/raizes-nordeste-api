@@ -52,12 +52,18 @@ export function getEnvConfig(): EnvConfig {
       : DEFAULT_JWT_EXPIRES_IN_SECONDS;
 
   const rawSwaggerPath = (process.env.SWAGGER_PATH ?? 'docs').trim().replace(/^\/+|\/+$/g, '');
+  const nodeEnv = process.env.NODE_ENV ?? 'development';
+  const jwtSecret = process.env.JWT_SECRET?.trim();
+
+  if (nodeEnv === 'production' && !jwtSecret) {
+    throw new Error('JWT_SECRET é obrigatório em ambiente de produção.');
+  }
 
   return {
-    nodeEnv: process.env.NODE_ENV ?? 'development',
+    nodeEnv,
     port,
     databaseUrl: process.env.DATABASE_URL ?? 'file:./dev.db',
-    jwtSecret: process.env.JWT_SECRET ?? 'dev-secret-change-me',
+    jwtSecret: jwtSecret || 'dev-secret-change-me',
     jwtExpiresInSeconds,
     swaggerPath: rawSwaggerPath || 'docs',
   };
