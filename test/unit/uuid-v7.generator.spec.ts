@@ -24,10 +24,10 @@ describe('UuidV7Generator', () => {
   it('deve manter ordenação cronológica entre milissegundos distintos', () => {
     jest.useFakeTimers();
 
-    jest.setSystemTime(new Date('2026-11-21T23:00:00.000Z'));
+    jest.setSystemTime(new Date('2026-02-15T14:00:00.000Z'));
     const anterior = generator.generate();
 
-    jest.setSystemTime(new Date('2026-11-21T23:00:01.000Z'));
+    jest.setSystemTime(new Date('2026-02-15T14:00:01.000Z'));
     const posterior = generator.generate();
 
     expect(anterior < posterior).toBe(true);

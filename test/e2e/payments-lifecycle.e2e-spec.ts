@@ -1,39 +1,18 @@
-import * as bcrypt from 'bcryptjs';
 import request from 'supertest';
-import { createTestApp, resetDatabase, type TestAppContext } from './helpers/test-app.helper';
+import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
+import {
+  UUID_V7_REGEX,
+  createTestApp,
+  criarContaFidelidade,
+  criarProdutoComEstoque,
+  criarUnidade,
+  criarUsuarioELogar,
+  resetDatabase,
+  type TestAppContext,
+} from './helpers/test-app.helper';
 
-const UUID_V7_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
-describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
+describe('Pagamentos Simulados e Ciclo de Vida de Pedidos (e2e)', () => {
   let ctx: TestAppContext;
-
-  async function criarUsuarioELogar(params: {
-    nome: string;
-    email: string;
-    perfil: 'ADMIN' | 'GERENTE' | 'ATENDENTE' | 'COZINHA' | 'CLIENTE';
-    unidadeId?: string | null;
-  }): Promise<{ id: string; token: string }> {
-    const senhaHash = await bcrypt.hash('Senha@123', 10);
-    const usuario = await ctx.prisma.usuario.create({
-      data: {
-        nome: params.nome,
-        email: params.email,
-        senhaHash,
-        perfil: params.perfil,
-        unidadeId: params.unidadeId ?? null,
-      },
-    });
-
-    const loginRes = await request(ctx.app.getHttpServer())
-      .post('/auth/login')
-      .send({ email: params.email, senha: 'Senha@123' })
-      .expect(200);
-
-    return {
-      id: usuario.id,
-      token: loginRes.body.accessToken as string,
-    };
-  }
 
   beforeAll(async () => {
     ctx = await createTestApp();
@@ -47,46 +26,23 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
     await ctx.app.close();
   });
 
-  describe('Pagamentos Mock (/pagamentos)', () => {
-    it('deve aprovar pagamento, avançar pedido para EM_PREPARO, acumular pontos e garantir idempotência', async () => {
-      const unidade = await ctx.prisma.unidade.create({
-        data: {
-          codigo: 'REC-01',
-          nome: 'Raízes Boa Viagem',
-          endereco: 'Av. Boa Viagem, 1000',
-        },
+  describe('Pagamentos (/pagamentos)', () => {
+    it('deve aprovar pagamento, avançar para EM_PREPARO, acumular pontos e manter idempotência sem duplicar log', async () => {
+      const unidade = await criarUnidade(ctx.prisma);
+      const { produto } = await criarProdutoComEstoque(ctx.prisma, unidade.id, {
+        nome: 'Carne de Sol com Macaxeira',
+        categoria: 'PRATOS',
+        precoCentavos: 3500,
       });
 
-      const produto = await ctx.prisma.produto.create({
-        data: {
-          nome: 'Carne de Sol com Macaxeira',
-          categoria: 'PRATOS',
-          precoCentavos: 3500,
-        },
-      });
-
-      await ctx.prisma.estoqueUnidade.create({
-        data: {
-          unidadeId: unidade.id,
-          produtoId: produto.id,
-          quantidadeDisponivel: 10,
-          disponivelVenda: true,
-        },
-      });
-
-      const cliente = await criarUsuarioELogar({
+      const cliente = await criarUsuarioELogar(ctx, {
         nome: 'Cliente Fiel',
         email: 'fiel@exemplo.com',
-        perfil: 'CLIENTE',
+        perfil: PerfilUsuario.CLIENTE,
       });
-
-      await ctx.prisma.contaFidelidade.create({
-        data: {
-          usuarioId: cliente.id,
-          saldoPontos: 0,
-          consentimentoAtivo: true,
-          consentimentoEm: new Date(),
-        },
+      await criarContaFidelidade(ctx.prisma, cliente.id, {
+        saldoPontos: 0,
+        consentimentoAtivo: true,
       });
 
       const pedidoRes = await request(ctx.app.getHttpServer())
@@ -120,7 +76,6 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
         valorCentavos: 3500,
         valor: 35,
       });
-      expect(typeof payRes.body.referenciaExterna).toBe('string');
       expect((payRes.body.referenciaExterna as string).length).toBeGreaterThan(0);
       expect(payRes.body.processadoEm).toBeTruthy();
 
@@ -137,19 +92,17 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
       const movFidelidade = await ctx.prisma.movimentacaoFidelidade.findFirst({
         where: { pedidoId, tipo: 'ACUMULO' },
       });
-      expect(movFidelidade).not.toBeNull();
       expect(movFidelidade?.pontos).toBe(3);
 
-      const logs = await ctx.prisma.logAuditoria.findMany({
+      const logsAntesRetry = await ctx.prisma.logAuditoria.count({
         where: {
           acao: 'PAGAMENTO_PROCESSADO',
           entidade: 'pagamentos',
           entidadeId: pagamentoId,
         },
       });
-      expect(logs.length).toBe(1);
+      expect(logsAntesRetry).toBe(1);
 
-      // Retentativa idempotente com a mesma idempotencyKey -> 200 sem duplicar pontos nem pagamento
       const retryRes = await request(ctx.app.getHttpServer())
         .post('/pagamentos')
         .set('Authorization', `Bearer ${cliente.token}`)
@@ -170,47 +123,29 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
 
       const totalPagamentos = await ctx.prisma.pagamento.count({ where: { pedidoId } });
       expect(totalPagamentos).toBe(1);
+
+      const logsAposRetry = await ctx.prisma.logAuditoria.count({
+        where: {
+          acao: 'PAGAMENTO_PROCESSADO',
+          entidade: 'pagamentos',
+          entidadeId: pagamentoId,
+        },
+      });
+      expect(logsAposRetry).toBe(1);
     });
 
     it('deve recusar pagamento simulado, marcar PAGAMENTO_RECUSADO e estornar estoque e pontos', async () => {
-      const unidade = await ctx.prisma.unidade.create({
-        data: {
-          codigo: 'REC-01',
-          nome: 'Raízes Boa Viagem',
-          endereco: 'Av. Boa Viagem, 1000',
-        },
-      });
+      const unidade = await criarUnidade(ctx.prisma);
+      const { produto, estoque } = await criarProdutoComEstoque(ctx.prisma, unidade.id);
 
-      const produto = await ctx.prisma.produto.create({
-        data: {
-          nome: 'Tapioca Carne de Sol',
-          categoria: 'TAPIOCAS',
-          precoCentavos: 2500,
-        },
-      });
-
-      const estoque = await ctx.prisma.estoqueUnidade.create({
-        data: {
-          unidadeId: unidade.id,
-          produtoId: produto.id,
-          quantidadeDisponivel: 10,
-          disponivelVenda: true,
-        },
-      });
-
-      const cliente = await criarUsuarioELogar({
+      const cliente = await criarUsuarioELogar(ctx, {
         nome: 'Cliente Pontos',
         email: 'pontos@exemplo.com',
-        perfil: 'CLIENTE',
+        perfil: PerfilUsuario.CLIENTE,
       });
-
-      await ctx.prisma.contaFidelidade.create({
-        data: {
-          usuarioId: cliente.id,
-          saldoPontos: 20,
-          consentimentoAtivo: true,
-          consentimentoEm: new Date(),
-        },
+      await criarContaFidelidade(ctx.prisma, cliente.id, {
+        saldoPontos: 20,
+        consentimentoAtivo: true,
       });
 
       const pedidoRes = await request(ctx.app.getHttpServer())
@@ -251,7 +186,6 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
       const movEstoqueEstorno = await ctx.prisma.movimentacaoEstoque.findFirst({
         where: { pedidoId, tipo: 'ESTORNO' },
       });
-      expect(movEstoqueEstorno).not.toBeNull();
       expect(movEstoqueEstorno?.quantidade).toBe(2);
 
       const contaEstornada = await ctx.prisma.contaFidelidade.findUniqueOrThrow({
@@ -262,53 +196,31 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
       const movFidelidadeEstorno = await ctx.prisma.movimentacaoFidelidade.findFirst({
         where: { pedidoId, tipo: 'ESTORNO' },
       });
-      expect(movFidelidadeEstorno).not.toBeNull();
       expect(movFidelidadeEstorno?.pontos).toBe(10);
     });
 
     it('não deve acumular pontos sem consentimento e deve retornar 403/404/409 nos conflitos de pagamento', async () => {
-      const unidade = await ctx.prisma.unidade.create({
-        data: {
-          codigo: 'REC-01',
-          nome: 'Raízes Boa Viagem',
-          endereco: 'Av. Boa Viagem, 1000',
-        },
+      const unidade = await criarUnidade(ctx.prisma);
+      const { produto } = await criarProdutoComEstoque(ctx.prisma, unidade.id, {
+        nome: 'Baião de Dois',
+        categoria: 'PRATOS',
+        precoCentavos: 3000,
       });
 
-      const produto = await ctx.prisma.produto.create({
-        data: {
-          nome: 'Baião de Dois',
-          categoria: 'PRATOS',
-          precoCentavos: 3000,
-        },
-      });
-
-      await ctx.prisma.estoqueUnidade.create({
-        data: {
-          unidadeId: unidade.id,
-          produtoId: produto.id,
-          quantidadeDisponivel: 10,
-          disponivelVenda: true,
-        },
-      });
-
-      const clienteSemConsent = await criarUsuarioELogar({
+      const clienteSemConsent = await criarUsuarioELogar(ctx, {
         nome: 'Cliente Sem Consentimento',
         email: 'semconsent@exemplo.com',
-        perfil: 'CLIENTE',
+        perfil: PerfilUsuario.CLIENTE,
       });
-      await ctx.prisma.contaFidelidade.create({
-        data: {
-          usuarioId: clienteSemConsent.id,
-          saldoPontos: 0,
-          consentimentoAtivo: false,
-        },
+      await criarContaFidelidade(ctx.prisma, clienteSemConsent.id, {
+        saldoPontos: 0,
+        consentimentoAtivo: false,
       });
 
-      const outroCliente = await criarUsuarioELogar({
+      const outroCliente = await criarUsuarioELogar(ctx, {
         nome: 'Outro Cliente',
         email: 'outro@exemplo.com',
-        perfil: 'CLIENTE',
+        perfil: PerfilUsuario.CLIENTE,
       });
 
       const pedidoRes = await request(ctx.app.getHttpServer())
@@ -322,7 +234,6 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
         .expect(201);
       const pedidoId = pedidoRes.body.id as string;
 
-      // Outro cliente tentando pagar pedido alheio -> 403
       const forbiddenRes = await request(ctx.app.getHttpServer())
         .post('/pagamentos')
         .set('Authorization', `Bearer ${outroCliente.token}`)
@@ -334,7 +245,6 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
         .expect(403);
       expect(forbiddenRes.body.error).toBe('ACESSO_NEGADO');
 
-      // Pagamento aprovado sem consentimento -> não acumula pontos
       await request(ctx.app.getHttpServer())
         .post('/pagamentos')
         .set('Authorization', `Bearer ${clienteSemConsent.token}`)
@@ -355,7 +265,6 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
       });
       expect(movAcumulo).toBeNull();
 
-      // Tentar pagar pedido já EM_PREPARO com outra chave -> 409
       const conflictRes = await request(ctx.app.getHttpServer())
         .post('/pagamentos')
         .set('Authorization', `Bearer ${clienteSemConsent.token}`)
@@ -367,7 +276,6 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
         .expect(409);
       expect(conflictRes.body.error).toBe('PEDIDO_NAO_PAGAVEL');
 
-      // Pedido inexistente -> 404
       const notFoundRes = await request(ctx.app.getHttpServer())
         .post('/pagamentos')
         .set('Authorization', `Bearer ${clienteSemConsent.token}`)
@@ -382,52 +290,41 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
   });
 
   describe('Ciclo de Status e Cancelamento (/pedidos/:id/status e /cancelar)', () => {
-    it('deve avançar EM_PREPARO -> PRONTO (COZINHA) -> ENTREGUE (ATENDENTE) respeitando RBAC e transições', async () => {
-      const unidadeA = await ctx.prisma.unidade.create({
-        data: { codigo: 'REC-01', nome: 'Boa Viagem', endereco: 'Av. Boa Viagem, 1000' },
-      });
-      const unidadeB = await ctx.prisma.unidade.create({
-        data: { codigo: 'FOR-01', nome: 'Meireles', endereco: 'Av. Beira Mar, 500' },
-      });
-
-      const produto = await ctx.prisma.produto.create({
-        data: {
-          nome: 'Moqueca Nordestina',
-          categoria: 'PRATOS',
-          precoCentavos: 4500,
-        },
+    it('deve avançar EM_PREPARO -> PRONTO -> ENTREGUE respeitando RBAC por perfil e unidade', async () => {
+      const unidadeA = await criarUnidade(ctx.prisma, { codigo: 'REC-01', nome: 'Boa Viagem' });
+      const unidadeB = await criarUnidade(ctx.prisma, {
+        codigo: 'FOR-01',
+        nome: 'Meireles',
+        endereco: 'Av. Beira Mar, 500',
       });
 
-      await ctx.prisma.estoqueUnidade.create({
-        data: {
-          unidadeId: unidadeA.id,
-          produtoId: produto.id,
-          quantidadeDisponivel: 10,
-          disponivelVenda: true,
-        },
+      const { produto } = await criarProdutoComEstoque(ctx.prisma, unidadeA.id, {
+        nome: 'Moqueca Nordestina',
+        categoria: 'PRATOS',
+        precoCentavos: 4500,
       });
 
-      const cliente = await criarUsuarioELogar({
+      const cliente = await criarUsuarioELogar(ctx, {
         nome: 'Cliente',
         email: 'cliente@exemplo.com',
-        perfil: 'CLIENTE',
+        perfil: PerfilUsuario.CLIENTE,
       });
-      const cozinhaA = await criarUsuarioELogar({
+      const cozinhaA = await criarUsuarioELogar(ctx, {
         nome: 'Cozinha A',
         email: 'cozinha.a@raizes.com',
-        perfil: 'COZINHA',
+        perfil: PerfilUsuario.COZINHA,
         unidadeId: unidadeA.id,
       });
-      const atendenteA = await criarUsuarioELogar({
+      const atendenteA = await criarUsuarioELogar(ctx, {
         nome: 'Atendente A',
         email: 'atendente.a@raizes.com',
-        perfil: 'ATENDENTE',
+        perfil: PerfilUsuario.ATENDENTE,
         unidadeId: unidadeA.id,
       });
-      const cozinhaB = await criarUsuarioELogar({
+      const cozinhaB = await criarUsuarioELogar(ctx, {
         nome: 'Cozinha B',
         email: 'cozinha.b@raizes.com',
-        perfil: 'COZINHA',
+        perfil: PerfilUsuario.COZINHA,
         unidadeId: unidadeB.id,
       });
 
@@ -452,7 +349,6 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
         })
         .expect(201);
 
-      // Atendente não pode marcar PRONTO -> 403
       const atendenteProntoRes = await request(ctx.app.getHttpServer())
         .patch(`/pedidos/${pedidoId}/status`)
         .set('Authorization', `Bearer ${atendenteA.token}`)
@@ -460,7 +356,6 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
         .expect(403);
       expect(atendenteProntoRes.body.error).toBe('ACESSO_NEGADO');
 
-      // Cozinha de outra unidade não pode alterar -> 403
       const cozinhaBRes = await request(ctx.app.getHttpServer())
         .patch(`/pedidos/${pedidoId}/status`)
         .set('Authorization', `Bearer ${cozinhaB.token}`)
@@ -468,7 +363,6 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
         .expect(403);
       expect(cozinhaBRes.body.error).toBe('ACESSO_NEGADO');
 
-      // Cozinha não pode marcar ENTREGUE -> 403
       const cozinhaEntregueRes = await request(ctx.app.getHttpServer())
         .patch(`/pedidos/${pedidoId}/status`)
         .set('Authorization', `Bearer ${cozinhaA.token}`)
@@ -476,7 +370,6 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
         .expect(403);
       expect(cozinhaEntregueRes.body.error).toBe('ACESSO_NEGADO');
 
-      // Cozinha A marca PRONTO -> 200
       const prontoRes = await request(ctx.app.getHttpServer())
         .patch(`/pedidos/${pedidoId}/status`)
         .set('Authorization', `Bearer ${cozinhaA.token}`)
@@ -484,7 +377,6 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
         .expect(200);
       expect(prontoRes.body.status).toBe('PRONTO');
 
-      // Atendente A marca ENTREGUE -> 200
       const entregueRes = await request(ctx.app.getHttpServer())
         .patch(`/pedidos/${pedidoId}/status`)
         .set('Authorization', `Bearer ${atendenteA.token}`)
@@ -492,7 +384,6 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
         .expect(200);
       expect(entregueRes.body.status).toBe('ENTREGUE');
 
-      // Tentar alterar pedido já ENTREGUE -> 409
       const aposEntregaRes = await request(ctx.app.getHttpServer())
         .patch(`/pedidos/${pedidoId}/status`)
         .set('Authorization', `Bearer ${atendenteA.token}`)
@@ -500,60 +391,38 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
         .expect(409);
       expect(aposEntregaRes.body.error).toBe('TRANSICAO_STATUS_INVALIDA');
 
-      const logsStatus = await ctx.prisma.logAuditoria.findMany({
+      const logsStatus = await ctx.prisma.logAuditoria.count({
         where: {
           acao: 'PEDIDO_STATUS_ATUALIZADO',
           entidade: 'pedidos',
           entidadeId: pedidoId,
         },
       });
-      expect(logsStatus.length).toBe(2);
+      expect(logsStatus).toBe(2);
     });
 
     it('deve cancelar pedido antes da entrega estornando estoque e pontos e bloquear recancelamento', async () => {
-      const unidade = await ctx.prisma.unidade.create({
-        data: {
-          codigo: 'REC-01',
-          nome: 'Raízes Boa Viagem',
-          endereco: 'Av. Boa Viagem, 1000',
-        },
+      const unidade = await criarUnidade(ctx.prisma);
+      const { produto, estoque } = await criarProdutoComEstoque(ctx.prisma, unidade.id, {
+        nome: 'Bolo de Rolo',
+        categoria: 'SOBREMESAS',
+        precoCentavos: 2500,
       });
 
-      const produto = await ctx.prisma.produto.create({
-        data: {
-          nome: 'Bolo de Rolo',
-          categoria: 'SOBREMESAS',
-          precoCentavos: 2500,
-        },
-      });
-
-      const estoque = await ctx.prisma.estoqueUnidade.create({
-        data: {
-          unidadeId: unidade.id,
-          produtoId: produto.id,
-          quantidadeDisponivel: 10,
-          disponivelVenda: true,
-        },
-      });
-
-      const cliente = await criarUsuarioELogar({
+      const cliente = await criarUsuarioELogar(ctx, {
         nome: 'Cliente Cancelamento',
         email: 'cancel@exemplo.com',
-        perfil: 'CLIENTE',
+        perfil: PerfilUsuario.CLIENTE,
       });
-      await ctx.prisma.contaFidelidade.create({
-        data: {
-          usuarioId: cliente.id,
-          saldoPontos: 20,
-          consentimentoAtivo: true,
-          consentimentoEm: new Date(),
-        },
+      await criarContaFidelidade(ctx.prisma, cliente.id, {
+        saldoPontos: 20,
+        consentimentoAtivo: true,
       });
 
-      const cozinha = await criarUsuarioELogar({
+      const cozinha = await criarUsuarioELogar(ctx, {
         nome: 'Cozinha',
         email: 'cozinha@raizes.com',
-        perfil: 'COZINHA',
+        perfil: PerfilUsuario.COZINHA,
         unidadeId: unidade.id,
       });
 
@@ -569,14 +438,12 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
         .expect(201);
       const pedidoId = pedidoRes.body.id as string;
 
-      // Cozinha não tem permissão para cancelar -> 403
       const cozinhaCancelRes = await request(ctx.app.getHttpServer())
         .post(`/pedidos/${pedidoId}/cancelar`)
         .set('Authorization', `Bearer ${cozinha.token}`)
         .expect(403);
       expect(cozinhaCancelRes.body.error).toBe('ACESSO_NEGADO');
 
-      // Dono cancela -> 200 e estorna tudo
       const cancelRes = await request(ctx.app.getHttpServer())
         .post(`/pedidos/${pedidoId}/cancelar`)
         .set('Authorization', `Bearer ${cliente.token}`)
@@ -591,7 +458,6 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
       const movEstoque = await ctx.prisma.movimentacaoEstoque.findFirst({
         where: { pedidoId, tipo: 'ESTORNO' },
       });
-      expect(movEstoque).not.toBeNull();
       expect(movEstoque?.quantidade).toBe(2);
 
       const contaEstornada = await ctx.prisma.contaFidelidade.findUniqueOrThrow({
@@ -602,19 +468,17 @@ describe('Pagamentos Mock e Ciclo de Vida de Pedidos (e2e)', () => {
       const movFidelidade = await ctx.prisma.movimentacaoFidelidade.findFirst({
         where: { pedidoId, tipo: 'ESTORNO' },
       });
-      expect(movFidelidade).not.toBeNull();
       expect(movFidelidade?.pontos).toBe(10);
 
-      const logsCancel = await ctx.prisma.logAuditoria.findMany({
+      const logsCancel = await ctx.prisma.logAuditoria.count({
         where: {
           acao: 'PEDIDO_CANCELADO',
           entidade: 'pedidos',
           entidadeId: pedidoId,
         },
       });
-      expect(logsCancel.length).toBe(1);
+      expect(logsCancel).toBe(1);
 
-      // Tentar cancelar pedido já CANCELADO -> 409
       const recancelarRes = await request(ctx.app.getHttpServer())
         .post(`/pedidos/${pedidoId}/cancelar`)
         .set('Authorization', `Bearer ${cliente.token}`)

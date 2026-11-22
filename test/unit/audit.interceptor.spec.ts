@@ -5,8 +5,10 @@ import { AuditInterceptor } from '@api/common/interceptors/audit.interceptor';
 
 function createMockContext(options: {
   userId?: string;
+  userUnidadeId?: string | null;
   requestId?: string;
   paramsId?: string;
+  statusCode?: number;
 }): ExecutionContext {
   return {
     getHandler: () => jest.fn(),
@@ -18,7 +20,12 @@ function createMockContext(options: {
         url: '/usuarios',
         params: options.paramsId ? { id: options.paramsId } : {},
         requestId: options.requestId,
-        user: options.userId ? { id: options.userId } : undefined,
+        user: options.userId
+          ? { id: options.userId, unidadeId: options.userUnidadeId ?? null }
+          : undefined,
+      }),
+      getResponse: () => ({
+        statusCode: options.statusCode ?? 201,
       }),
     }),
   } as unknown as ExecutionContext;
@@ -99,6 +106,58 @@ describe('AuditInterceptor', () => {
         usuarioId: 'cliente-1',
         entidadeId: 'cliente-1',
         acao: 'USUARIO_CADASTRADO',
+      }),
+    );
+  });
+
+  it('não deve registrar auditoria quando statusCode coincidir com ignorarQuandoStatus', async () => {
+    const reflector = {
+      getAllAndOverride: jest.fn().mockReturnValue({
+        acao: 'PAGAMENTO_PROCESSADO',
+        entidade: 'pagamentos',
+        ignorarQuandoStatus: 200,
+      }),
+    };
+    const registrar = jest.fn().mockResolvedValue(undefined);
+    const interceptor = new AuditInterceptor(reflector as unknown as Reflector, { registrar });
+
+    const next: CallHandler = { handle: () => of({ id: 'pag-1', status: 'APROVADO' }) };
+    const result = await firstValueFrom(
+      interceptor.intercept(createMockContext({ userId: 'cli-1', statusCode: 200 }), next),
+    );
+
+    expect(result).toEqual({ id: 'pag-1', status: 'APROVADO' });
+    expect(registrar).not.toHaveBeenCalled();
+  });
+
+  it('deve extrair unidadeId de responseData.saldo quando não estiver na raiz', async () => {
+    const reflector = {
+      getAllAndOverride: jest.fn().mockReturnValue({
+        acao: 'ESTOQUE_MOVIMENTADO',
+        entidade: 'estoque_unidades',
+      }),
+    };
+    const registrar = jest.fn().mockResolvedValue(undefined);
+    const interceptor = new AuditInterceptor(reflector as unknown as Reflector, { registrar });
+
+    const next: CallHandler = {
+      handle: () =>
+        of({
+          movimentacao: { id: 'mov-1' },
+          saldo: { id: 'est-1', unidadeId: 'uni-saldo' },
+        }),
+    };
+
+    await firstValueFrom(
+      interceptor.intercept(createMockContext({ userId: 'admin-1', requestId: 'req-est' }), next),
+    );
+
+    expect(registrar).toHaveBeenCalledWith(
+      expect.objectContaining({
+        entidadeId: 'est-1',
+        metadados: expect.objectContaining({
+          unidadeId: 'uni-saldo',
+        }),
       }),
     );
   });

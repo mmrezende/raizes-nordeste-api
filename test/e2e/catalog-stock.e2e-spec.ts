@@ -1,39 +1,16 @@
-import * as bcrypt from 'bcryptjs';
 import request from 'supertest';
-import { createTestApp, resetDatabase, type TestAppContext } from './helpers/test-app.helper';
-
-const UUID_V7_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
+import {
+  UUID_V7_REGEX,
+  createTestApp,
+  criarUnidade,
+  criarUsuarioELogar,
+  resetDatabase,
+  type TestAppContext,
+} from './helpers/test-app.helper';
 
 describe('Unidades, Produtos, Cardápio e Estoque (e2e)', () => {
   let ctx: TestAppContext;
-
-  async function criarUsuarioELogar(params: {
-    nome: string;
-    email: string;
-    perfil: 'ADMIN' | 'GERENTE' | 'CLIENTE';
-    unidadeId?: string | null;
-  }): Promise<{ id: string; token: string }> {
-    const senhaHash = await bcrypt.hash('Senha@123', 10);
-    const usuario = await ctx.prisma.usuario.create({
-      data: {
-        nome: params.nome,
-        email: params.email,
-        senhaHash,
-        perfil: params.perfil,
-        unidadeId: params.unidadeId ?? null,
-      },
-    });
-
-    const loginRes = await request(ctx.app.getHttpServer())
-      .post('/auth/login')
-      .send({ email: params.email, senha: 'Senha@123' })
-      .expect(200);
-
-    return {
-      id: usuario.id,
-      token: loginRes.body.accessToken as string,
-    };
-  }
 
   beforeAll(async () => {
     ctx = await createTestApp();
@@ -49,10 +26,10 @@ describe('Unidades, Produtos, Cardápio e Estoque (e2e)', () => {
 
   describe('Unidades (/unidades)', () => {
     it('deve permitir ADMIN cadastrar unidade com UUIDv7 e listar paginado', async () => {
-      const admin = await criarUsuarioELogar({
+      const admin = await criarUsuarioELogar(ctx, {
         nome: 'Admin',
         email: 'admin@raizes.com',
-        perfil: 'ADMIN',
+        perfil: PerfilUsuario.ADMIN,
       });
 
       const createRes = await request(ctx.app.getHttpServer())
@@ -86,16 +63,16 @@ describe('Unidades, Produtos, Cardápio e Estoque (e2e)', () => {
       expect((listRes.body.data as unknown[]).length).toBe(1);
     });
 
-    it('deve retornar 409 ao tentar cadastrar código de unidade duplicado e 403 para CLIENTE', async () => {
-      const admin = await criarUsuarioELogar({
+    it('deve retornar 409 para código duplicado e 403 quando CLIENTE tentar cadastrar unidade', async () => {
+      const admin = await criarUsuarioELogar(ctx, {
         nome: 'Admin',
         email: 'admin@raizes.com',
-        perfil: 'ADMIN',
+        perfil: PerfilUsuario.ADMIN,
       });
-      const cliente = await criarUsuarioELogar({
+      const cliente = await criarUsuarioELogar(ctx, {
         nome: 'Cliente',
         email: 'cliente@exemplo.com',
-        perfil: 'CLIENTE',
+        perfil: PerfilUsuario.CLIENTE,
       });
 
       await request(ctx.app.getHttpServer())
@@ -136,10 +113,10 @@ describe('Unidades, Produtos, Cardápio e Estoque (e2e)', () => {
 
   describe('Produtos (/produtos)', () => {
     it('deve cadastrar produto na matriz e filtrar listagem por categoria', async () => {
-      const admin = await criarUsuarioELogar({
+      const admin = await criarUsuarioELogar(ctx, {
         nome: 'Admin',
         email: 'admin@raizes.com',
-        perfil: 'ADMIN',
+        perfil: PerfilUsuario.ADMIN,
       });
 
       const createRes = await request(ctx.app.getHttpServer())
@@ -181,15 +158,15 @@ describe('Unidades, Produtos, Cardápio e Estoque (e2e)', () => {
     });
 
     it('deve retornar 422 para preço inválido e 403 quando CLIENTE tentar criar produto', async () => {
-      const admin = await criarUsuarioELogar({
+      const admin = await criarUsuarioELogar(ctx, {
         nome: 'Admin',
         email: 'admin@raizes.com',
-        perfil: 'ADMIN',
+        perfil: PerfilUsuario.ADMIN,
       });
-      const cliente = await criarUsuarioELogar({
+      const cliente = await criarUsuarioELogar(ctx, {
         nome: 'Cliente',
         email: 'cliente@exemplo.com',
-        perfil: 'CLIENTE',
+        perfil: PerfilUsuario.CLIENTE,
       });
 
       const invalidRes = await request(ctx.app.getHttpServer())
@@ -217,18 +194,18 @@ describe('Unidades, Produtos, Cardápio e Estoque (e2e)', () => {
   });
 
   describe('Estoque por Unidade e Cardápio (/estoque e /unidades/:id/cardapio)', () => {
-    it('deve registrar ENTRADA/SAIDA, bloquear saída sem saldo (409) e refletir no cardápio da unidade', async () => {
-      const unidadeA = await ctx.prisma.unidade.create({
-        data: { codigo: 'REC-01', nome: 'Boa Viagem', endereco: 'Av. Boa Viagem, 1000' },
-      });
-      const unidadeB = await ctx.prisma.unidade.create({
-        data: { codigo: 'FOR-01', nome: 'Meireles', endereco: 'Av. Beira Mar, 500' },
+    it('deve registrar ENTRADA/SAIDA, isolar cardápio por loja e auditar movimentações', async () => {
+      const unidadeA = await criarUnidade(ctx.prisma, { codigo: 'REC-01', nome: 'Boa Viagem' });
+      const unidadeB = await criarUnidade(ctx.prisma, {
+        codigo: 'FOR-01',
+        nome: 'Meireles',
+        endereco: 'Av. Beira Mar, 500',
       });
 
-      const gerenteA = await criarUsuarioELogar({
+      const gerenteA = await criarUsuarioELogar(ctx, {
         nome: 'Gerente A',
         email: 'gerente.a@raizes.com',
-        perfil: 'GERENTE',
+        perfil: PerfilUsuario.GERENTE,
         unidadeId: unidadeA.id,
       });
 
@@ -240,7 +217,6 @@ describe('Unidades, Produtos, Cardápio e Estoque (e2e)', () => {
         },
       });
 
-      // Entrada de 10 unidades na Loja A
       const entradaRes = await request(ctx.app.getHttpServer())
         .post('/estoque/movimentacoes')
         .set('Authorization', `Bearer ${gerenteA.token}`)
@@ -261,7 +237,6 @@ describe('Unidades, Produtos, Cardápio e Estoque (e2e)', () => {
         disponivelVenda: true,
       });
 
-      // Saída de 3 unidades -> saldo 7
       const saidaRes = await request(ctx.app.getHttpServer())
         .post('/estoque/movimentacoes')
         .set('Authorization', `Bearer ${gerenteA.token}`)
@@ -276,7 +251,6 @@ describe('Unidades, Produtos, Cardápio e Estoque (e2e)', () => {
 
       expect(saidaRes.body.saldo.quantidadeDisponivel).toBe(7);
 
-      // Tentativa de saída maior que saldo -> 409
       const insufRes = await request(ctx.app.getHttpServer())
         .post('/estoque/movimentacoes')
         .set('Authorization', `Bearer ${gerenteA.token}`)
@@ -290,7 +264,6 @@ describe('Unidades, Produtos, Cardápio e Estoque (e2e)', () => {
 
       expect(insufRes.body.error).toBe('ESTOQUE_INSUFICIENTE');
 
-      // Cardápio da Loja A deve exibir saldo 7; Loja B deve vir vazia
       const cardapioA = await request(ctx.app.getHttpServer())
         .get(`/unidades/${unidadeA.id}/cardapio?page=1&limit=10`)
         .expect(200);
@@ -310,7 +283,6 @@ describe('Unidades, Produtos, Cardápio e Estoque (e2e)', () => {
 
       expect(cardapioB.body.meta.total).toBe(0);
 
-      // Gerente A consultando estoque da própria loja -> 200
       const estoqueA = await request(ctx.app.getHttpServer())
         .get(`/unidades/${unidadeA.id}/estoque`)
         .set('Authorization', `Bearer ${gerenteA.token}`)
@@ -318,31 +290,30 @@ describe('Unidades, Produtos, Cardápio e Estoque (e2e)', () => {
 
       expect(estoqueA.body.data[0].quantidadeDisponivel).toBe(7);
 
-      // Auditoria registrada
       const logs = await ctx.prisma.logAuditoria.findMany({
         where: { entidade: 'estoque_unidades' },
       });
       expect(logs.length).toBeGreaterThanOrEqual(2);
     });
 
-    it('deve impedir GERENTE de movimentar ou consultar estoque de outra unidade (403) e retornar 404 para unidade inexistente', async () => {
-      const unidadeA = await ctx.prisma.unidade.create({
-        data: { codigo: 'REC-01', nome: 'Boa Viagem', endereco: 'Av. Boa Viagem, 1000' },
-      });
-      const unidadeB = await ctx.prisma.unidade.create({
-        data: { codigo: 'FOR-01', nome: 'Meireles', endereco: 'Av. Beira Mar, 500' },
+    it('deve impedir GERENTE de operar estoque de outra unidade (403) e retornar 404 para unidade inexistente', async () => {
+      const unidadeA = await criarUnidade(ctx.prisma, { codigo: 'REC-01', nome: 'Boa Viagem' });
+      const unidadeB = await criarUnidade(ctx.prisma, {
+        codigo: 'FOR-01',
+        nome: 'Meireles',
+        endereco: 'Av. Beira Mar, 500',
       });
 
-      const gerenteA = await criarUsuarioELogar({
+      const gerenteA = await criarUsuarioELogar(ctx, {
         nome: 'Gerente A',
         email: 'gerente.a@raizes.com',
-        perfil: 'GERENTE',
+        perfil: PerfilUsuario.GERENTE,
         unidadeId: unidadeA.id,
       });
-      const admin = await criarUsuarioELogar({
+      const admin = await criarUsuarioELogar(ctx, {
         nome: 'Admin',
         email: 'admin@raizes.com',
-        perfil: 'ADMIN',
+        perfil: PerfilUsuario.ADMIN,
       });
 
       const produto = await ctx.prisma.produto.create({

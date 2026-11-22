@@ -7,8 +7,17 @@ import {
   type PromocaoAplicavel,
 } from '@domain/rules/pedido-calculo.rule';
 
+function capturarErro(fn: () => void): unknown {
+  try {
+    fn();
+    return null;
+  } catch (err) {
+    return err;
+  }
+}
+
 describe('pedido-calculo.rule', () => {
-  const agora = new Date('2026-11-22T12:00:00.000Z');
+  const agora = new Date('2026-02-15T12:00:00.000Z');
   const promocaoBase: PromocaoAplicavel = {
     id: '0193514c-8d12-7a00-8f41-9c2a1b3e4f01',
     codigo: 'TOTEM10',
@@ -17,8 +26,8 @@ describe('pedido-calculo.rule', () => {
     valorMinimoCentavos: 2000,
     unidadeId: null,
     canalAplicavel: CanalPedido.TOTEM,
-    inicioEm: new Date('2026-11-20T00:00:00.000Z'),
-    fimEm: new Date('2026-11-25T23:59:59.000Z'),
+    inicioEm: new Date('2026-02-01T00:00:00.000Z'),
+    fimEm: new Date('2026-02-28T23:59:59.000Z'),
     ativo: true,
   };
 
@@ -76,7 +85,7 @@ describe('pedido-calculo.rule', () => {
           subtotalCentavos: 5000,
           unidadeId: 'u1',
           canalPedido: CanalPedido.TOTEM,
-          agora: new Date('2026-11-30T12:00:00.000Z'),
+          agora: new Date('2026-03-10T12:00:00.000Z'),
         }),
       ).toThrow(ValidationDomainError);
 
@@ -96,20 +105,17 @@ describe('pedido-calculo.rule', () => {
         }),
       ).toThrow(ValidationDomainError);
 
-      let erroCapturado: unknown;
-      try {
+      const erro = capturarErro(() =>
         validarECalcularDescontoPromocao(promocaoBase, {
           subtotalCentavos: 1999,
           unidadeId: 'u1',
           canalPedido: CanalPedido.TOTEM,
           agora,
-        });
-      } catch (err) {
-        erroCapturado = err;
-      }
+        }),
+      );
 
-      expect(erroCapturado).toBeInstanceOf(ValidationDomainError);
-      expect((erroCapturado as ValidationDomainError).code).toBe('PROMOCAO_INVALIDA');
+      expect(erro).toBeInstanceOf(ValidationDomainError);
+      expect((erro as ValidationDomainError).code).toBe('PROMOCAO_INVALIDA');
     });
   });
 
@@ -126,37 +132,31 @@ describe('pedido-calculo.rule', () => {
     });
 
     it('deve lançar FIDELIDADE_SEM_CONSENTIMENTO quando não houver consentimento ativo', () => {
-      let erroCapturado: unknown;
-      try {
+      const erro = capturarErro(() =>
         calcularDescontoFidelidade({
           pontosSolicitados: 10,
           saldoDisponivel: 50,
           consentimentoAtivo: false,
           valorRestanteCentavos: 4000,
-        });
-      } catch (err) {
-        erroCapturado = err;
-      }
+        }),
+      );
 
-      expect(erroCapturado).toBeInstanceOf(ConflictDomainError);
-      expect((erroCapturado as ConflictDomainError).code).toBe('FIDELIDADE_SEM_CONSENTIMENTO');
+      expect(erro).toBeInstanceOf(ConflictDomainError);
+      expect((erro as ConflictDomainError).code).toBe('FIDELIDADE_SEM_CONSENTIMENTO');
     });
 
     it('deve lançar SALDO_PONTOS_INSUFICIENTE quando saldo for menor que pontos solicitados', () => {
-      let erroCapturado: unknown;
-      try {
+      const erro = capturarErro(() =>
         calcularDescontoFidelidade({
           pontosSolicitados: 10,
           saldoDisponivel: 5,
           consentimentoAtivo: true,
           valorRestanteCentavos: 4000,
-        });
-      } catch (err) {
-        erroCapturado = err;
-      }
+        }),
+      );
 
-      expect(erroCapturado).toBeInstanceOf(ConflictDomainError);
-      expect((erroCapturado as ConflictDomainError).code).toBe('SALDO_PONTOS_INSUFICIENTE');
+      expect(erro).toBeInstanceOf(ConflictDomainError);
+      expect((erro as ConflictDomainError).code).toBe('SALDO_PONTOS_INSUFICIENTE');
     });
 
     it('deve calcular resgate normal (10 pts = 500 centavos) e limitar pontos ao restante do pedido', () => {
@@ -168,7 +168,6 @@ describe('pedido-calculo.rule', () => {
       });
       expect(normal).toEqual({ pontosUtilizados: 10, descontoCentavos: 500 });
 
-      // Valor restante 130 centavos comporta no máximo 2 pontos (100 centavos)
       const limitado = calcularDescontoFidelidade({
         pontosSolicitados: 10,
         saldoDisponivel: 20,

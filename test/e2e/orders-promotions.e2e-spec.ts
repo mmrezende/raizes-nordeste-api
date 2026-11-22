@@ -1,8 +1,15 @@
-import * as bcrypt from 'bcryptjs';
 import request from 'supertest';
-import { createTestApp, resetDatabase, type TestAppContext } from './helpers/test-app.helper';
-
-const UUID_V7_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
+import {
+  UUID_V7_REGEX,
+  createTestApp,
+  criarContaFidelidade,
+  criarProdutoComEstoque,
+  criarUnidade,
+  criarUsuarioELogar,
+  resetDatabase,
+  type TestAppContext,
+} from './helpers/test-app.helper';
 
 const DAY_IN_MS = 86_400_000;
 
@@ -16,34 +23,6 @@ function amanhaIso(): string {
 
 describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
   let ctx: TestAppContext;
-
-  async function criarUsuarioELogar(params: {
-    nome: string;
-    email: string;
-    perfil: 'ADMIN' | 'GERENTE' | 'ATENDENTE' | 'COZINHA' | 'CLIENTE';
-    unidadeId?: string | null;
-  }): Promise<{ id: string; token: string }> {
-    const senhaHash = await bcrypt.hash('Senha@123', 10);
-    const usuario = await ctx.prisma.usuario.create({
-      data: {
-        nome: params.nome,
-        email: params.email,
-        senhaHash,
-        perfil: params.perfil,
-        unidadeId: params.unidadeId ?? null,
-      },
-    });
-
-    const loginRes = await request(ctx.app.getHttpServer())
-      .post('/auth/login')
-      .send({ email: params.email, senha: 'Senha@123' })
-      .expect(200);
-
-    return {
-      id: usuario.id,
-      token: loginRes.body.accessToken as string,
-    };
-  }
 
   beforeAll(async () => {
     ctx = await createTestApp();
@@ -59,10 +38,10 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
 
   describe('Promoções (/promocoes)', () => {
     it('deve permitir ADMIN cadastrar promoção com UUIDv7 e listar paginado', async () => {
-      const admin = await criarUsuarioELogar({
+      const admin = await criarUsuarioELogar(ctx, {
         nome: 'Admin',
         email: 'admin@raizes.com',
-        perfil: 'ADMIN',
+        perfil: PerfilUsuario.ADMIN,
       });
 
       const createRes = await request(ctx.app.getHttpServer())
@@ -106,15 +85,15 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
     });
 
     it('deve retornar 409 para código duplicado, 422 para vigência inválida e 403 para CLIENTE', async () => {
-      const admin = await criarUsuarioELogar({
+      const admin = await criarUsuarioELogar(ctx, {
         nome: 'Admin',
         email: 'admin@raizes.com',
-        perfil: 'ADMIN',
+        perfil: PerfilUsuario.ADMIN,
       });
-      const cliente = await criarUsuarioELogar({
+      const cliente = await criarUsuarioELogar(ctx, {
         nome: 'Cliente',
         email: 'cliente@exemplo.com',
-        perfil: 'CLIENTE',
+        perfil: PerfilUsuario.CLIENTE,
       });
 
       const inicioEm = ontemIso();
@@ -184,30 +163,8 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
 
   describe('Pedidos e Multicanalidade (/pedidos)', () => {
     it('deve criar pedido com cupom, resgate de pontos, reserva de estoque e trilha de auditoria', async () => {
-      const unidade = await ctx.prisma.unidade.create({
-        data: {
-          codigo: 'REC-01',
-          nome: 'Raízes Boa Viagem',
-          endereco: 'Av. Boa Viagem, 1000',
-        },
-      });
-
-      const produto = await ctx.prisma.produto.create({
-        data: {
-          nome: 'Tapioca Carne de Sol',
-          categoria: 'TAPIOCAS',
-          precoCentavos: 2500,
-        },
-      });
-
-      const estoque = await ctx.prisma.estoqueUnidade.create({
-        data: {
-          unidadeId: unidade.id,
-          produtoId: produto.id,
-          quantidadeDisponivel: 10,
-          disponivelVenda: true,
-        },
-      });
+      const unidade = await criarUnidade(ctx.prisma);
+      const { produto, estoque } = await criarProdutoComEstoque(ctx.prisma, unidade.id);
 
       const promocao = await ctx.prisma.promocao.create({
         data: {
@@ -223,19 +180,14 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
         },
       });
 
-      const cliente = await criarUsuarioELogar({
+      const cliente = await criarUsuarioELogar(ctx, {
         nome: 'Cliente Fiel',
         email: 'fiel@exemplo.com',
-        perfil: 'CLIENTE',
+        perfil: PerfilUsuario.CLIENTE,
       });
-
-      await ctx.prisma.contaFidelidade.create({
-        data: {
-          usuarioId: cliente.id,
-          saldoPontos: 20,
-          consentimentoAtivo: true,
-          consentimentoEm: new Date(),
-        },
+      await criarContaFidelidade(ctx.prisma, cliente.id, {
+        saldoPontos: 20,
+        consentimentoAtivo: true,
       });
 
       const createRes = await request(ctx.app.getHttpServer())
@@ -286,7 +238,6 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
       const movEstoque = await ctx.prisma.movimentacaoEstoque.findFirst({
         where: { pedidoId, tipo: 'RESERVA' },
       });
-      expect(movEstoque).not.toBeNull();
       expect(movEstoque?.quantidade).toBe(2);
 
       const contaAtualizada = await ctx.prisma.contaFidelidade.findUniqueOrThrow({
@@ -297,7 +248,6 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
       const movFidelidade = await ctx.prisma.movimentacaoFidelidade.findFirst({
         where: { pedidoId, tipo: 'RESGATE' },
       });
-      expect(movFidelidade).not.toBeNull();
       expect(movFidelidade?.pontos).toBe(10);
 
       const logs = await ctx.prisma.logAuditoria.findMany({
@@ -310,30 +260,12 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
       expect(logs.length).toBe(1);
     });
 
-    it('deve retornar 422 para dados ou cupom inelegível e 404 para unidade/produto inexistente', async () => {
-      const unidade = await ctx.prisma.unidade.create({
-        data: {
-          codigo: 'REC-01',
-          nome: 'Raízes Boa Viagem',
-          endereco: 'Av. Boa Viagem, 1000',
-        },
-      });
-
-      const produto = await ctx.prisma.produto.create({
-        data: {
-          nome: 'Cuscuz Recheado',
-          categoria: 'CUSCUZ',
-          precoCentavos: 2200,
-        },
-      });
-
-      await ctx.prisma.estoqueUnidade.create({
-        data: {
-          unidadeId: unidade.id,
-          produtoId: produto.id,
-          quantidadeDisponivel: 10,
-          disponivelVenda: true,
-        },
+    it('deve retornar 422 para canal ausente/inválido, itens vazios ou cupom inelegível', async () => {
+      const unidade = await criarUnidade(ctx.prisma);
+      const { produto } = await criarProdutoComEstoque(ctx.prisma, unidade.id, {
+        nome: 'Cuscuz Recheado',
+        categoria: 'CUSCUZ',
+        precoCentavos: 2200,
       });
 
       await ctx.prisma.promocao.create({
@@ -350,13 +282,12 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
         },
       });
 
-      const cliente = await criarUsuarioELogar({
+      const cliente = await criarUsuarioELogar(ctx, {
         nome: 'Cliente',
         email: 'cliente@exemplo.com',
-        perfil: 'CLIENTE',
+        perfil: PerfilUsuario.CLIENTE,
       });
 
-      // Sem canalPedido -> 422
       const semCanalRes = await request(ctx.app.getHttpServer())
         .post('/pedidos')
         .set('Authorization', `Bearer ${cliente.token}`)
@@ -367,7 +298,6 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
         .expect(422);
       expect(semCanalRes.body.error).toBe('ERRO_VALIDACAO');
 
-      // canalPedido inválido -> 422
       const canalInvalidoRes = await request(ctx.app.getHttpServer())
         .post('/pedidos')
         .set('Authorization', `Bearer ${cliente.token}`)
@@ -379,7 +309,6 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
         .expect(422);
       expect(canalInvalidoRes.body.error).toBe('ERRO_VALIDACAO');
 
-      // itens vazio -> 422
       const itensVazioRes = await request(ctx.app.getHttpServer())
         .post('/pedidos')
         .set('Authorization', `Bearer ${cliente.token}`)
@@ -391,31 +320,6 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
         .expect(422);
       expect(itensVazioRes.body.error).toBe('ERRO_VALIDACAO');
 
-      // unidadeId inexistente -> 404
-      const unidadeNotFoundRes = await request(ctx.app.getHttpServer())
-        .post('/pedidos')
-        .set('Authorization', `Bearer ${cliente.token}`)
-        .send({
-          unidadeId: '0193514c-8d12-7a00-8f41-9c2a1b3e4f99',
-          canalPedido: 'APP',
-          itens: [{ produtoId: produto.id, quantidade: 1 }],
-        })
-        .expect(404);
-      expect(unidadeNotFoundRes.body.error).toBe('UNIDADE_NAO_ENCONTRADA');
-
-      // produtoId inexistente -> 404
-      const produtoNotFoundRes = await request(ctx.app.getHttpServer())
-        .post('/pedidos')
-        .set('Authorization', `Bearer ${cliente.token}`)
-        .send({
-          unidadeId: unidade.id,
-          canalPedido: 'APP',
-          itens: [{ produtoId: '0193514c-8d12-7a00-8f41-9c2a1b3e4f98', quantidade: 1 }],
-        })
-        .expect(404);
-      expect(produtoNotFoundRes.body.error).toBe('PRODUTO_NAO_ENCONTRADO');
-
-      // Cupom restrito a TOTEM usado no canal APP -> 422
       const promoInelegivelRes = await request(ctx.app.getHttpServer())
         .post('/pedidos')
         .set('Authorization', `Bearer ${cliente.token}`)
@@ -429,60 +333,67 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
       expect(promoInelegivelRes.body.error).toBe('PROMOCAO_INVALIDA');
     });
 
-    it('deve bloquear com 409 por estoque insuficiente, falta de consentimento LGPD ou saldo insuficiente de pontos', async () => {
-      const unidade = await ctx.prisma.unidade.create({
-        data: {
-          codigo: 'REC-01',
-          nome: 'Raízes Boa Viagem',
-          endereco: 'Av. Boa Viagem, 1000',
-        },
+    it('deve retornar 404 para unidade ou produto inexistente', async () => {
+      const unidade = await criarUnidade(ctx.prisma);
+      const { produto } = await criarProdutoComEstoque(ctx.prisma, unidade.id);
+      const cliente = await criarUsuarioELogar(ctx, {
+        nome: 'Cliente',
+        email: 'cliente@exemplo.com',
+        perfil: PerfilUsuario.CLIENTE,
       });
 
-      const produto = await ctx.prisma.produto.create({
-        data: {
-          nome: 'Bolo de Rolo',
-          categoria: 'SOBREMESAS',
-          precoCentavos: 1500,
-        },
-      });
+      const unidadeNotFoundRes = await request(ctx.app.getHttpServer())
+        .post('/pedidos')
+        .set('Authorization', `Bearer ${cliente.token}`)
+        .send({
+          unidadeId: '0193514c-8d12-7a00-8f41-9c2a1b3e4f99',
+          canalPedido: 'APP',
+          itens: [{ produtoId: produto.id, quantidade: 1 }],
+        })
+        .expect(404);
+      expect(unidadeNotFoundRes.body.error).toBe('UNIDADE_NAO_ENCONTRADA');
 
-      const estoque = await ctx.prisma.estoqueUnidade.create({
-        data: {
+      const produtoNotFoundRes = await request(ctx.app.getHttpServer())
+        .post('/pedidos')
+        .set('Authorization', `Bearer ${cliente.token}`)
+        .send({
           unidadeId: unidade.id,
-          produtoId: produto.id,
-          quantidadeDisponivel: 2,
-          disponivelVenda: true,
-        },
+          canalPedido: 'APP',
+          itens: [{ produtoId: '0193514c-8d12-7a00-8f41-9c2a1b3e4f98', quantidade: 1 }],
+        })
+        .expect(404);
+      expect(produtoNotFoundRes.body.error).toBe('PRODUTO_NAO_ENCONTRADO');
+    });
+
+    it('deve bloquear com 409 por estoque insuficiente, falta de consentimento ou saldo insuficiente de pontos', async () => {
+      const unidade = await criarUnidade(ctx.prisma);
+      const { produto, estoque } = await criarProdutoComEstoque(ctx.prisma, unidade.id, {
+        nome: 'Bolo de Rolo',
+        categoria: 'SOBREMESAS',
+        precoCentavos: 1500,
+        quantidadeDisponivel: 2,
       });
 
-      const clienteSemConsent = await criarUsuarioELogar({
+      const clienteSemConsent = await criarUsuarioELogar(ctx, {
         nome: 'Cliente Sem Consentimento',
         email: 'semconsent@exemplo.com',
-        perfil: 'CLIENTE',
+        perfil: PerfilUsuario.CLIENTE,
       });
-      await ctx.prisma.contaFidelidade.create({
-        data: {
-          usuarioId: clienteSemConsent.id,
-          saldoPontos: 50,
-          consentimentoAtivo: false,
-        },
+      await criarContaFidelidade(ctx.prisma, clienteSemConsent.id, {
+        saldoPontos: 50,
+        consentimentoAtivo: false,
       });
 
-      const clientePoucosPontos = await criarUsuarioELogar({
+      const clientePoucosPontos = await criarUsuarioELogar(ctx, {
         nome: 'Cliente Poucos Pontos',
         email: 'poucoponto@exemplo.com',
-        perfil: 'CLIENTE',
+        perfil: PerfilUsuario.CLIENTE,
       });
-      await ctx.prisma.contaFidelidade.create({
-        data: {
-          usuarioId: clientePoucosPontos.id,
-          saldoPontos: 5,
-          consentimentoAtivo: true,
-          consentimentoEm: new Date(),
-        },
+      await criarContaFidelidade(ctx.prisma, clientePoucosPontos.id, {
+        saldoPontos: 5,
+        consentimentoAtivo: true,
       });
 
-      // Estoque insuficiente -> 409 e saldo mantido em 2
       const estoqueInsufRes = await request(ctx.app.getHttpServer())
         .post('/pedidos')
         .set('Authorization', `Bearer ${clientePoucosPontos.token}`)
@@ -494,7 +405,6 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
         .expect(409);
 
       expect(estoqueInsufRes.body.error).toBe('ESTOQUE_INSUFICIENTE');
-      expect(Array.isArray(estoqueInsufRes.body.details)).toBe(true);
       expect((estoqueInsufRes.body.details as unknown[]).length).toBeGreaterThan(0);
 
       const estoqueConferido = await ctx.prisma.estoqueUnidade.findUniqueOrThrow({
@@ -502,7 +412,6 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
       });
       expect(estoqueConferido.quantidadeDisponivel).toBe(2);
 
-      // Resgate sem consentimento ativo -> 409
       const semConsentRes = await request(ctx.app.getHttpServer())
         .post('/pedidos')
         .set('Authorization', `Bearer ${clienteSemConsent.token}`)
@@ -516,7 +425,6 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
 
       expect(semConsentRes.body.error).toBe('FIDELIDADE_SEM_CONSENTIMENTO');
 
-      // Resgate maior que saldo -> 409
       const saldoInsufRes = await request(ctx.app.getHttpServer())
         .post('/pedidos')
         .set('Authorization', `Bearer ${clientePoucosPontos.token}`)
@@ -531,68 +439,57 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
       expect(saldoInsufRes.body.error).toBe('SALDO_PONTOS_INSUFICIENTE');
     });
 
-    it('deve aplicar RBAC por perfil/unidade na criação e filtrar/restringir consulta em GET /pedidos e GET /pedidos/:id', async () => {
-      const unidadeA = await ctx.prisma.unidade.create({
-        data: { codigo: 'REC-01', nome: 'Boa Viagem', endereco: 'Av. Boa Viagem, 1000' },
-      });
-      const unidadeB = await ctx.prisma.unidade.create({
-        data: { codigo: 'FOR-01', nome: 'Meireles', endereco: 'Av. Beira Mar, 500' },
+    it('deve aplicar RBAC por perfil/unidade na criação e filtrar/restringir consultas em GET /pedidos', async () => {
+      const unidadeA = await criarUnidade(ctx.prisma, { codigo: 'REC-01', nome: 'Boa Viagem' });
+      const unidadeB = await criarUnidade(ctx.prisma, {
+        codigo: 'FOR-01',
+        nome: 'Meireles',
+        endereco: 'Av. Beira Mar, 500',
       });
 
-      const produto = await ctx.prisma.produto.create({
+      const { produto } = await criarProdutoComEstoque(ctx.prisma, unidadeA.id, {
+        nome: 'Baião de Dois',
+        categoria: 'PRATOS',
+        precoCentavos: 3200,
+        quantidadeDisponivel: 20,
+      });
+      await ctx.prisma.estoqueUnidade.create({
         data: {
-          nome: 'Baião de Dois',
-          categoria: 'PRATOS',
-          precoCentavos: 3200,
+          unidadeId: unidadeB.id,
+          produtoId: produto.id,
+          quantidadeDisponivel: 20,
+          disponivelVenda: true,
         },
       });
 
-      await ctx.prisma.estoqueUnidade.createMany({
-        data: [
-          {
-            unidadeId: unidadeA.id,
-            produtoId: produto.id,
-            quantidadeDisponivel: 20,
-            disponivelVenda: true,
-          },
-          {
-            unidadeId: unidadeB.id,
-            produtoId: produto.id,
-            quantidadeDisponivel: 20,
-            disponivelVenda: true,
-          },
-        ],
-      });
-
-      const cliente1 = await criarUsuarioELogar({
+      const cliente1 = await criarUsuarioELogar(ctx, {
         nome: 'Cliente 1',
         email: 'cliente1@exemplo.com',
-        perfil: 'CLIENTE',
+        perfil: PerfilUsuario.CLIENTE,
       });
-      const cliente2 = await criarUsuarioELogar({
+      const cliente2 = await criarUsuarioELogar(ctx, {
         nome: 'Cliente 2',
         email: 'cliente2@exemplo.com',
-        perfil: 'CLIENTE',
+        perfil: PerfilUsuario.CLIENTE,
       });
-      const atendenteA = await criarUsuarioELogar({
+      const atendenteA = await criarUsuarioELogar(ctx, {
         nome: 'Atendente A',
         email: 'atendente.a@raizes.com',
-        perfil: 'ATENDENTE',
+        perfil: PerfilUsuario.ATENDENTE,
         unidadeId: unidadeA.id,
       });
-      const cozinhaA = await criarUsuarioELogar({
+      const cozinhaA = await criarUsuarioELogar(ctx, {
         nome: 'Cozinha A',
         email: 'cozinha.a@raizes.com',
-        perfil: 'COZINHA',
+        perfil: PerfilUsuario.COZINHA,
         unidadeId: unidadeA.id,
       });
-      const admin = await criarUsuarioELogar({
+      const admin = await criarUsuarioELogar(ctx, {
         nome: 'Admin',
         email: 'admin@raizes.com',
-        perfil: 'ADMIN',
+        perfil: PerfilUsuario.ADMIN,
       });
 
-      // COZINHA tentando criar pedido -> 403
       const cozinhaForbidden = await request(ctx.app.getHttpServer())
         .post('/pedidos')
         .set('Authorization', `Bearer ${cozinhaA.token}`)
@@ -604,7 +501,6 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
         .expect(403);
       expect(cozinhaForbidden.body.error).toBe('ACESSO_NEGADO');
 
-      // ATENDENTE da unidade A tentando criar pedido para unidade B -> 403
       const atendenteOutroUnitForbidden = await request(ctx.app.getHttpServer())
         .post('/pedidos')
         .set('Authorization', `Bearer ${atendenteA.token}`)
@@ -616,7 +512,6 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
         .expect(403);
       expect(atendenteOutroUnitForbidden.body.error).toBe('ACESSO_NEGADO');
 
-      // cliente1 cria pedido na unidadeA via TOTEM
       const pedido1Res = await request(ctx.app.getHttpServer())
         .post('/pedidos')
         .set('Authorization', `Bearer ${cliente1.token}`)
@@ -628,7 +523,6 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
         .expect(201);
       const pedido1Id = pedido1Res.body.id as string;
 
-      // cliente2 cria pedido na unidadeB via APP
       const pedido2Res = await request(ctx.app.getHttpServer())
         .post('/pedidos')
         .set('Authorization', `Bearer ${cliente2.token}`)
@@ -640,7 +534,6 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
         .expect(201);
       const pedido2Id = pedido2Res.body.id as string;
 
-      // ADMIN filtra por canalPedido=TOTEM&status=AGUARDANDO_PAGAMENTO
       const adminFiltroRes = await request(ctx.app.getHttpServer())
         .get('/pedidos?canalPedido=TOTEM&status=AGUARDANDO_PAGAMENTO')
         .set('Authorization', `Bearer ${admin.token}`)
@@ -648,7 +541,6 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
       expect(adminFiltroRes.body.meta.total).toBe(1);
       expect(adminFiltroRes.body.data[0].id).toBe(pedido1Id);
 
-      // cliente1 vê apenas próprio pedido
       const cliente1ListRes = await request(ctx.app.getHttpServer())
         .get('/pedidos')
         .set('Authorization', `Bearer ${cliente1.token}`)
@@ -656,7 +548,6 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
       expect(cliente1ListRes.body.meta.total).toBe(1);
       expect(cliente1ListRes.body.data[0].id).toBe(pedido1Id);
 
-      // atendenteA vê apenas pedidos da unidadeA
       const atendenteAListRes = await request(ctx.app.getHttpServer())
         .get('/pedidos')
         .set('Authorization', `Bearer ${atendenteA.token}`)
@@ -664,21 +555,18 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
       expect(atendenteAListRes.body.meta.total).toBe(1);
       expect(atendenteAListRes.body.data[0].id).toBe(pedido1Id);
 
-      // cliente1 tentando ver pedido do cliente2 -> 403
       const clienteOutroRes = await request(ctx.app.getHttpServer())
         .get(`/pedidos/${pedido2Id}`)
         .set('Authorization', `Bearer ${cliente1.token}`)
         .expect(403);
       expect(clienteOutroRes.body.error).toBe('ACESSO_NEGADO');
 
-      // atendenteA tentando ver pedido da unidadeB -> 403
       const atendenteOutroRes = await request(ctx.app.getHttpServer())
         .get(`/pedidos/${pedido2Id}`)
         .set('Authorization', `Bearer ${atendenteA.token}`)
         .expect(403);
       expect(atendenteOutroRes.body.error).toBe('ACESSO_NEGADO');
 
-      // pedido inexistente -> 404
       const notFoundRes = await request(ctx.app.getHttpServer())
         .get('/pedidos/0193514c-8d12-7a00-8f41-9c2a1b3e4f97')
         .set('Authorization', `Bearer ${admin.token}`)
