@@ -1,293 +1,212 @@
 import 'dotenv/config';
+import { fakerPT_BR as faker } from '@faker-js/faker';
 import { CanalPedido, PerfilUsuario, PrismaClient, TipoDesconto } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
+import { uuidv7 } from 'uuidv7';
 
 const prisma = new PrismaClient();
 
-const IDS = {
-  unidadeRecife: '019c6199-df00-7000-8000-000000000101',
-  unidadeFortaleza: '019c6199-df00-7000-8000-000000000102',
-  produtoTapioca: '019c6199-df00-7000-8000-000000000201',
-  produtoCuscuz: '019c6199-df00-7000-8000-000000000202',
-  produtoBaiao: '019c6199-df00-7000-8000-000000000203',
-  produtoBoloRolo: '019c6199-df00-7000-8000-000000000204',
-  produtoSucoCaja: '019c6199-df00-7000-8000-000000000205',
-  usuarioAdmin: '019c6199-df00-7000-8000-000000000301',
-  usuarioGerente: '019c6199-df00-7000-8000-000000000302',
-  usuarioAtendente: '019c6199-df00-7000-8000-000000000303',
-  usuarioCozinha: '019c6199-df00-7000-8000-000000000304',
-  usuarioCliente: '019c6199-df00-7000-8000-000000000305',
-  contaFidelidadeCliente: '019c6199-df00-7000-8000-000000000401',
-  promoTotem10: '019c6199-df00-7000-8000-000000000501',
-  promoRaizes5: '019c6199-df00-7000-8000-000000000502',
-} as const;
-
 async function main(): Promise<void> {
-  const recife = await prisma.unidade.upsert({
-    where: { codigo: 'REC-01' },
-    update: {
-      nome: 'Raízes Boa Viagem',
-      endereco: 'Av. Boa Viagem, 1000 - Recife/PE',
-      ativo: true,
-    },
-    create: {
-      id: IDS.unidadeRecife,
+  await prisma.logAuditoria.deleteMany();
+  await prisma.movimentacaoFidelidade.deleteMany();
+  await prisma.contaFidelidade.deleteMany();
+  await prisma.pagamento.deleteMany();
+  await prisma.movimentacaoEstoque.deleteMany();
+  await prisma.itemPedido.deleteMany();
+  await prisma.pedido.deleteMany();
+  await prisma.promocao.deleteMany();
+  await prisma.estoqueUnidade.deleteMany();
+  await prisma.produto.deleteMany();
+  await prisma.usuario.deleteMany();
+  await prisma.unidade.deleteMany();
+
+  const recife = await prisma.unidade.create({
+    data: {
+      id: uuidv7(),
       codigo: 'REC-01',
-      nome: 'Raízes Boa Viagem',
-      endereco: 'Av. Boa Viagem, 1000 - Recife/PE',
+      nome: `Raízes ${faker.location.street()}`,
+      endereco: `${faker.location.streetAddress({ useFullAddress: true })} - Recife/PE`,
       ativo: true,
     },
   });
 
-  const fortaleza = await prisma.unidade.upsert({
-    where: { codigo: 'FOR-01' },
-    update: {
-      nome: 'Raízes Meireles',
-      endereco: 'Av. Beira Mar, 500 - Fortaleza/CE',
-      ativo: true,
-    },
-    create: {
-      id: IDS.unidadeFortaleza,
+  const fortaleza = await prisma.unidade.create({
+    data: {
+      id: uuidv7(),
       codigo: 'FOR-01',
-      nome: 'Raízes Meireles',
-      endereco: 'Av. Beira Mar, 500 - Fortaleza/CE',
+      nome: `Raízes ${faker.location.street()}`,
+      endereco: `${faker.location.streetAddress({ useFullAddress: true })} - Fortaleza/CE`,
       ativo: true,
     },
   });
 
-  const produtosData = [
+  const catalogoBase = [
     {
-      id: IDS.produtoTapioca,
       nome: 'Tapioca Carne de Sol',
-      descricao: 'Tapioca artesanal com carne de sol desfiada e queijo coalho',
+      descricao: faker.commerce.productDescription(),
       categoria: 'TAPIOCAS',
       precoCentavos: 2490,
+      estoqueRecife: faker.number.int({ min: 15, max: 40 }),
+      estoqueFortaleza: faker.number.int({ min: 10, max: 25 }),
     },
     {
-      id: IDS.produtoCuscuz,
       nome: 'Cuscuz Recheado',
-      descricao: 'Cuscuz nordestino com manteiga de garrafa e queijo coalho',
+      descricao: faker.commerce.productDescription(),
       categoria: 'CUSCUZ',
       precoCentavos: 1890,
+      estoqueRecife: faker.number.int({ min: 15, max: 35 }),
+      estoqueFortaleza: faker.number.int({ min: 8, max: 20 }),
     },
     {
-      id: IDS.produtoBaiao,
       nome: 'Baião de Dois',
-      descricao: 'Arroz, feijão verde, queijo coalho e carne seca na chapa',
+      descricao: faker.commerce.productDescription(),
       categoria: 'PRATOS',
       precoCentavos: 3200,
+      estoqueRecife: faker.number.int({ min: 10, max: 25 }),
+      estoqueFortaleza: faker.number.int({ min: 5, max: 15 }),
     },
     {
-      id: IDS.produtoBoloRolo,
       nome: 'Bolo de Rolo Tradicional',
-      descricao: 'Fatia generosa de bolo de rolo pernambucano com goiabada',
+      descricao: faker.commerce.productDescription(),
       categoria: 'SOBREMESAS',
       precoCentavos: 1500,
+      estoqueRecife: 2,
+      estoqueFortaleza: faker.number.int({ min: 6, max: 18 }),
     },
     {
-      id: IDS.produtoSucoCaja,
       nome: 'Suco de Cajá 400ml',
-      descricao: 'Suco natural da fruta sem conservantes',
+      descricao: faker.commerce.productDescription(),
       categoria: 'BEBIDAS',
       precoCentavos: 1100,
+      estoqueRecife: faker.number.int({ min: 20, max: 50 }),
+      estoqueFortaleza: faker.number.int({ min: 12, max: 30 }),
     },
   ];
 
-  for (const produto of produtosData) {
-    await prisma.produto.upsert({
-      where: { id: produto.id },
-      update: {
-        nome: produto.nome,
-        descricao: produto.descricao,
-        categoria: produto.categoria,
-        precoCentavos: produto.precoCentavos,
-        ativo: true,
-      },
-      create: {
-        ...produto,
+  for (const item of catalogoBase) {
+    const produto = await prisma.produto.create({
+      data: {
+        id: uuidv7(),
+        nome: item.nome,
+        descricao: item.descricao,
+        categoria: item.categoria,
+        precoCentavos: item.precoCentavos,
         ativo: true,
       },
     });
-  }
 
-  const estoquesData = [
-    { id: '019c6199-df00-7000-8000-000000000601', unidadeId: recife.id, produtoId: IDS.produtoTapioca, quantidade: 25 },
-    { id: '019c6199-df00-7000-8000-000000000602', unidadeId: recife.id, produtoId: IDS.produtoCuscuz, quantidade: 20 },
-    { id: '019c6199-df00-7000-8000-000000000603', unidadeId: recife.id, produtoId: IDS.produtoBaiao, quantidade: 15 },
-    { id: '019c6199-df00-7000-8000-000000000604', unidadeId: recife.id, produtoId: IDS.produtoBoloRolo, quantidade: 2 },
-    { id: '019c6199-df00-7000-8000-000000000605', unidadeId: recife.id, produtoId: IDS.produtoSucoCaja, quantidade: 30 },
-    { id: '019c6199-df00-7000-8000-000000000606', unidadeId: fortaleza.id, produtoId: IDS.produtoTapioca, quantidade: 12 },
-    { id: '019c6199-df00-7000-8000-000000000607', unidadeId: fortaleza.id, produtoId: IDS.produtoSucoCaja, quantidade: 18 },
-  ];
-
-  for (const estoque of estoquesData) {
-    await prisma.estoqueUnidade.upsert({
-      where: {
-        unidadeId_produtoId: {
-          unidadeId: estoque.unidadeId,
-          produtoId: estoque.produtoId,
+    await prisma.estoqueUnidade.createMany({
+      data: [
+        {
+          id: uuidv7(),
+          unidadeId: recife.id,
+          produtoId: produto.id,
+          quantidadeDisponivel: item.estoqueRecife,
+          disponivelVenda: true,
         },
-      },
-      update: {
-        quantidadeDisponivel: estoque.quantidade,
-        disponivelVenda: true,
-      },
-      create: {
-        id: estoque.id,
-        unidadeId: estoque.unidadeId,
-        produtoId: estoque.produtoId,
-        quantidadeDisponivel: estoque.quantidade,
-        disponivelVenda: true,
-      },
+        {
+          id: uuidv7(),
+          unidadeId: fortaleza.id,
+          produtoId: produto.id,
+          quantidadeDisponivel: item.estoqueFortaleza,
+          disponivelVenda: true,
+        },
+      ],
     });
   }
 
   const senhaHash = await bcrypt.hash('Senha@123', 10);
 
-  const usuariosData = [
+  const usuarios = [
     {
-      id: IDS.usuarioAdmin,
-      nome: 'Administrador Matriz',
       email: 'admin@raizes.com',
       perfil: PerfilUsuario.ADMIN,
       unidadeId: null,
     },
     {
-      id: IDS.usuarioGerente,
-      nome: 'Gerente Boa Viagem',
       email: 'gerente.rec@raizes.com',
       perfil: PerfilUsuario.GERENTE,
       unidadeId: recife.id,
     },
     {
-      id: IDS.usuarioAtendente,
-      nome: 'Atendente Boa Viagem',
       email: 'atendente.rec@raizes.com',
       perfil: PerfilUsuario.ATENDENTE,
       unidadeId: recife.id,
     },
     {
-      id: IDS.usuarioCozinha,
-      nome: 'Cozinha Boa Viagem',
       email: 'cozinha.rec@raizes.com',
       perfil: PerfilUsuario.COZINHA,
       unidadeId: recife.id,
     },
     {
-      id: IDS.usuarioCliente,
-      nome: 'Maria Cliente',
       email: 'cliente@exemplo.com',
       perfil: PerfilUsuario.CLIENTE,
       unidadeId: null,
     },
   ];
 
-  for (const usuario of usuariosData) {
-    await prisma.usuario.upsert({
-      where: { email: usuario.email },
-      update: {
-        nome: usuario.nome,
+  for (const u of usuarios) {
+    const criado = await prisma.usuario.create({
+      data: {
+        id: uuidv7(),
+        nome: faker.person.fullName(),
+        email: u.email,
         senhaHash,
-        perfil: usuario.perfil,
-        unidadeId: usuario.unidadeId,
-        ativo: true,
-        anonimizadoEm: null,
-      },
-      create: {
-        id: usuario.id,
-        nome: usuario.nome,
-        email: usuario.email,
-        senhaHash,
-        perfil: usuario.perfil,
-        unidadeId: usuario.unidadeId,
+        perfil: u.perfil,
+        unidadeId: u.unidadeId,
         ativo: true,
       },
     });
+
+    if (u.perfil === PerfilUsuario.CLIENTE) {
+      await prisma.contaFidelidade.create({
+        data: {
+          id: uuidv7(),
+          usuarioId: criado.id,
+          saldoPontos: 20,
+          consentimentoAtivo: true,
+          consentimentoEm: new Date(),
+        },
+      });
+    }
   }
-
-  const cliente = await prisma.usuario.findUniqueOrThrow({
-    where: { email: 'cliente@exemplo.com' },
-    select: { id: true },
-  });
-
-  await prisma.contaFidelidade.upsert({
-    where: { usuarioId: cliente.id },
-    update: {
-      saldoPontos: 20,
-      consentimentoAtivo: true,
-      consentimentoEm: new Date(),
-      revogadoEm: null,
-    },
-    create: {
-      id: IDS.contaFidelidadeCliente,
-      usuarioId: cliente.id,
-      saldoPontos: 20,
-      consentimentoAtivo: true,
-      consentimentoEm: new Date(),
-    },
-  });
 
   const agora = Date.now();
   const inicioEm = new Date(agora - 86_400_000);
   const fimEm = new Date(agora + 180 * 86_400_000);
 
-  await prisma.promocao.upsert({
-    where: { codigo: 'TOTEM10' },
-    update: {
-      descricao: '10% de desconto em pedidos realizados pelo Totem',
-      tipoDesconto: TipoDesconto.PERCENTUAL,
-      valorDesconto: 10,
-      valorMinimoCentavos: 2000,
-      canalAplicavel: CanalPedido.TOTEM,
-      unidadeId: null,
-      inicioEm,
-      fimEm,
-      ativo: true,
-    },
-    create: {
-      id: IDS.promoTotem10,
-      codigo: 'TOTEM10',
-      descricao: '10% de desconto em pedidos realizados pelo Totem',
-      tipoDesconto: TipoDesconto.PERCENTUAL,
-      valorDesconto: 10,
-      valorMinimoCentavos: 2000,
-      canalAplicavel: CanalPedido.TOTEM,
-      unidadeId: null,
-      inicioEm,
-      fimEm,
-      ativo: true,
-    },
+  await prisma.promocao.createMany({
+    data: [
+      {
+        id: uuidv7(),
+        codigo: 'TOTEM10',
+        descricao: '10% de desconto em pedidos realizados pelo Totem',
+        tipoDesconto: TipoDesconto.PERCENTUAL,
+        valorDesconto: 10,
+        valorMinimoCentavos: 2000,
+        canalAplicavel: CanalPedido.TOTEM,
+        unidadeId: null,
+        inicioEm,
+        fimEm,
+        ativo: true,
+      },
+      {
+        id: uuidv7(),
+        codigo: 'RAIZES5',
+        descricao: 'R$ 5,00 de desconto em qualquer canal a partir de R$ 15,00',
+        tipoDesconto: TipoDesconto.VALOR_FIXO,
+        valorDesconto: 500,
+        valorMinimoCentavos: 1500,
+        canalAplicavel: null,
+        unidadeId: null,
+        inicioEm,
+        fimEm,
+        ativo: true,
+      },
+    ],
   });
 
-  await prisma.promocao.upsert({
-    where: { codigo: 'RAIZES5' },
-    update: {
-      descricao: 'R$ 5,00 de desconto em qualquer canal a partir de R$ 15,00',
-      tipoDesconto: TipoDesconto.VALOR_FIXO,
-      valorDesconto: 500,
-      valorMinimoCentavos: 1500,
-      canalAplicavel: null,
-      unidadeId: null,
-      inicioEm,
-      fimEm,
-      ativo: true,
-    },
-    create: {
-      id: IDS.promoRaizes5,
-      codigo: 'RAIZES5',
-      descricao: 'R$ 5,00 de desconto em qualquer canal a partir de R$ 15,00',
-      tipoDesconto: TipoDesconto.VALOR_FIXO,
-      valorDesconto: 500,
-      valorMinimoCentavos: 1500,
-      canalAplicavel: null,
-      unidadeId: null,
-      inicioEm,
-      fimEm,
-      ativo: true,
-    },
-  });
-
-  console.log('Seed executado com sucesso (unidades, produtos, estoques, usuários e promoções).');
+  console.log('Seed executado em runtime com @faker-js/faker e UUIDv7.');
 }
 
 main()

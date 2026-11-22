@@ -115,7 +115,11 @@
                 "exec": [
                   "pm.test('Login gerente 200 OK', function () {",
                   "  pm.response.to.have.status(200);",
-                  "  pm.collectionVariables.set('gerenteToken', pm.response.json().accessToken);",
+                  "  const json = pm.response.json();",
+                  "  pm.collectionVariables.set('gerenteToken', json.accessToken);",
+                  "  if (json.user && json.user.unidadeId) {",
+                  "    pm.collectionVariables.set('unidadeRecifeId', json.user.unidadeId);",
+                  "  }",
                   "});"
                 ]
               }
@@ -149,6 +153,10 @@
                   "  const json = pm.response.json();",
                   "  pm.expect(json.data.length).to.be.greaterThan(0);",
                   "  pm.expect(json.meta.page).to.eql(1);",
+                  "  const tapioca = json.data.find((i) => i.nome === 'Tapioca Carne de Sol') || json.data[0];",
+                  "  const boloRolo = json.data.find((i) => i.quantidadeDisponivel === 2) || json.data[1];",
+                  "  if (tapioca) pm.collectionVariables.set('produtoTapiocaId', tapioca.id);",
+                  "  if (boloRolo) pm.collectionVariables.set('produtoBoloRoloId', boloRolo.id);",
                   "});"
                 ]
               }

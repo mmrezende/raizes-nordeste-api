@@ -1,5 +1,6 @@
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { fakerPT_BR as faker } from '@faker-js/faker';
 import * as bcrypt from 'bcryptjs';
 import request from 'supertest';
 import type { App } from 'supertest/types';
@@ -85,8 +86,8 @@ export async function criarUnidade(
   return prisma.unidade.create({
     data: {
       codigo: overrides.codigo ?? 'REC-01',
-      nome: overrides.nome ?? 'Raízes Boa Viagem',
-      endereco: overrides.endereco ?? 'Av. Boa Viagem, 1000',
+      nome: overrides.nome ?? `Raízes ${faker.location.street()}`,
+      endereco: overrides.endereco ?? faker.location.streetAddress({ useFullAddress: true }),
       ativo: overrides.ativo ?? true,
     },
   });
@@ -106,7 +107,8 @@ export async function criarProdutoComEstoque(
 ) {
   const produto = await prisma.produto.create({
     data: {
-      nome: overrides.nome ?? 'Tapioca Carne de Sol',
+      nome: overrides.nome ?? faker.commerce.productName(),
+      descricao: faker.commerce.productDescription(),
       categoria: overrides.categoria ?? 'TAPIOCAS',
       precoCentavos: overrides.precoCentavos ?? 2500,
       ativo: overrides.ativo ?? true,
