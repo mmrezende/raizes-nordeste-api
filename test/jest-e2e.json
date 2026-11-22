@@ -2,6 +2,8 @@
   "moduleFileExtensions": ["js", "json", "ts"],
   "rootDir": ".",
   "maxWorkers": 1,
+  "globalSetup": "./e2e/global-setup.ts",
+  "setupFiles": ["./e2e/setup-env.ts"],
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
