@@ -39,19 +39,19 @@ Especificação completa: [`docs/requirements/requirements.md`](./docs/requireme
 
 ### 3.1 Casos de Uso e Fluxos Críticos
 
-![Diagrama de Casos de Uso](./docs/diagrams/img/use-cases.png)
+![Diagrama de Casos de Uso](./docs/diagrams/img/use-cases.svg)
 
 Fontes: [`docs/diagrams/use-cases.puml`](./docs/diagrams/use-cases.puml) · [`docs/requirements/use-cases.md`](./docs/requirements/use-cases.md). Cobre `UC01`–`UC14` entre `Cliente`, `Atendente`, `Cozinha`, `Gerente`, `Administrador` e `Gateway Mock`, detalhando pré/pós-condições e exceções de `UC04 + UC07` (Pedido + Pagamento) e `UC09` (Status/Cancelamento).
 
 ### 3.2 Modelo de Dados (DER)
 
-![Diagrama Entidade-Relacionamento](./docs/diagrams/img/der.png)
+![Diagrama Entidade-Relacionamento](./docs/diagrams/img/der.svg)
 
 Fontes: [`docs/diagrams/der.dbml`](./docs/diagrams/der.dbml) · [`prisma/schema.prisma`](./prisma/schema.prisma) · [`migration.sql`](./prisma/migrations/20261122000853_init/migration.sql). Define **12 tabelas** com PK UUIDv7 e FKs: `unidades`, `usuarios`, `produtos`, `estoque_unidades` (`unique(unidade_id, produto_id)`), `promocoes`, `pedidos`, `itens_pedido`, `movimentacoes_estoque`, `pagamentos` (`unique(idempotency_key)`), `contas_fidelidade`, `movimentacoes_fidelidade` e `logs_auditoria`.
 
 ### 3.3 Arquitetura em 4 Camadas
 
-![Arquitetura em 4 Camadas](./docs/diagrams/img/architecture.png)
+![Arquitetura em 4 Camadas](./docs/diagrams/img/architecture.svg)
 
 Fonte: [`docs/diagrams/architecture.mmd`](./docs/diagrams/architecture.mmd).
 
@@ -62,9 +62,9 @@ Fonte: [`docs/diagrams/architecture.mmd`](./docs/diagrams/architecture.mmd).
 
 ### 3.4 Classes e Sequência
 
-![Diagrama de Classes](./docs/diagrams/img/classes.png)
+![Diagrama de Classes](./docs/diagrams/img/classes.svg)
 
-![Diagrama de Sequência - Pedido e Pagamento](./docs/diagrams/img/sequence-order-payment.png)
+![Diagrama de Sequência - Pedido e Pagamento](./docs/diagrams/img/sequence-order-payment.svg)
 
 Fontes: [`docs/diagrams/classes.mmd`](./docs/diagrams/classes.mmd) · [`docs/diagrams/sequence-order-payment.mmd`](./docs/diagrams/sequence-order-payment.mmd).
 
