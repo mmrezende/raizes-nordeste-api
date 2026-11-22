@@ -79,8 +79,8 @@
     <text x="125" y="132" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">fidelidade, catálogo e auditoria</text>
     <rect x="14" y="211" width="222" height="137" rx="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.1"/>
     <text x="125" y="232" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#2563EB">Helpers Compartilhados</text>
-    <text x="125" y="251" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">acesso-escopo.helper (unidade/dono),</text>
-    <text x="125" y="266" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">paginacao.helper, pedido-estorno.helper</text>
+    <text x="125" y="251" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">acesso-escopo.util (unidade/dono),</text>
+    <text x="125" y="266" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">paginacao.util, pedido-estorno.helper</text>
     <text x="125" y="281" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">e USUARIO_SEGURO_SELECT</text>
     <rect x="14" y="360" width="222" height="137" rx="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.1"/>
     <text x="125" y="381" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#2563EB">Portas (Contratos)</text>

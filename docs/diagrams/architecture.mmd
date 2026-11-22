@@ -4,28 +4,39 @@ flowchart LR
   subgraph Backend["Back-end Raízes do Nordeste (NestJS + TypeScript)"]
     subgraph CamadaAPI["Camada 1 - API (Controllers e Filtros)"]
       direction TB
-      A1["Controllers REST e DTOs"] ~~~ A2["JwtAuthGuard, RolesGuard e AuditInterceptor"] ~~~ A3["GlobalExceptionFilter e RequestId"] ~~~ A4["Swagger / OpenAPI (/docs)"]
+      A1["Controllers REST e DTOs"]
+      A2["JwtAuthGuard, RolesGuard e AuditInterceptor"]
+      A3["GlobalExceptionFilter e RequestId"]
+      A4["Swagger / OpenAPI (/docs)"]
     end
 
     subgraph CamadaApp["Camada 2 - Application (Casos de Uso)"]
       direction TB
-      B1["Services por Módulo\n(Pedidos, Estoque, Pagamentos, Fidelidade, Auditoria)"] ~~~ B2["Helpers Compartilhados\n(Paginação, Escopo, Estorno, Select)"] ~~~ B3["Portas / Interfaces\n(PaymentGateway, AuditLogger, IdGenerator, PasswordHasher)"]
+      B1["Services por Módulo\n(Pedidos, Estoque, Pagamentos, Fidelidade, Auditoria)"]
+      B2["Helpers Compartilhados\n(Paginação, Escopo, Estorno, Select)"]
+      B3["Portas / Interfaces\n(PaymentGateway, AuditLogger, IdGenerator, PasswordHasher)"]
     end
 
     subgraph CamadaDomain["Camada 3 - Domain (Núcleo Puro)"]
       direction TB
-      C1["Enums de Domínio\n(Perfis, Canais, Status, Pagamento, Fidelidade)"] ~~~ C2["Regras Puras e Utilitários\n(Cálculo de Desconto/Pontos, Transições, Centavos)"] ~~~ C3["Erros de Domínio Tipados"]
+      C1["Enums de Domínio\n(Perfis, Canais, Status, Pagamento, Fidelidade)"]
+      C2["Regras Puras e Utilitários\n(Cálculo de Desconto/Pontos, Transições, Centavos)"]
+      C3["Erros de Domínio Tipados"]
     end
 
     subgraph CamadaInfra["Camada 4 - Infrastructure (Implementações)"]
       direction TB
-      D1["InfrastructureModule e PrismaService"] ~~~ D2["Segurança (Bcrypt, JWT, UUIDv7)"] ~~~ D3["PrismaAuditLogger"] ~~~ D4["MockPaymentGateway"]
+      D1["InfrastructureModule e PrismaService"]
+      D2["Segurança (Bcrypt, JWT, UUIDv7)"]
+      D3["PrismaAuditLogger"]
+      D4["MockPaymentGateway"]
     end
   end
 
   subgraph Externos["Persistência e Integrações"]
     direction TB
-    DB[("Banco SQLite (dev.db)")] ~~~ Gateway["Gateway de Pagamento (Mock)"]
+    DB[("Banco SQLite (dev.db)")]
+    Gateway["Gateway de Pagamento (Mock)"]
   end
 
   Canais -->|"HTTP / REST + JWT"| CamadaAPI

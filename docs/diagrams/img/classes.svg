@@ -73,11 +73,11 @@
       <text x="14" y="121" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+entidade: string</text>
       <text x="14" y="141" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+entidadeId: string</text>
       <text x="14" y="161" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+requestId: string?</text>
-      <text x="14" y="181" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+metadados: Json?</text>
+      <text x="14" y="181" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+metadados: string?</text>
       <text x="14" y="201" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+createdAt: Date</text>
       <line x1="0" y1="216" x2="405" y2="216" stroke="#CBD5E1" stroke-width="1.2"/>
       <rect x="1" y="217" width="403" height="30" rx="6" fill="#F8FAFC"/>
-      <text x="14" y="233" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#475569">+registrar(evento: AuditEvent): Promise&lt;void&gt;</text>
+      <text x="14" y="233" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#475569">+AuditLogger.registrar(input): Promise&lt;void&gt;</text>
     </g>
     <g transform="translate(650,98)" filter="url(#shadow)">
       <rect x="0" y="0" width="405" height="288" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
@@ -85,18 +85,17 @@
       <text x="202.5" y="17" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="9.5" fill="#E2E8F0">[Fidelidade e LGPD]</text>
       <text x="202.5" y="35" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#FFFFFF">ContaFidelidade</text>
       <text x="14" y="61" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+id: string (UUIDv7)</text>
-      <text x="14" y="81" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+usuarioId: string</text>
+      <text x="14" y="81" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+usuarioId: string (unique)</text>
       <text x="14" y="101" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+saldoPontos: number</text>
       <text x="14" y="121" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+consentimentoAtivo: boolean</text>
       <text x="14" y="141" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+consentimentoEm: Date?</text>
-      <text x="14" y="161" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+revogadoEm: Date?</text>
+      <text x="14" y="161" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+revogadoEm: Date? / +updatedAt: Date</text>
       <line x1="0" y1="176" x2="405" y2="176" stroke="#CBD5E1" stroke-width="1.2"/>
       <rect x="1" y="177" width="403" height="110" rx="6" fill="#F8FAFC"/>
-      <text x="14" y="193" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#7C3AED">+ativarConsentimento(): void</text>
-      <text x="14" y="213" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#7C3AED">+revogarConsentimento(): void</text>
-      <text x="14" y="233" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#7C3AED">+acumular(pontos: number): void</text>
-      <text x="14" y="253" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#7C3AED">+resgatar(pontos: number): void</text>
-      <text x="14" y="273" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#7C3AED">+estornar(pontos: number): void</text>
+      <text x="14" y="196" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#7C3AED">+consultarConta(usuarioId): ContaFidelidade</text>
+      <text x="14" y="218" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#7C3AED">+atualizarConsentimento(usuarioId, ativo)</text>
+      <text x="14" y="240" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#7C3AED">+calcularDescontoFidelidade(input): Resultado</text>
+      <text x="14" y="262" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#7C3AED">+calcularPontosAcumulo(valorTotalCentavos): number</text>
     </g>
     <g transform="translate(1215,98)" filter="url(#shadow)">
       <rect x="0" y="0" width="405" height="228" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
@@ -108,11 +107,11 @@
       <text x="14" y="101" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+pedidoId: string?</text>
       <text x="14" y="121" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+tipo: ACUMULO | RESGATE | ESTORNO</text>
       <text x="14" y="141" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+pontos: number</text>
-      <text x="14" y="161" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+descricao: string</text>
+      <text x="14" y="161" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+descricao: string?</text>
       <text x="14" y="181" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+createdAt: Date</text>
       <line x1="0" y1="196" x2="405" y2="196" stroke="#CBD5E1" stroke-width="1.2"/>
       <rect x="1" y="197" width="403" height="30" rx="6" fill="#F8FAFC"/>
-      <text x="14" y="213" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#7C3AED">+criar(contaId, pedidoId, tipo, pts): Movimentacao</text>
+      <text x="14" y="213" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#7C3AED">+listarMovimentacoes(usuarioId, paginacao)</text>
     </g>
     <g transform="translate(1780,98)" filter="url(#shadow)">
       <rect x="0" y="0" width="405" height="268" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
@@ -122,15 +121,15 @@
       <text x="14" y="61" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+id: string (UUIDv7)</text>
       <text x="14" y="81" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+pedidoId: string</text>
       <text x="14" y="101" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+idempotencyKey: string (unique)</text>
-      <text x="14" y="121" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+formaPagamento: PIX | CARTAO | DINHEIRO</text>
+      <text x="14" y="121" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+formaPagamento: PIX | CARTAO_CREDITO | CARTAO_DEBITO | MOCK</text>
       <text x="14" y="141" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+status: PENDENTE | APROVADO | RECUSADO</text>
       <text x="14" y="161" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+valorCentavos: number</text>
-      <text x="14" y="181" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+referenciaExterna: string?</text>
-      <text x="14" y="201" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+payloadRetorno: Json?</text>
+      <text x="14" y="181" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+referenciaExterna: string? / +processadoEm: Date?</text>
+      <text x="14" y="201" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+payloadRetorno: string?</text>
       <line x1="0" y1="216" x2="405" y2="216" stroke="#CBD5E1" stroke-width="1.2"/>
       <rect x="1" y="217" width="403" height="50" rx="6" fill="#F8FAFC"/>
-      <text x="14" y="233" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#2563EB">+aprovar(referencia: string, payload: object): void</text>
-      <text x="14" y="253" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#2563EB">+recusar(referencia: string, payload: object): void</text>
+      <text x="14" y="233" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#2563EB">+processar(input, ator): ProcessarPagamentoOutput</text>
+      <text x="14" y="253" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#2563EB">+PaymentGateway.processar(input): RetornoGateway</text>
     </g>
     <g transform="translate(85,496)" filter="url(#shadow)">
       <rect x="0" y="0" width="405" height="248" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
@@ -141,13 +140,13 @@
       <text x="14" y="81" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+codigo: string (unique)</text>
       <text x="14" y="101" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+nome: string</text>
       <text x="14" y="121" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+endereco: string</text>
-      <text x="14" y="141" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+cidade: string</text>
-      <text x="14" y="161" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+uf: string</text>
-      <text x="14" y="181" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+ativo: boolean</text>
+      <text x="14" y="141" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+ativo: boolean</text>
+      <text x="14" y="161" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+createdAt: Date</text>
+      <text x="14" y="181" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+updatedAt: Date</text>
       <line x1="0" y1="196" x2="405" y2="196" stroke="#CBD5E1" stroke-width="1.2"/>
       <rect x="1" y="197" width="403" height="50" rx="6" fill="#F8FAFC"/>
-      <text x="14" y="213" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#0F766E">+validarAtiva(): void</text>
-      <text x="14" y="233" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#0F766E">+listarCardapioDisponivel(): ProdutoCardapio[]</text>
+      <text x="14" y="213" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#0F766E">+criar(input) / +listar(paginacao)</text>
+      <text x="14" y="233" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#0F766E">+consultarCardapio(unidadeId, paginacao)</text>
     </g>
     <g transform="translate(650,496)" filter="url(#shadow)">
       <rect x="0" y="0" width="405" height="268" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
@@ -157,15 +156,15 @@
       <text x="14" y="61" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+id: string (UUIDv7)</text>
       <text x="14" y="81" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+unidadeId: string?</text>
       <text x="14" y="101" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+nome: string</text>
-      <text x="14" y="121" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+email: string (unique)</text>
+      <text x="14" y="121" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+email: string (unique) / +senhaHash: string</text>
       <text x="14" y="141" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+perfil: CLIENTE | ATENDENTE | COZINHA | GERENTE | ADMIN</text>
       <text x="14" y="161" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+ativo: boolean</text>
       <text x="14" y="181" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+anonimizadoEm: Date?</text>
       <line x1="0" y1="196" x2="405" y2="196" stroke="#CBD5E1" stroke-width="1.2"/>
       <rect x="1" y="197" width="403" height="70" rx="6" fill="#F8FAFC"/>
-      <text x="14" y="213" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#1E3A5F">+criar(nome, email, perfil, unidadeId?): Usuario</text>
-      <text x="14" y="233" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#1E3A5F">+podeOperarUnidade(unidadeId: string): boolean</text>
-      <text x="14" y="253" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#1E3A5F">+anonimizar(): void</text>
+      <text x="14" y="213" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#1E3A5F">+criarUsuarioInterno(input, ator): UsuarioSeguro</text>
+      <text x="14" y="233" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#1E3A5F">+validarEscopoUnidade(ator, unidadeId): void</text>
+      <text x="14" y="253" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#1E3A5F">+anonimizar(usuarioId): UsuarioAnonimizado</text>
     </g>
     <g transform="translate(1215,496)" filter="url(#shadow)">
       <rect x="0" y="0" width="405" height="368" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
@@ -185,10 +184,10 @@
       <text x="14" y="261" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+valorTotalCentavos: number</text>
       <line x1="0" y1="276" x2="405" y2="276" stroke="#CBD5E1" stroke-width="1.2"/>
       <rect x="1" y="277" width="403" height="90" rx="6" fill="#F8FAFC"/>
-      <text x="14" y="293" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#2563EB">+criar(unidadeId, clienteId, canal, itens): Pedido</text>
-      <text x="14" y="313" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#2563EB">+calcularTotais(cupom?, pontos?): TotaisPedido</text>
-      <text x="14" y="333" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#2563EB">+podeTransicionarPara(novoStatus, perfil): boolean</text>
-      <text x="14" y="353" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#2563EB">+cancelar(perfilSolicitante): void</text>
+      <text x="14" y="293" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#2563EB">+criar(input, ator): PedidoResultado</text>
+      <text x="14" y="313" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#2563EB">+validarTransicaoStatusPedido(input): void</text>
+      <text x="14" y="333" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#2563EB">+validarCancelamentoPedido(input): void</text>
+      <text x="14" y="353" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#2563EB">+estornarReservasDoPedido(tx, idGen, input): void</text>
     </g>
     <g transform="translate(1780,496)" filter="url(#shadow)">
       <rect x="0" y="0" width="405" height="208" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
@@ -203,7 +202,7 @@
       <text x="14" y="161" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+subtotalCentavos: number</text>
       <line x1="0" y1="176" x2="405" y2="176" stroke="#CBD5E1" stroke-width="1.2"/>
       <rect x="1" y="177" width="403" height="30" rx="6" fill="#F8FAFC"/>
-      <text x="14" y="193" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#2563EB">+calcularSubtotal(): number</text>
+      <text x="14" y="193" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#2563EB">+centavosParaReais(centavos): number</text>
     </g>
     <g transform="translate(85,974)" filter="url(#shadow)">
       <rect x="0" y="0" width="405" height="288" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
@@ -212,7 +211,7 @@
       <text x="202.5" y="35" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#FFFFFF">Promocao</text>
       <text x="14" y="61" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+id: string (UUIDv7)</text>
       <text x="14" y="81" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+unidadeId: string?</text>
-      <text x="14" y="101" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+codigo: string (unique)</text>
+      <text x="14" y="101" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+codigo: string (unique) / +descricao: string</text>
       <text x="14" y="121" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+tipoDesconto: PERCENTUAL | VALOR_FIXO</text>
       <text x="14" y="141" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+valorDesconto: number</text>
       <text x="14" y="161" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+valorMinimoCentavos: number</text>
@@ -221,8 +220,8 @@
       <text x="14" y="221" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+ativo: boolean</text>
       <line x1="0" y1="236" x2="405" y2="236" stroke="#CBD5E1" stroke-width="1.2"/>
       <rect x="1" y="237" width="403" height="50" rx="6" fill="#F8FAFC"/>
-      <text x="14" y="253" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#2563EB">+estaVigente(data, unidadeId, canal): boolean</text>
-      <text x="14" y="273" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#2563EB">+calcularDesconto(subtotalCentavos): number</text>
+      <text x="14" y="253" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#2563EB">+criar(input) / +listar(paginacao)</text>
+      <text x="14" y="273" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#2563EB">+validarECalcularDescontoPromocao(promo, ctx)</text>
     </g>
     <g transform="translate(650,974)" filter="url(#shadow)">
       <rect x="0" y="0" width="405" height="248" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
@@ -235,11 +234,11 @@
       <text x="14" y="121" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+pedidoId: string?</text>
       <text x="14" y="141" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+tipo: ENTRADA | SAIDA | RESERVA | ESTORNO</text>
       <text x="14" y="161" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+quantidade: number</text>
-      <text x="14" y="181" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+motivo: string</text>
+      <text x="14" y="181" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+motivo: string?</text>
       <text x="14" y="201" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+createdAt: Date</text>
       <line x1="0" y1="216" x2="405" y2="216" stroke="#CBD5E1" stroke-width="1.2"/>
       <rect x="1" y="217" width="403" height="30" rx="6" fill="#F8FAFC"/>
-      <text x="14" y="233" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#0F766E">+registrar(estoqueId, usuarioId, tipo, qtd): void</text>
+      <text x="14" y="233" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#0F766E">+registrarMovimentacao(input, ator)</text>
     </g>
     <g transform="translate(1215,974)" filter="url(#shadow)">
       <rect x="0" y="0" width="405" height="268" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
@@ -250,14 +249,13 @@
       <text x="14" y="81" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+unidadeId: string</text>
       <text x="14" y="101" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+produtoId: string</text>
       <text x="14" y="121" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+quantidadeDisponivel: number</text>
-      <text x="14" y="141" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+estoqueMinimo: number</text>
-      <text x="14" y="161" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+disponivelVenda: boolean</text>
+      <text x="14" y="141" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+disponivelVenda: boolean</text>
+      <text x="14" y="161" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+updatedAt: Date</text>
       <line x1="0" y1="176" x2="405" y2="176" stroke="#CBD5E1" stroke-width="1.2"/>
       <rect x="1" y="177" width="403" height="90" rx="6" fill="#F8FAFC"/>
-      <text x="14" y="193" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#0F766E">+possuiSaldo(qtd: number): boolean</text>
-      <text x="14" y="213" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#0F766E">+reservar(qtd: number): void</text>
-      <text x="14" y="233" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#0F766E">+estornar(qtd: number): void</text>
-      <text x="14" y="253" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#0F766E">+registrarEntrada(qtd: number): void</text>
+      <text x="14" y="200" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#0F766E">+consultarPorUnidade(unidadeId, paginacao, ator)</text>
+      <text x="14" y="224" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#0F766E">+mapearEstoqueItem(registro): EstoqueItem</text>
+      <text x="14" y="248" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#0F766E">+unique(unidadeId, produtoId)</text>
     </g>
     <g transform="translate(1780,974)" filter="url(#shadow)">
       <rect x="0" y="0" width="405" height="208" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
@@ -265,14 +263,14 @@
       <text x="202.5" y="17" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="9.5" fill="#E2E8F0">[Rede e Estoque]</text>
       <text x="202.5" y="35" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#FFFFFF">Produto</text>
       <text x="14" y="61" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+id: string (UUIDv7)</text>
-      <text x="14" y="81" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+sku: string (unique)</text>
-      <text x="14" y="101" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+nome: string</text>
+      <text x="14" y="81" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+nome: string</text>
+      <text x="14" y="101" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+descricao: string?</text>
       <text x="14" y="121" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+categoria: string</text>
       <text x="14" y="141" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+precoCentavos: number</text>
       <text x="14" y="161" font-family="DejaVu Sans Mono, monospace" font-size="10.2" fill="#0F172A">+ativo: boolean</text>
       <line x1="0" y1="176" x2="405" y2="176" stroke="#CBD5E1" stroke-width="1.2"/>
       <rect x="1" y="177" width="403" height="30" rx="6" fill="#F8FAFC"/>
-      <text x="14" y="193" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#0F766E">+validarAtivo(): void</text>
+      <text x="14" y="193" font-family="DejaVu Sans Mono, monospace" font-size="10.2" font-weight="700" fill="#0F766E">+criar(input) / +listar(paginacao)</text>
     </g>
   </g>
   <g transform="translate(85,1297)">

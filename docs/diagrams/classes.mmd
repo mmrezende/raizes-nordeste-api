@@ -1,5 +1,4 @@
 classDiagram
-  %% Modelo conceitual de domínio e persistência da rede Raízes do Nordeste
   direction TB
 
   namespace Identidade_e_Auditoria {
@@ -17,12 +16,13 @@ classDiagram
       +string? unidadeId
       +string nome
       +string email
+      +string senhaHash
       +PerfilUsuario perfil
       +boolean ativo
       +Date? anonimizadoEm
-      +criar(nome, email, perfil, unidadeId?) Usuario$
-      +podeOperarUnidade(unidadeId) boolean
-      +anonimizar() void
+      +criarUsuarioInterno(input, ator) UsuarioSeguro
+      +validarEscopoUnidade(ator, unidadeId) void
+      +anonimizar(usuarioId) UsuarioAnonimizadoResultado
     }
 
     class LogAuditoria {
@@ -31,8 +31,10 @@ classDiagram
       +string acao
       +string entidade
       +string entidadeId
+      +string? metadados
       +string? requestId
       +Date createdAt
+      +registrar(input) Promise~void~
     }
   }
 
@@ -43,14 +45,22 @@ classDiagram
       +string nome
       +string endereco
       +boolean ativo
+      +Date createdAt
+      +Date updatedAt
+      +criar(input) Unidade
+      +listar(paginacao) ResultadoPaginado
+      +consultarCardapio(unidadeId, paginacao) ResultadoPaginado
     }
 
     class Produto {
       +string id
       +string nome
+      +string? descricao
       +string categoria
       +number precoCentavos
       +boolean ativo
+      +criar(input) ProdutoResultado
+      +listar(paginacao) ResultadoPaginado
     }
 
     class EstoqueUnidade {
@@ -59,10 +69,9 @@ classDiagram
       +string produtoId
       +number quantidadeDisponivel
       +boolean disponivelVenda
-      +possuiSaldo(qtd) boolean
-      +reservar(qtd) void
-      +estornar(qtd) void
-      +registrarEntrada(qtd) void
+      +Date updatedAt
+      +consultarPorUnidade(unidadeId, paginacao, ator) ResultadoPaginado
+      +mapearEstoqueItem(registro) EstoqueItemFormatado
     }
 
     class MovimentacaoEstoque {
@@ -70,9 +79,11 @@ classDiagram
       +string estoqueUnidadeId
       +string usuarioId
       +string? pedidoId
-      +string tipo
+      +TipoMovimentacaoEstoque tipo
       +number quantidade
+      +string? motivo
       +Date createdAt
+      +registrarMovimentacao(input, ator) MovimentacaoResultado
     }
   }
 
@@ -100,16 +111,16 @@ classDiagram
       +string id
       +string? unidadeId
       +string codigo
-      +string tipoDesconto
+      +string descricao
+      +TipoDesconto tipoDesconto
       +number valorDesconto
       +number valorMinimoCentavos
       +CanalPedido? canalAplicavel
       +Date inicioEm
       +Date fimEm
       +boolean ativo
-      +criar(codigo, tipo, valor, vigencia) Promocao$
-      +estaVigente(data, unidadeId, canal) boolean
-      +calcularDesconto(subtotalCentavos) number
+      +criar(input) PromocaoResultado
+      +validarECalcularDescontoPromocao(promocao, contexto) number
     }
 
     class Pedido {
@@ -124,12 +135,10 @@ classDiagram
       +number pontosUtilizados
       +number descontoFidelidadeCentavos
       +number valorTotalCentavos
-      +criar(unidadeId, clienteId, canal, itens) Pedido$
-      +calcularTotais() void
-      +podeTransicionarPara(novoStatus, perfil) boolean
-      +marcarComoEmPreparo() void
-      +marcarComoRecusado() void
-      +cancelar() void
+      +criar(input, ator) PedidoResultado
+      +validarTransicaoStatusPedido(input) void
+      +validarCancelamentoPedido(input) void
+      +estornarReservasDoPedido(tx, idGenerator, input) Promise~void~
     }
 
     class ItemPedido {
@@ -139,6 +148,7 @@ classDiagram
       +number quantidade
       +number precoUnitarioCentavos
       +number subtotalCentavos
+      +centavosParaReais(centavos) number
     }
   }
 
@@ -154,12 +164,13 @@ classDiagram
       +string id
       +string pedidoId
       +string idempotencyKey
-      +string formaPagamento
+      +FormaPagamento formaPagamento
       +StatusPagamento status
       +number valorCentavos
       +string? referenciaExterna
-      +aprovar(referencia, payload) void
-      +recusar(referencia, payload) void
+      +string? payloadRetorno
+      +Date? processadoEm
+      +processar(input, ator) ProcessarPagamentoOutput
     }
   }
 
@@ -171,31 +182,31 @@ classDiagram
       +boolean consentimentoAtivo
       +Date? consentimentoEm
       +Date? revogadoEm
-      +ativarConsentimento() void
-      +revogarConsentimento() void
-      +acumular(pontos) void
-      +resgatar(pontos) void
-      +estornar(pontos) void
+      +Date updatedAt
+      +consultarConta(usuarioId) ContaFidelidade
+      +atualizarConsentimento(usuarioId, ativo) ContaFidelidade
+      +calcularDescontoFidelidade(params) CalculoFidelidadeResultado
+      +calcularPontosAcumulo(valorTotalCentavos) number
     }
 
     class MovimentacaoFidelidade {
       +string id
       +string contaFidelidadeId
       +string? pedidoId
-      +string tipo
+      +TipoMovimentacaoFidelidade tipo
       +number pontos
+      +string? descricao
       +Date createdAt
+      +listarMovimentacoes(usuarioId, paginacao) ResultadoPaginado
     }
   }
 
-  %% Rede e Estoque
   Unidade "0..1" --> "0..*" Usuario : vincula equipe
   Unidade "1" --> "0..*" EstoqueUnidade : mantém
   Produto "1" --> "0..*" EstoqueUnidade : disponível em
   EstoqueUnidade "1" --> "0..*" MovimentacaoEstoque : registra
   Usuario "1" --> "0..*" MovimentacaoEstoque : executa
 
-  %% Pedidos e Promoções
   Unidade "1" --> "0..*" Pedido : recebe
   Usuario "1" --> "0..*" Pedido : realiza
   Unidade "0..1" --> "0..*" Promocao : restringe
@@ -203,7 +214,6 @@ classDiagram
   Pedido "1" *-- "1..*" ItemPedido : contém
   Produto "1" --> "0..*" ItemPedido : referencia
 
-  %% Pagamentos, Fidelidade e Auditoria
   Pedido "1" --> "0..*" Pagamento : processa
   Usuario "1" -- "0..1" ContaFidelidade : possui
   ContaFidelidade "1" --> "0..*" MovimentacaoFidelidade : movimenta
