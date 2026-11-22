@@ -1,0 +1,227 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1680" height="1020" viewBox="0 0 1680 1020">
+  <defs>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0F172A" flood-opacity="0.07"/>
+    </filter>
+    <marker id="arrow-dashed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <rect width="1680" height="1020" fill="#FFFFFF"/>
+  <text x="840.0" y="38" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#0F172A">Diagrama de Casos de Uso - API Raízes do Nordeste</text>
+  <text x="840.0" y="61" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="12.5" fill="#475569">Atores externos, fronteira do sistema e relacionamentos de inclusão e extensão (UC01 a UC14)</text>
+  <g filter="url(#shadow)">
+    <rect x="310" y="90" width="1060" height="870" rx="10" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+    <path d="M 310 100 Q 310 90 320 90 L 1360 90 Q 1370 90 1370 100 L 1370 132 L 310 132 Z" fill="#1E3A5F"/>
+    <text x="840" y="116" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF">Fronteira do Sistema: API Raízes do Nordeste (NestJS + Prisma)</text>
+  </g>
+  <g id="associations">
+    <line x1="200.0" y1="310.0" x2="345.0" y2="195.0" stroke="#1E3A5F" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="200.0" y1="310.0" x2="345.0" y2="295.0" stroke="#7C3AED" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="200.0" y1="310.0" x2="345.0" y2="395.0" stroke="#0F766E" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="200.0" y1="310.0" x2="695.0" y2="195.0" stroke="#2563EB" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="200.0" y1="310.0" x2="695.0" y2="330.0" stroke="#1E3A5F" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="200.0" y1="310.0" x2="695.0" y2="465.0" stroke="#2563EB" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="200.0" y1="310.0" x2="695.0" y2="600.0" stroke="#2563EB" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="200.0" y1="310.0" x2="695.0" y2="770.0" stroke="#2563EB" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="200.0" y1="615.0" x2="345.0" y2="395.0" stroke="#0F766E" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="200.0" y1="615.0" x2="695.0" y2="195.0" stroke="#2563EB" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="200.0" y1="615.0" x2="695.0" y2="330.0" stroke="#1E3A5F" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="200.0" y1="615.0" x2="695.0" y2="465.0" stroke="#2563EB" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="200.0" y1="615.0" x2="695.0" y2="600.0" stroke="#2563EB" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="200.0" y1="615.0" x2="695.0" y2="770.0" stroke="#2563EB" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="1480.0" y1="190.0" x2="985.0" y2="195.0" stroke="#2563EB" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="1480.0" y1="380.0" x2="1337.5" y2="280.0" stroke="#0F766E" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="1480.0" y1="380.0" x2="985.0" y2="330.0" stroke="#1E3A5F" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="1480.0" y1="380.0" x2="985.0" y2="600.0" stroke="#2563EB" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="1480.0" y1="605.0" x2="985.0" y2="195.0" stroke="#2563EB" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="1480.0" y1="605.0" x2="985.0" y2="330.0" stroke="#1E3A5F" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="1480.0" y1="605.0" x2="985.0" y2="465.0" stroke="#2563EB" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="1480.0" y1="605.0" x2="985.0" y2="600.0" stroke="#2563EB" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="1480.0" y1="605.0" x2="985.0" y2="770.0" stroke="#2563EB" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="1480.0" y1="605.0" x2="1337.5" y2="700.0" stroke="#0F766E" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="1480.0" y1="605.0" x2="1337.5" y2="795.0" stroke="#475569" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="1480.0" y1="830.0" x2="985.0" y2="195.0" stroke="#2563EB" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="1480.0" y1="830.0" x2="985.0" y2="330.0" stroke="#1E3A5F" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="1480.0" y1="830.0" x2="985.0" y2="465.0" stroke="#2563EB" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="1480.0" y1="830.0" x2="985.0" y2="600.0" stroke="#2563EB" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="1480.0" y1="830.0" x2="985.0" y2="770.0" stroke="#2563EB" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="1480.0" y1="830.0" x2="1337.5" y2="700.0" stroke="#0F766E" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="1480.0" y1="830.0" x2="1337.5" y2="795.0" stroke="#475569" stroke-width="1.4" stroke-opacity="0.65"/>
+    <line x1="1480.0" y1="830.0" x2="1337.5" y2="890.0" stroke="#1E3A5F" stroke-width="1.4" stroke-opacity="0.65"/>
+  </g>
+  <g id="uc-relations">
+    <line x1="695.0" y1="770" x2="619.0" y2="770" stroke="#2563EB" stroke-width="1.8" stroke-dasharray="6,4" marker-end="url(#arrow-dashed)"/>
+    <rect x="618" y="747" width="76" height="18" rx="4" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1"/>
+    <text x="656" y="760" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="10" font-weight="700" fill="#1D4ED8">&lt;&lt;include&gt;&gt;</text>
+    <path d="M 615.0 880 L 656 880 L 693.0 792" fill="none" stroke="#2563EB" stroke-width="1.8" stroke-dasharray="6,4" marker-end="url(#arrow-dashed)"/>
+    <rect x="618" y="858" width="76" height="18" rx="4" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1"/>
+    <text x="656" y="871" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="10" font-weight="700" fill="#1D4ED8">&lt;&lt;extend&gt;&gt;</text>
+  </g>
+  <g id="usecases">
+    <g transform="translate(345.0,167.0)" filter="url(#shadow)">
+      <rect x="0" y="0" width="270" height="56" rx="28.0" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="1.8"/>
+      <rect x="14" y="17.0" width="44" height="22" rx="11" fill="#1E3A5F"/>
+      <text x="36" y="32.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#FFFFFF">UC01</text>
+      <text x="161.0" y="25.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">Cadastrar Cliente</text>
+      <text x="161.0" y="41.0" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="9.5" fill="#475569">POST /auth/register</text>
+    </g>
+    <g transform="translate(345.0,267.0)" filter="url(#shadow)">
+      <rect x="0" y="0" width="270" height="56" rx="28.0" fill="#FFFFFF" stroke="#7C3AED" stroke-width="1.8"/>
+      <rect x="14" y="17.0" width="44" height="22" rx="11" fill="#7C3AED"/>
+      <text x="36" y="32.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#FFFFFF">UC13</text>
+      <text x="161.0" y="25.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">Fidelidade e Consentimento</text>
+      <text x="161.0" y="41.0" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="9.5" fill="#475569">GET/PATCH /fidelidade/*</text>
+    </g>
+    <g transform="translate(345.0,367.0)" filter="url(#shadow)">
+      <rect x="0" y="0" width="270" height="56" rx="28.0" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.8"/>
+      <rect x="14" y="17.0" width="44" height="22" rx="11" fill="#0F766E"/>
+      <text x="36" y="32.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#FFFFFF">UC03</text>
+      <text x="161.0" y="25.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">Consultar Unidades e Cardápio</text>
+      <text x="161.0" y="41.0" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="9.5" fill="#475569">GET /unidades/:id/cardapio</text>
+    </g>
+    <g transform="translate(345.0,742.0)" filter="url(#shadow)">
+      <rect x="0" y="0" width="270" height="56" rx="28.0" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.8"/>
+      <rect x="14" y="17.0" width="44" height="22" rx="11" fill="#0F766E"/>
+      <text x="36" y="32.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#FFFFFF">UC05</text>
+      <text x="161.0" y="25.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">Validar e Reservar Estoque</text>
+      <text x="161.0" y="41.0" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="9.5" fill="#475569">Transação em estoque_unidades</text>
+    </g>
+    <g transform="translate(345.0,852.0)" filter="url(#shadow)">
+      <rect x="0" y="0" width="270" height="56" rx="28.0" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.8"/>
+      <rect x="14" y="17.0" width="44" height="22" rx="11" fill="#2563EB"/>
+      <text x="36" y="32.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#FFFFFF">UC06</text>
+      <text x="161.0" y="25.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">Aplicar Promoção / Fidelidade</text>
+      <text x="161.0" y="41.0" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="9.5" fill="#475569">Cupom e resgate de pontos</text>
+    </g>
+    <g transform="translate(695.0,166.0)" filter="url(#shadow)">
+      <rect x="0" y="0" width="290" height="58" rx="29.0" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.8"/>
+      <rect x="14" y="18.0" width="44" height="22" rx="11" fill="#2563EB"/>
+      <text x="36" y="33.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#FFFFFF">UC07</text>
+      <text x="171.0" y="26.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">Solicitar Pagamento (Mock)</text>
+      <text x="171.0" y="42.0" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="9.5" fill="#475569">POST /pagamentos (idempotente)</text>
+    </g>
+    <g transform="translate(695.0,301.0)" filter="url(#shadow)">
+      <rect x="0" y="0" width="290" height="58" rx="29.0" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="1.8"/>
+      <rect x="14" y="18.0" width="44" height="22" rx="11" fill="#1E3A5F"/>
+      <text x="36" y="33.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#FFFFFF">UC02</text>
+      <text x="171.0" y="26.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">Autenticar Usuário (JWT)</text>
+      <text x="171.0" y="42.0" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="9.5" fill="#475569">POST /auth/login</text>
+    </g>
+    <g transform="translate(695.0,436.0)" filter="url(#shadow)">
+      <rect x="0" y="0" width="290" height="58" rx="29.0" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.8"/>
+      <rect x="14" y="18.0" width="44" height="22" rx="11" fill="#2563EB"/>
+      <text x="36" y="33.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#FFFFFF">UC08</text>
+      <text x="171.0" y="26.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">Consultar Pedidos por Canal</text>
+      <text x="171.0" y="42.0" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="9.5" fill="#475569">GET /pedidos?canalPedido=...</text>
+    </g>
+    <g transform="translate(695.0,571.0)" filter="url(#shadow)">
+      <rect x="0" y="0" width="290" height="58" rx="29.0" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.8"/>
+      <rect x="14" y="18.0" width="44" height="22" rx="11" fill="#2563EB"/>
+      <text x="36" y="33.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#FFFFFF">UC09</text>
+      <text x="171.0" y="26.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">Atualizar Status / Cancelar</text>
+      <text x="171.0" y="42.0" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="9.5" fill="#475569">PATCH status e POST cancelar</text>
+    </g>
+    <g transform="translate(695.0,741.0)" filter="url(#shadow)">
+      <rect x="0" y="0" width="290" height="58" rx="29.0" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.8"/>
+      <rect x="14" y="18.0" width="44" height="22" rx="11" fill="#2563EB"/>
+      <text x="36" y="33.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#FFFFFF">UC04</text>
+      <text x="171.0" y="26.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">Realizar Pedido (Multicanal)</text>
+      <text x="171.0" y="42.0" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="9.5" fill="#475569">POST /pedidos (canalPedido)</text>
+    </g>
+    <g transform="translate(1062.5,252.0)" filter="url(#shadow)">
+      <rect x="0" y="0" width="275" height="56" rx="28.0" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.8"/>
+      <rect x="14" y="17.0" width="44" height="22" rx="11" fill="#0F766E"/>
+      <text x="36" y="32.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#FFFFFF">UC10</text>
+      <text x="163.5" y="25.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">Consultar Fila de Preparo</text>
+      <text x="163.5" y="41.0" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="9.5" fill="#475569">Pedidos EM_PREPARO da loja</text>
+    </g>
+    <g transform="translate(1062.5,672.0)" filter="url(#shadow)">
+      <rect x="0" y="0" width="275" height="56" rx="28.0" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.8"/>
+      <rect x="14" y="17.0" width="44" height="22" rx="11" fill="#0F766E"/>
+      <text x="36" y="32.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#FFFFFF">UC12</text>
+      <text x="163.5" y="25.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">Movimentar e Consultar Estoque</text>
+      <text x="163.5" y="41.0" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="9.5" fill="#475569">POST /estoque/movimentacoes</text>
+    </g>
+    <g transform="translate(1062.5,767.0)" filter="url(#shadow)">
+      <rect x="0" y="0" width="275" height="56" rx="28.0" fill="#FFFFFF" stroke="#475569" stroke-width="1.8"/>
+      <rect x="14" y="17.0" width="44" height="22" rx="11" fill="#475569"/>
+      <text x="36" y="32.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#FFFFFF">UC14</text>
+      <text x="163.5" y="25.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">Consultar Logs de Auditoria</text>
+      <text x="163.5" y="41.0" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="9.5" fill="#475569">GET /auditoria (escopo RBAC)</text>
+    </g>
+    <g transform="translate(1062.5,862.0)" filter="url(#shadow)">
+      <rect x="0" y="0" width="275" height="56" rx="28.0" fill="#FFFFFF" stroke="#1E3A5F" stroke-width="1.8"/>
+      <rect x="14" y="17.0" width="44" height="22" rx="11" fill="#1E3A5F"/>
+      <text x="36" y="32.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#FFFFFF">UC11</text>
+      <text x="163.5" y="25.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">Gerenciar Unidades e Catálogo</text>
+      <text x="163.5" y="41.0" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="9.5" fill="#475569">POST /unidades, /produtos, /promocoes</text>
+    </g>
+  </g>
+  <g id="actors">
+    <g transform="translate(145,315)">
+      <rect x="-78" y="-58" width="156" height="114" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" filter="url(#shadow)"/>
+      <circle cx="0" cy="-32" r="11" fill="#EFF6FF" stroke="#1E3A5F" stroke-width="2.2"/>
+      <line x1="0" y1="-21" x2="0" y2="3" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="-16" y1="-11" x2="16" y2="-11" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="0" y1="3" x2="-13" y2="20" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="0" y1="3" x2="13" y2="20" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <text x="0" y="36" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="700" fill="#0F172A">Cliente</text>
+      <text x="0" y="50" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#475569">(App / Web / Totem / Pickup)</text>
+    </g>
+    <g transform="translate(145,620)">
+      <rect x="-78" y="-58" width="156" height="114" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" filter="url(#shadow)"/>
+      <circle cx="0" cy="-32" r="11" fill="#EFF6FF" stroke="#1E3A5F" stroke-width="2.2"/>
+      <line x1="0" y1="-21" x2="0" y2="3" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="-16" y1="-11" x2="16" y2="-11" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="0" y1="3" x2="-13" y2="20" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="0" y1="3" x2="13" y2="20" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <text x="0" y="36" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="700" fill="#0F172A">Atendente</text>
+      <text x="0" y="50" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#475569">(Balcão da Loja)</text>
+    </g>
+    <g transform="translate(1535,195)">
+      <rect x="-78" y="-58" width="156" height="114" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" filter="url(#shadow)"/>
+      <circle cx="0" cy="-32" r="11" fill="#EFF6FF" stroke="#1E3A5F" stroke-width="2.2"/>
+      <line x1="0" y1="-21" x2="0" y2="3" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="-16" y1="-11" x2="16" y2="-11" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="0" y1="3" x2="-13" y2="20" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="0" y1="3" x2="13" y2="20" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <text x="0" y="36" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="700" fill="#0F172A">Gateway Pagamento</text>
+      <text x="0" y="50" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#475569">(Serviço Mock)</text>
+    </g>
+    <g transform="translate(1535,385)">
+      <rect x="-78" y="-58" width="156" height="114" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" filter="url(#shadow)"/>
+      <circle cx="0" cy="-32" r="11" fill="#EFF6FF" stroke="#1E3A5F" stroke-width="2.2"/>
+      <line x1="0" y1="-21" x2="0" y2="3" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="-16" y1="-11" x2="16" y2="-11" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="0" y1="3" x2="-13" y2="20" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="0" y1="3" x2="13" y2="20" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <text x="0" y="36" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="700" fill="#0F172A">Cozinha</text>
+      <text x="0" y="50" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#475569">(Preparo da Loja)</text>
+    </g>
+    <g transform="translate(1535,610)">
+      <rect x="-78" y="-58" width="156" height="114" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" filter="url(#shadow)"/>
+      <circle cx="0" cy="-32" r="11" fill="#EFF6FF" stroke="#1E3A5F" stroke-width="2.2"/>
+      <line x1="0" y1="-21" x2="0" y2="3" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="-16" y1="-11" x2="16" y2="-11" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="0" y1="3" x2="-13" y2="20" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="0" y1="3" x2="13" y2="20" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <text x="0" y="36" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="700" fill="#0F172A">Gerente</text>
+      <text x="0" y="50" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#475569">(Gestão da Unidade)</text>
+    </g>
+    <g transform="translate(1535,835)">
+      <rect x="-78" y="-58" width="156" height="114" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" filter="url(#shadow)"/>
+      <circle cx="0" cy="-32" r="11" fill="#EFF6FF" stroke="#1E3A5F" stroke-width="2.2"/>
+      <line x1="0" y1="-21" x2="0" y2="3" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="-16" y1="-11" x2="16" y2="-11" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="0" y1="3" x2="-13" y2="20" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="0" y1="3" x2="13" y2="20" stroke="#1E3A5F" stroke-width="2.2" stroke-linecap="round"/>
+      <text x="0" y="36" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="700" fill="#0F172A">Administrador</text>
+      <text x="0" y="50" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#475569">(Matriz)</text>
+    </g>
+  </g>
+  <g transform="translate(310, 972)">
+    <rect x="0" y="0" width="1060" height="34" rx="6" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1"/>
+    <text x="530" y="21" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Linha contínua: associação ator-caso de uso  |  Seta tracejada &lt;&lt;include&gt;&gt;: execução obrigatória  |  Seta tracejada &lt;&lt;extend&gt;&gt;: execução condicional (cupom ou pontos)</text>
+  </g>
+</svg>

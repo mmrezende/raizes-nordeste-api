@@ -1,0 +1,175 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1860" height="820" viewBox="0 0 1860 820">
+  <defs>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0F172A" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arr-navy" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9 Z" fill="#1E3A5F"/>
+    </marker>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9 Z" fill="#2563EB"/>
+    </marker>
+    <marker id="arr-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9 Z" fill="#0F766E"/>
+    </marker>
+  </defs>
+  <rect width="1860" height="820" fill="#FFFFFF"/>
+  <text x="930.0" y="38" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#0F172A">Arquitetura em 4 Camadas - Back-end Raízes do Nordeste</text>
+  <text x="930.0" y="61" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="12.5" fill="#475569">Separação de responsabilidades entre Canais de Acesso, API, Application, Domain, Infrastructure e Persistência</text>
+  <g transform="translate(40, 145)" filter="url(#shadow)">
+    <rect x="0" y="0" width="230" height="515" rx="10" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+    <path d="M 0 10 Q 0 0 10 0 L 220 0 Q 230 0 230 10 L 230 40 L 0 40 Z" fill="#1E3A5F"/>
+    <text x="115" y="25" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#FFFFFF">Canais de Acesso</text>
+    <rect x="16" y="58" width="198" height="58" rx="7" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+    <text x="115" y="82" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">APP Mobile</text>
+    <text x="115" y="100" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#475569">Clientes (iOS / Android)</text>
+    <rect x="16" y="131" width="198" height="58" rx="7" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+    <text x="115" y="155" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">TOTEM Autoatendimento</text>
+    <text x="115" y="173" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#475569">Pedidos na loja (canal TOTEM)</text>
+    <rect x="16" y="204" width="198" height="58" rx="7" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+    <text x="115" y="228" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">WEB / E-commerce</text>
+    <text x="115" y="246" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#475569">Pedidos online (canal WEB)</text>
+    <rect x="16" y="277" width="198" height="58" rx="7" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+    <text x="115" y="301" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">PICKUP Retirada</text>
+    <text x="115" y="319" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#475569">Retirada rápida (canal PICKUP)</text>
+    <rect x="16" y="350" width="198" height="58" rx="7" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+    <text x="115" y="374" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">BALCÃO / PDV</text>
+    <text x="115" y="392" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#475569">Atendentes da unidade</text>
+    <rect x="16" y="423" width="198" height="58" rx="7" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+    <text x="115" y="447" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F172A">COZINHA e GESTÃO</text>
+    <text x="115" y="465" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#475569">Fila de preparo, estoque e auditoria</text>
+  </g>
+  <g transform="translate(355, 95)" filter="url(#shadow)">
+    <rect x="0" y="0" width="1155" height="685" rx="12" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1.6"/>
+    <path d="M 0 12 Q 0 0 12 0 L 1143 0 Q 1155 0 1155 12 L 1155 42 L 0 42 Z" fill="#0F172A"/>
+    <text x="577.5" y="26" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF">Back-end Raízes do Nordeste (NestJS 12 + TypeScript)</text>
+  </g>
+  <g transform="translate(380, 155)" filter="url(#shadow)">
+    <rect x="0" y="0" width="250" height="505" rx="9" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
+    <path d="M 0 9 Q 0 0 9 0 L 241 0 Q 250 0 250 9 L 250 50 L 0 50 Z" fill="#1E3A5F"/>
+    <text x="125" y="22" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF">Camada 1 - API</text>
+    <text x="125" y="40" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="10" fill="#E2E8F0">src/api (Entrada HTTP)</text>
+    <rect x="14" y="62" width="222" height="99" rx="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.1"/>
+    <text x="125" y="83" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#1E3A5F">Controllers REST</text>
+    <text x="125" y="102" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">Auth, Usuarios, Unidades, Produtos,</text>
+    <text x="125" y="117" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">Estoque, Pedidos, Pagamentos,</text>
+    <text x="125" y="132" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">Promocoes, Fidelidade, Auditoria</text>
+    <rect x="14" y="173" width="222" height="99" rx="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.1"/>
+    <text x="125" y="194" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#1E3A5F">DTOs de Entrada e Saída</text>
+    <text x="125" y="213" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">Validação estrita com class-validator</text>
+    <text x="125" y="228" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">e contratos tipados de resposta</text>
+    <rect x="14" y="284" width="222" height="99" rx="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.1"/>
+    <text x="125" y="305" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#1E3A5F">Guards e Interceptor</text>
+    <text x="125" y="324" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">JwtAuthGuard, RolesGuard (RBAC)</text>
+    <text x="125" y="339" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">e AuditInterceptor (logs pós-commit)</text>
+    <rect x="14" y="395" width="222" height="99" rx="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.1"/>
+    <text x="125" y="416" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#1E3A5F">Filtro Global e Swagger</text>
+    <text x="125" y="435" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">GlobalExceptionFilter, X-Request-Id</text>
+    <text x="125" y="450" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">e documentação OpenAPI em /docs</text>
+  </g>
+  <g transform="translate(665, 155)" filter="url(#shadow)">
+    <rect x="0" y="0" width="250" height="505" rx="9" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
+    <path d="M 0 9 Q 0 0 9 0 L 241 0 Q 250 0 250 9 L 250 50 L 0 50 Z" fill="#2563EB"/>
+    <text x="125" y="22" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF">Camada 2 - Application</text>
+    <text x="125" y="40" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="10" fill="#E2E8F0">src/application (Casos de Uso)</text>
+    <rect x="14" y="62" width="222" height="137" rx="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.1"/>
+    <text x="125" y="83" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#2563EB">Services por Módulo</text>
+    <text x="125" y="102" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">Orquestração transacional de pedidos,</text>
+    <text x="125" y="117" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">reserva de estoque, pagamentos,</text>
+    <text x="125" y="132" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">fidelidade, catálogo e auditoria</text>
+    <rect x="14" y="211" width="222" height="137" rx="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.1"/>
+    <text x="125" y="232" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#2563EB">Helpers Compartilhados</text>
+    <text x="125" y="251" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">acesso-escopo.helper (unidade/dono),</text>
+    <text x="125" y="266" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">paginacao.helper, pedido-estorno.helper</text>
+    <text x="125" y="281" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">e USUARIO_SEGURO_SELECT</text>
+    <rect x="14" y="360" width="222" height="137" rx="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.1"/>
+    <text x="125" y="381" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#2563EB">Portas (Contratos)</text>
+    <text x="125" y="400" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">PaymentGateway, AuditLogger,</text>
+    <text x="125" y="415" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">IdGenerator e PasswordHasher</text>
+    <text x="125" y="430" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">(desacoplam a infraestrutura)</text>
+  </g>
+  <g transform="translate(950, 155)" filter="url(#shadow)">
+    <rect x="0" y="0" width="250" height="505" rx="9" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
+    <path d="M 0 9 Q 0 0 9 0 L 241 0 Q 250 0 250 9 L 250 50 L 0 50 Z" fill="#0F766E"/>
+    <text x="125" y="22" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF">Camada 3 - Domain</text>
+    <text x="125" y="40" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="10" fill="#E2E8F0">src/domain (Núcleo Puro)</text>
+    <rect x="14" y="62" width="222" height="137" rx="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.1"/>
+    <text x="125" y="83" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F766E">Enums de Domínio</text>
+    <text x="125" y="102" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">PerfilUsuario, CanalPedido,</text>
+    <text x="125" y="117" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">StatusPedido, StatusPagamento,</text>
+    <text x="125" y="132" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">TipoDesconto, FormaPagamento</text>
+    <rect x="14" y="211" width="222" height="137" rx="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.1"/>
+    <text x="125" y="232" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F766E">Regras Puras de Negócio</text>
+    <text x="125" y="251" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">pedido-calculo.rule (descontos e pontos),</text>
+    <text x="125" y="266" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">pedido-status.rule (matriz de transição)</text>
+    <text x="125" y="281" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">e conversão segura em centavos</text>
+    <rect x="14" y="360" width="222" height="137" rx="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.1"/>
+    <text x="125" y="381" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#0F766E">Erros de Domínio Tipados</text>
+    <text x="125" y="400" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">DomainError, BusinessRuleException,</text>
+    <text x="125" y="415" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">ConflictDomainException,</text>
+    <text x="125" y="430" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">ResourceNotFoundException</text>
+  </g>
+  <g transform="translate(1235, 155)" filter="url(#shadow)">
+    <rect x="0" y="0" width="250" height="505" rx="9" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
+    <path d="M 0 9 Q 0 0 9 0 L 241 0 Q 250 0 250 9 L 250 50 L 0 50 Z" fill="#475569"/>
+    <text x="125" y="22" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF">Camada 4 - Infrastructure</text>
+    <text x="125" y="40" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="10" fill="#E2E8F0">src/infrastructure (Adapters)</text>
+    <rect x="14" y="62" width="222" height="99" rx="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.1"/>
+    <text x="125" y="83" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#475569">Persistência Relacional</text>
+    <text x="125" y="102" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">InfrastructureModule (@Global) e</text>
+    <text x="125" y="117" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">PrismaService conectado ao SQLite</text>
+    <rect x="14" y="173" width="222" height="99" rx="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.1"/>
+    <text x="125" y="194" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#475569">Segurança e Identificadores</text>
+    <text x="125" y="213" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">BcryptPasswordHasher (custo 10),</text>
+    <text x="125" y="228" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">JwtStrategy (valida usuário ativo)</text>
+    <text x="125" y="243" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">e UuidV7Generator (pacote uuidv7)</text>
+    <rect x="14" y="284" width="222" height="99" rx="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.1"/>
+    <text x="125" y="305" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#475569">Auditoria Persistente</text>
+    <text x="125" y="324" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">PrismaAuditLogger implementando</text>
+    <text x="125" y="339" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">a porta AuditLogger</text>
+    <rect x="14" y="395" width="222" height="99" rx="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.1"/>
+    <text x="125" y="416" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#475569">Gateway de Pagamento</text>
+    <text x="125" y="435" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">MockPaymentGateway implementando</text>
+    <text x="125" y="450" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#334155">a porta PaymentGateway</text>
+  </g>
+  <g transform="translate(1590, 145)" filter="url(#shadow)">
+    <rect x="0" y="0" width="230" height="515" rx="10" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+    <path d="M 0 10 Q 0 0 10 0 L 220 0 Q 230 0 230 10 L 230 40 L 0 40 Z" fill="#1E3A5F"/>
+    <text x="115" y="25" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF">Persistência e Externos</text>
+    <rect x="18" y="75" width="194" height="185" rx="8" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.6"/>
+    <ellipse cx="115" cy="108" rx="52" ry="14" fill="#CCFBF1" stroke="#0F766E" stroke-width="1.5"/>
+    <path d="M 63 108 L 63 142 A 52 14 0 0 0 167 142 L 167 108" fill="#CCFBF1" stroke="#0F766E" stroke-width="1.5"/>
+    <ellipse cx="115" cy="108" rx="52" ry="14" fill="#99F6E4" stroke="#0F766E" stroke-width="1.5"/>
+    <text x="115" y="182" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#0F172A">Banco SQLite</text>
+    <text x="115" y="200" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="10" fill="#0F766E">prisma/dev.db</text>
+    <text x="115" y="220" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#475569">12 tabelas relacionais,</text>
+    <text x="115" y="235" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#475569">FKs e transações ACID</text>
+    <rect x="18" y="295" width="194" height="185" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.6"/>
+    <rect x="55" y="318" width="120" height="44" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.4"/>
+    <text x="115" y="345" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11" font-weight="700" fill="#1E40AF">MOCK GATEWAY</text>
+    <text x="115" y="392" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#0F172A">Gateway Simulado</text>
+    <text x="115" y="412" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#475569">Simula aprovação ou recusa</text>
+    <text x="115" y="427" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#475569">determinística com retorno</text>
+    <text x="115" y="442" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="9.5" fill="#2563EB">payloadRetorno JSON</text>
+  </g>
+  <g id="arrows">
+    <line x1="270" y1="405" x2="374" y2="405" stroke="#1E3A5F" stroke-width="2.2" marker-end="url(#arr-navy)"/>
+    <rect x="276" y="368" width="92" height="28" rx="4" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+    <text x="322" y="381" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="9.5" font-weight="700" fill="#1E3A5F">HTTP / REST</text>
+    <text x="322" y="392" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="8.5" fill="#475569">Bearer JWT</text>
+    <line x1="630" y1="405" x2="659" y2="405" stroke="#2563EB" stroke-width="2.2" marker-end="url(#arr-blue)"/>
+    <line x1="915" y1="405" x2="944" y2="405" stroke="#0F766E" stroke-width="2.2" marker-end="url(#arr-teal)"/>
+    <path d="M 790 660 L 790 705 L 1360 705 L 1360 666" fill="none" stroke="#2563EB" stroke-width="2" marker-end="url(#arr-blue)"/>
+    <rect x="920" y="692" width="310" height="24" rx="4" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1"/>
+    <text x="1075" y="708" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#1D4ED8">Persiste via PrismaService e consome Portas</text>
+    <path d="M 1310 660 L 1310 742 L 835 742 L 835 666" fill="none" stroke="#475569" stroke-width="1.8" stroke-dasharray="6,4" marker-end="url(#arr-navy)"/>
+    <rect x="915" y="730" width="320" height="24" rx="4" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1"/>
+    <text x="1075" y="746" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="10.5" font-weight="700" fill="#334155">Inversão de dependência (implementa Portas)</text>
+    <line x1="1485" y1="310" x2="1602" y2="310" stroke="#0F766E" stroke-width="2.2" marker-end="url(#arr-teal)"/>
+    <rect x="1496" y="280" width="84" height="22" rx="4" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+    <text x="1538" y="295" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="9.5" font-weight="700" fill="#0F766E">Prisma ORM</text>
+    <line x1="1485" y1="530" x2="1602" y2="530" stroke="#2563EB" stroke-width="2.2" marker-end="url(#arr-blue)"/>
+    <rect x="1496" y="500" width="84" height="22" rx="4" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+    <text x="1538" y="515" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="9.5" font-weight="700" fill="#2563EB">Simulação</text>
+  </g>
+</svg>
