@@ -287,6 +287,27 @@ describe('Pagamentos Simulados e Ciclo de Vida de Pedidos (e2e)', () => {
         .expect(409);
       expect(conflictRes.body.error).toBe('PEDIDO_NAO_PAGAVEL');
 
+      const outroPedidoRes = await request(ctx.app.getHttpServer())
+        .post('/pedidos')
+        .set('Authorization', `Bearer ${clienteSemConsent.token}`)
+        .send({
+          unidadeId: unidade.id,
+          canalPedido: 'APP',
+          itens: [{ produtoId: produto.id, quantidade: 1 }],
+        })
+        .expect(201);
+
+      const idempotencyConflictRes = await request(ctx.app.getHttpServer())
+        .post('/pagamentos')
+        .set('Authorization', `Bearer ${clienteSemConsent.token}`)
+        .send({
+          pedidoId: outroPedidoRes.body.id,
+          formaPagamento: 'PIX',
+          idempotencyKey: 'pay-sem-consent-001',
+        })
+        .expect(409);
+      expect(idempotencyConflictRes.body.error).toBe('IDEMPOTENCY_KEY_CONFLITO');
+
       const notFoundRes = await request(ctx.app.getHttpServer())
         .post('/pagamentos')
         .set('Authorization', `Bearer ${clienteSemConsent.token}`)

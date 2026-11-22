@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { Pagamento } from '@prisma/client';
+import { Prisma, type Pagamento } from '@prisma/client';
 import { validarAcessoPedido } from '@application/common/acesso-escopo.util';
 import type { UsuarioAutenticado } from '@application/common/usuario-autenticado.type';
 import { ID_GENERATOR, type IdGenerator } from '@application/ports/id-generator.interface';
@@ -85,12 +85,13 @@ export class PagamentosService {
     @Inject(PAYMENT_GATEWAY) private readonly paymentGateway: PaymentGateway,
   ) {}
 
-  async processar(
-    input: ProcessarPagamentoInput,
+  private async resolverPagamentoExistente(
+    idempotencyKey: string,
+    pedidoId: string,
     ator: UsuarioAutenticado,
-  ): Promise<ProcessarPagamentoOutput> {
+  ): Promise<ProcessarPagamentoOutput | null> {
     const existente = await this.prisma.pagamento.findUnique({
-      where: { idempotencyKey: input.idempotencyKey },
+      where: { idempotencyKey },
       include: {
         pedido: {
           select: { clienteId: true, unidadeId: true },
@@ -98,20 +99,36 @@ export class PagamentosService {
       },
     });
 
-    if (existente) {
-      if (existente.pedidoId !== input.pedidoId) {
-        throw new ConflictDomainError(
-          'Chave de idempotência já utilizada para outro pedido.',
-          [{ field: 'idempotencyKey', issue: 'Chave vinculada a outro pedido.' }],
-          'IDEMPOTENCY_KEY_CONFLITO',
-        );
-      }
+    if (!existente) {
+      return null;
+    }
 
-      validarAcessoPedido(existente.pedido, ator, MENSAGENS_ACESSO_PAGAMENTO);
-      return {
-        pagamento: formatarPagamento(existente, existente.pedido.unidadeId),
-        jaProcessado: true,
-      };
+    if (existente.pedidoId !== pedidoId) {
+      throw new ConflictDomainError(
+        'Chave de idempotência já utilizada para outro pedido.',
+        [{ field: 'idempotencyKey', issue: 'Chave vinculada a outro pedido.' }],
+        'IDEMPOTENCY_KEY_CONFLITO',
+      );
+    }
+
+    validarAcessoPedido(existente.pedido, ator, MENSAGENS_ACESSO_PAGAMENTO);
+    return {
+      pagamento: formatarPagamento(existente, existente.pedido.unidadeId),
+      jaProcessado: true,
+    };
+  }
+
+  async processar(
+    input: ProcessarPagamentoInput,
+    ator: UsuarioAutenticado,
+  ): Promise<ProcessarPagamentoOutput> {
+    const pagamentoExistente = await this.resolverPagamentoExistente(
+      input.idempotencyKey,
+      input.pedidoId,
+      ator,
+    );
+    if (pagamentoExistente) {
+      return pagamentoExistente;
     }
 
     const pedido = await this.prisma.pedido.findUnique({
@@ -141,82 +158,96 @@ export class PagamentosService {
       simularRecusa: input.simularRecusa,
     });
 
-    const pagamentoCriado = await this.prisma.$transaction(async (tx) => {
-      const novoStatusPedido =
-        retornoGateway.status === StatusPagamento.APROVADO
-          ? StatusPedido.EM_PREPARO
-          : StatusPedido.PAGAMENTO_RECUSADO;
+    try {
+      const pagamentoCriado = await this.prisma.$transaction(async (tx) => {
+        const novoStatusPedido =
+          retornoGateway.status === StatusPagamento.APROVADO
+            ? StatusPedido.EM_PREPARO
+            : StatusPedido.PAGAMENTO_RECUSADO;
 
-      const pedidoAtualizado = await tx.pedido.updateMany({
-        where: {
-          id: pedido.id,
-          status: StatusPedido.AGUARDANDO_PAGAMENTO,
-        },
-        data: { status: novoStatusPedido },
-      });
-
-      if (pedidoAtualizado.count === 0) {
-        throw new ConflictDomainError(
-          'Este pedido não está aguardando pagamento.',
-          [{ field: 'pedidoId', issue: 'Status alterado concorrentemente.' }],
-          'PEDIDO_NAO_PAGAVEL',
-        );
-      }
-
-      const pagamento = await tx.pagamento.create({
-        data: {
-          id: this.idGenerator.generate(),
-          pedidoId: pedido.id,
-          idempotencyKey: input.idempotencyKey,
-          formaPagamento: input.formaPagamento,
-          status: retornoGateway.status,
-          valorCentavos: pedido.valorTotalCentavos,
-          referenciaExterna: retornoGateway.referenciaExterna,
-          payloadRetorno: retornoGateway.payloadRetorno,
-          processadoEm: retornoGateway.processadoEm,
-        },
-      });
-
-      if (retornoGateway.status === StatusPagamento.APROVADO) {
-        const pontosAcumulo = calcularPontosAcumulo(pedido.valorTotalCentavos);
-        if (pontosAcumulo > 0) {
-          const conta = await tx.contaFidelidade.findUnique({
-            where: { usuarioId: pedido.clienteId },
-            select: { id: true, consentimentoAtivo: true },
-          });
-
-          if (conta && conta.consentimentoAtivo) {
-            await tx.contaFidelidade.update({
-              where: { id: conta.id },
-              data: { saldoPontos: { increment: pontosAcumulo } },
-            });
-
-            await tx.movimentacaoFidelidade.create({
-              data: {
-                id: this.idGenerator.generate(),
-                contaFidelidadeId: conta.id,
-                pedidoId: pedido.id,
-                tipo: TipoMovimentacaoFidelidade.ACUMULO,
-                pontos: pontosAcumulo,
-                descricao: 'Acúmulo de pontos por pagamento aprovado',
-              },
-            });
-          }
-        }
-      } else {
-        await estornarReservasDoPedido(tx, this.idGenerator, {
-          pedido,
-          atorUsuarioId: ator.id,
-          motivo: 'Estorno automático por pagamento recusado',
+        const pedidoAtualizado = await tx.pedido.updateMany({
+          where: {
+            id: pedido.id,
+            status: StatusPedido.AGUARDANDO_PAGAMENTO,
+          },
+          data: { status: novoStatusPedido },
         });
+
+        if (pedidoAtualizado.count === 0) {
+          throw new ConflictDomainError(
+            'Este pedido não está aguardando pagamento.',
+            [{ field: 'pedidoId', issue: 'Status alterado concorrentemente.' }],
+            'PEDIDO_NAO_PAGAVEL',
+          );
+        }
+
+        const pagamento = await tx.pagamento.create({
+          data: {
+            id: this.idGenerator.generate(),
+            pedidoId: pedido.id,
+            idempotencyKey: input.idempotencyKey,
+            formaPagamento: input.formaPagamento,
+            status: retornoGateway.status,
+            valorCentavos: pedido.valorTotalCentavos,
+            referenciaExterna: retornoGateway.referenciaExterna,
+            payloadRetorno: retornoGateway.payloadRetorno,
+            processadoEm: retornoGateway.processadoEm,
+          },
+        });
+
+        if (retornoGateway.status === StatusPagamento.APROVADO) {
+          const pontosAcumulo = calcularPontosAcumulo(pedido.valorTotalCentavos);
+          if (pontosAcumulo > 0) {
+            const conta = await tx.contaFidelidade.findUnique({
+              where: { usuarioId: pedido.clienteId },
+              select: { id: true, consentimentoAtivo: true },
+            });
+
+            if (conta && conta.consentimentoAtivo) {
+              await tx.contaFidelidade.update({
+                where: { id: conta.id },
+                data: { saldoPontos: { increment: pontosAcumulo } },
+              });
+
+              await tx.movimentacaoFidelidade.create({
+                data: {
+                  id: this.idGenerator.generate(),
+                  contaFidelidadeId: conta.id,
+                  pedidoId: pedido.id,
+                  tipo: TipoMovimentacaoFidelidade.ACUMULO,
+                  pontos: pontosAcumulo,
+                  descricao: 'Acúmulo de pontos por pagamento aprovado',
+                },
+              });
+            }
+          }
+        } else {
+          await estornarReservasDoPedido(tx, this.idGenerator, {
+            pedido,
+            atorUsuarioId: ator.id,
+            motivo: 'Estorno automático por pagamento recusado',
+          });
+        }
+
+        return pagamento;
+      });
+
+      return {
+        pagamento: formatarPagamento(pagamentoCriado, pedido.unidadeId),
+        jaProcessado: false,
+      };
+    } catch (error: unknown) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        const concorrente = await this.resolverPagamentoExistente(
+          input.idempotencyKey,
+          input.pedidoId,
+          ator,
+        );
+        if (concorrente) {
+          return concorrente;
+        }
       }
-
-      return pagamento;
-    });
-
-    return {
-      pagamento: formatarPagamento(pagamentoCriado, pedido.unidadeId),
-      jaProcessado: false,
-    };
+      throw error;
+    }
   }
 }
