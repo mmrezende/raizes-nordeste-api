@@ -70,7 +70,7 @@ Todos os usuários criados pelo seed usam a senha `Senha@123`:
 | `cozinha.rec@raizes.com` | `COZINHA` | `REC-01` | Preparo de pedidos (`EM_PREPARO` -> `PRONTO`) |
 | `cliente@exemplo.com` | `CLIENTE` | `null` | Cliente com 20 pontos e consentimento ativo |
 
-- Unidades criadas: `REC-01` (`Raízes Boa Viagem`, ID `0193514c-8d12-7000-8000-000000000101`) e `FOR-01` (`Raízes Meireles`).
+- Unidades criadas: `REC-01` (`Raízes Boa Viagem`, ID `019c6199-df00-7000-8000-000000000101`) e `FOR-01` (`Raízes Meireles`).
 - Cupons ativos: `TOTEM10` (10% no canal `TOTEM`, mínimo R$ 20,00) e `RAIZES5` (R$ 5,00 em qualquer canal, mínimo R$ 15,00).
 - O produto *Bolo de Rolo Tradicional* em `REC-01` inicia com saldo `2` para facilitar testes de estoque insuficiente (`409`).
 
@@ -96,12 +96,12 @@ Criar pedido (`POST /pedidos`):
 
 ```json
 {
-  "unidadeId": "0193514c-8d12-7000-8000-000000000101",
+  "unidadeId": "019c6199-df00-7000-8000-000000000101",
   "canalPedido": "TOTEM",
   "codigoPromocao": "TOTEM10",
   "pontosResgate": 5,
   "itens": [
-    { "produtoId": "0193514c-8d12-7000-8000-000000000201", "quantidade": 2 }
+    { "produtoId": "019c6199-df00-7000-8000-000000000201", "quantidade": 2 }
   ]
 }
 ```
@@ -110,9 +110,9 @@ Processar pagamento (`POST /pagamentos`):
 
 ```json
 {
-  "pedidoId": "0193514c-8d12-7a00-8f41-9c2a1b3e4f77",
+  "pedidoId": "019c6199-df00-7a00-8f41-9c2a1b3e4f77",
   "formaPagamento": "PIX",
-  "idempotencyKey": "pm-ok-1732250000000"
+  "idempotencyKey": "pm-ok-1771164000000"
 }
 ```
 
@@ -127,7 +127,7 @@ Resposta padrão de erro (`409 Conflict`):
   ],
   "timestamp": "2026-02-15T14:00:00.000Z",
   "path": "/pedidos",
-  "requestId": "0193514c-8d12-7a00-8f41-9c2a1b3e4f99"
+  "requestId": "019c6199-df00-7a00-8f41-9c2a1b3e4f99"
 }
 ```
 

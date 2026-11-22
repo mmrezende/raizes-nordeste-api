@@ -342,7 +342,7 @@ describe('Unidades, Produtos, Cardápio e Estoque (e2e)', () => {
         .post('/estoque/movimentacoes')
         .set('Authorization', `Bearer ${admin.token}`)
         .send({
-          unidadeId: '0193514c-8d12-7a00-8f41-9c2a1b3e4f99',
+          unidadeId: '019c6199-df00-7a00-8f41-9c2a1b3e4f99',
           produtoId: produto.id,
           tipo: 'ENTRADA',
           quantidade: 5,

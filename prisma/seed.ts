@@ -5,21 +5,21 @@ import * as bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 const IDS = {
-  unidadeRecife: '0193514c-8d12-7000-8000-000000000101',
-  unidadeFortaleza: '0193514c-8d12-7000-8000-000000000102',
-  produtoTapioca: '0193514c-8d12-7000-8000-000000000201',
-  produtoCuscuz: '0193514c-8d12-7000-8000-000000000202',
-  produtoBaiao: '0193514c-8d12-7000-8000-000000000203',
-  produtoBoloRolo: '0193514c-8d12-7000-8000-000000000204',
-  produtoSucoCaja: '0193514c-8d12-7000-8000-000000000205',
-  usuarioAdmin: '0193514c-8d12-7000-8000-000000000301',
-  usuarioGerente: '0193514c-8d12-7000-8000-000000000302',
-  usuarioAtendente: '0193514c-8d12-7000-8000-000000000303',
-  usuarioCozinha: '0193514c-8d12-7000-8000-000000000304',
-  usuarioCliente: '0193514c-8d12-7000-8000-000000000305',
-  contaFidelidadeCliente: '0193514c-8d12-7000-8000-000000000401',
-  promoTotem10: '0193514c-8d12-7000-8000-000000000501',
-  promoRaizes5: '0193514c-8d12-7000-8000-000000000502',
+  unidadeRecife: '019c6199-df00-7000-8000-000000000101',
+  unidadeFortaleza: '019c6199-df00-7000-8000-000000000102',
+  produtoTapioca: '019c6199-df00-7000-8000-000000000201',
+  produtoCuscuz: '019c6199-df00-7000-8000-000000000202',
+  produtoBaiao: '019c6199-df00-7000-8000-000000000203',
+  produtoBoloRolo: '019c6199-df00-7000-8000-000000000204',
+  produtoSucoCaja: '019c6199-df00-7000-8000-000000000205',
+  usuarioAdmin: '019c6199-df00-7000-8000-000000000301',
+  usuarioGerente: '019c6199-df00-7000-8000-000000000302',
+  usuarioAtendente: '019c6199-df00-7000-8000-000000000303',
+  usuarioCozinha: '019c6199-df00-7000-8000-000000000304',
+  usuarioCliente: '019c6199-df00-7000-8000-000000000305',
+  contaFidelidadeCliente: '019c6199-df00-7000-8000-000000000401',
+  promoTotem10: '019c6199-df00-7000-8000-000000000501',
+  promoRaizes5: '019c6199-df00-7000-8000-000000000502',
 } as const;
 
 async function main(): Promise<void> {
@@ -111,13 +111,13 @@ async function main(): Promise<void> {
   }
 
   const estoquesData = [
-    { id: '0193514c-8d12-7000-8000-000000000601', unidadeId: recife.id, produtoId: IDS.produtoTapioca, quantidade: 25 },
-    { id: '0193514c-8d12-7000-8000-000000000602', unidadeId: recife.id, produtoId: IDS.produtoCuscuz, quantidade: 20 },
-    { id: '0193514c-8d12-7000-8000-000000000603', unidadeId: recife.id, produtoId: IDS.produtoBaiao, quantidade: 15 },
-    { id: '0193514c-8d12-7000-8000-000000000604', unidadeId: recife.id, produtoId: IDS.produtoBoloRolo, quantidade: 2 },
-    { id: '0193514c-8d12-7000-8000-000000000605', unidadeId: recife.id, produtoId: IDS.produtoSucoCaja, quantidade: 30 },
-    { id: '0193514c-8d12-7000-8000-000000000606', unidadeId: fortaleza.id, produtoId: IDS.produtoTapioca, quantidade: 12 },
-    { id: '0193514c-8d12-7000-8000-000000000607', unidadeId: fortaleza.id, produtoId: IDS.produtoSucoCaja, quantidade: 18 },
+    { id: '019c6199-df00-7000-8000-000000000601', unidadeId: recife.id, produtoId: IDS.produtoTapioca, quantidade: 25 },
+    { id: '019c6199-df00-7000-8000-000000000602', unidadeId: recife.id, produtoId: IDS.produtoCuscuz, quantidade: 20 },
+    { id: '019c6199-df00-7000-8000-000000000603', unidadeId: recife.id, produtoId: IDS.produtoBaiao, quantidade: 15 },
+    { id: '019c6199-df00-7000-8000-000000000604', unidadeId: recife.id, produtoId: IDS.produtoBoloRolo, quantidade: 2 },
+    { id: '019c6199-df00-7000-8000-000000000605', unidadeId: recife.id, produtoId: IDS.produtoSucoCaja, quantidade: 30 },
+    { id: '019c6199-df00-7000-8000-000000000606', unidadeId: fortaleza.id, produtoId: IDS.produtoTapioca, quantidade: 12 },
+    { id: '019c6199-df00-7000-8000-000000000607', unidadeId: fortaleza.id, produtoId: IDS.produtoSucoCaja, quantidade: 18 },
   ];
 
   for (const estoque of estoquesData) {

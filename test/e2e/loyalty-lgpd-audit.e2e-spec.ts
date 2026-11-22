@@ -90,14 +90,14 @@ describe('Fidelidade, LGPD e Auditoria (e2e)', () => {
       await ctx.prisma.movimentacaoFidelidade.createMany({
         data: [
           {
-            id: '0193514c-8d12-7a00-8f41-9c2a1b3e4f01',
+            id: '019c6199-df00-7a00-8f41-9c2a1b3e4f01',
             contaFidelidadeId: conta.id,
             tipo: 'ACUMULO',
             pontos: 5,
             descricao: 'Acúmulo em pedido teste',
           },
           {
-            id: '0193514c-8d12-7a00-8f41-9c2a1b3e4f02',
+            id: '019c6199-df00-7a00-8f41-9c2a1b3e4f02',
             contaFidelidadeId: conta.id,
             tipo: 'RESGATE',
             pontos: 2,

@@ -2,13 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 import { PaginationMetaDto } from '@api/common/dtos/pagination-query.dto';
 
 export class MovimentacaoEstoqueDto {
-  @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f77' })
+  @ApiProperty({ example: '019c6199-df00-7a00-8f41-9c2a1b3e4f77' })
   id: string;
 
-  @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f88' })
+  @ApiProperty({ example: '019c6199-df00-7a00-8f41-9c2a1b3e4f88' })
   estoqueUnidadeId: string;
 
-  @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f99' })
+  @ApiProperty({ example: '019c6199-df00-7a00-8f41-9c2a1b3e4f99' })
   usuarioId: string;
 
   @ApiProperty({ example: 'ENTRADA' })
@@ -25,13 +25,13 @@ export class MovimentacaoEstoqueDto {
 }
 
 export class SaldoEstoqueDto {
-  @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f88' })
+  @ApiProperty({ example: '019c6199-df00-7a00-8f41-9c2a1b3e4f88' })
   id: string;
 
-  @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f55' })
+  @ApiProperty({ example: '019c6199-df00-7a00-8f41-9c2a1b3e4f55' })
   unidadeId: string;
 
-  @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f66' })
+  @ApiProperty({ example: '019c6199-df00-7a00-8f41-9c2a1b3e4f66' })
   produtoId: string;
 
   @ApiProperty({ example: 10 })
@@ -50,7 +50,7 @@ export class MovimentarEstoqueResponseDto {
 }
 
 export class EstoqueUnidadeItemResponseDto {
-  @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f66' })
+  @ApiProperty({ example: '019c6199-df00-7a00-8f41-9c2a1b3e4f66' })
   produtoId: string;
 
   @ApiProperty({ example: 'Bolo de Rolo Tradicional' })

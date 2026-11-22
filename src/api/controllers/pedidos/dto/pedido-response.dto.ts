@@ -3,10 +3,10 @@ import { PaginationMetaDto } from '@api/common/dtos/pagination-query.dto';
 import { CanalPedido, StatusPedido } from '@domain/enums/pedido.enum';
 
 export class ItemPedidoResponseDto {
-  @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f88' })
+  @ApiProperty({ example: '019c6199-df00-7a00-8f41-9c2a1b3e4f88' })
   id: string;
 
-  @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f66' })
+  @ApiProperty({ example: '019c6199-df00-7a00-8f41-9c2a1b3e4f66' })
   produtoId: string;
 
   @ApiProperty({ example: 2 })
@@ -26,16 +26,16 @@ export class ItemPedidoResponseDto {
 }
 
 export class PedidoResponseDto {
-  @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f77' })
+  @ApiProperty({ example: '019c6199-df00-7a00-8f41-9c2a1b3e4f77' })
   id: string;
 
-  @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f55' })
+  @ApiProperty({ example: '019c6199-df00-7a00-8f41-9c2a1b3e4f55' })
   unidadeId: string;
 
-  @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f11' })
+  @ApiProperty({ example: '019c6199-df00-7a00-8f41-9c2a1b3e4f11' })
   clienteId: string;
 
-  @ApiProperty({ type: String, nullable: true, example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f99' })
+  @ApiProperty({ type: String, nullable: true, example: '019c6199-df00-7a00-8f41-9c2a1b3e4f99' })
   promocaoId: string | null;
 
   @ApiProperty({ enum: CanalPedido, example: CanalPedido.TOTEM })

@@ -2,10 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import { PaginationMetaDto } from '@api/common/dtos/pagination-query.dto';
 
 export class LogAuditoriaResponseDto {
-  @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f90' })
+  @ApiProperty({ example: '019c6199-df00-7a00-8f41-9c2a1b3e4f90' })
   id: string;
 
-  @ApiProperty({ type: String, nullable: true, example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f11' })
+  @ApiProperty({ type: String, nullable: true, example: '019c6199-df00-7a00-8f41-9c2a1b3e4f11' })
   usuarioId: string | null;
 
   @ApiProperty({ example: 'PEDIDO_CRIADO' })
@@ -14,7 +14,7 @@ export class LogAuditoriaResponseDto {
   @ApiProperty({ example: 'pedidos' })
   entidade: string;
 
-  @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f77' })
+  @ApiProperty({ example: '019c6199-df00-7a00-8f41-9c2a1b3e4f77' })
   entidadeId: string;
 
   @ApiProperty({

@@ -3,10 +3,10 @@ import { PaginationMetaDto } from '@api/common/dtos/pagination-query.dto';
 import { TipoMovimentacaoFidelidade } from '@domain/enums/fidelidade.enum';
 
 export class ContaFidelidadeResponseDto {
-  @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f11' })
+  @ApiProperty({ example: '019c6199-df00-7a00-8f41-9c2a1b3e4f11' })
   id: string;
 
-  @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f22' })
+  @ApiProperty({ example: '019c6199-df00-7a00-8f41-9c2a1b3e4f22' })
   usuarioId: string;
 
   @ApiProperty({ example: 25 })
@@ -26,13 +26,13 @@ export class ContaFidelidadeResponseDto {
 }
 
 export class MovimentacaoFidelidadeResponseDto {
-  @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f33' })
+  @ApiProperty({ example: '019c6199-df00-7a00-8f41-9c2a1b3e4f33' })
   id: string;
 
-  @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f11' })
+  @ApiProperty({ example: '019c6199-df00-7a00-8f41-9c2a1b3e4f11' })
   contaFidelidadeId: string;
 
-  @ApiProperty({ type: String, nullable: true, example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f77' })
+  @ApiProperty({ type: String, nullable: true, example: '019c6199-df00-7a00-8f41-9c2a1b3e4f77' })
   pedidoId: string | null;
 
   @ApiProperty({ enum: TipoMovimentacaoFidelidade, example: TipoMovimentacaoFidelidade.ACUMULO })

@@ -280,7 +280,7 @@ describe('Pagamentos Simulados e Ciclo de Vida de Pedidos (e2e)', () => {
         .post('/pagamentos')
         .set('Authorization', `Bearer ${clienteSemConsent.token}`)
         .send({
-          pedidoId: '0193514c-8d12-7a00-8f41-9c2a1b3e4f99',
+          pedidoId: '019c6199-df00-7a00-8f41-9c2a1b3e4f99',
           formaPagamento: 'PIX',
           idempotencyKey: 'pay-inexistente-001',
         })

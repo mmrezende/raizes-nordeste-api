@@ -346,7 +346,7 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
         .post('/pedidos')
         .set('Authorization', `Bearer ${cliente.token}`)
         .send({
-          unidadeId: '0193514c-8d12-7a00-8f41-9c2a1b3e4f99',
+          unidadeId: '019c6199-df00-7a00-8f41-9c2a1b3e4f99',
           canalPedido: 'APP',
           itens: [{ produtoId: produto.id, quantidade: 1 }],
         })
@@ -359,7 +359,7 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
         .send({
           unidadeId: unidade.id,
           canalPedido: 'APP',
-          itens: [{ produtoId: '0193514c-8d12-7a00-8f41-9c2a1b3e4f98', quantidade: 1 }],
+          itens: [{ produtoId: '019c6199-df00-7a00-8f41-9c2a1b3e4f98', quantidade: 1 }],
         })
         .expect(404);
       expect(produtoNotFoundRes.body.error).toBe('PRODUTO_NAO_ENCONTRADO');
@@ -568,7 +568,7 @@ describe('Promoções e Pedidos Multicanalidade (e2e)', () => {
       expect(atendenteOutroRes.body.error).toBe('ACESSO_NEGADO');
 
       const notFoundRes = await request(ctx.app.getHttpServer())
-        .get('/pedidos/0193514c-8d12-7a00-8f41-9c2a1b3e4f97')
+        .get('/pedidos/019c6199-df00-7a00-8f41-9c2a1b3e4f97')
         .set('Authorization', `Bearer ${admin.token}`)
         .expect(404);
       expect(notFoundRes.body.error).toBe('PEDIDO_NAO_ENCONTRADO');

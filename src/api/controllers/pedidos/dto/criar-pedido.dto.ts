@@ -15,7 +15,7 @@ import {
 import { CanalPedido } from '@domain/enums/pedido.enum';
 
 export class ItemPedidoInputDto {
-  @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f66' })
+  @ApiProperty({ example: '019c6199-df00-7a00-8f41-9c2a1b3e4f66' })
   @IsUUID('all')
   produtoId: string;
 
@@ -26,7 +26,7 @@ export class ItemPedidoInputDto {
 }
 
 export class CriarPedidoDto {
-  @ApiProperty({ example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f55' })
+  @ApiProperty({ example: '019c6199-df00-7a00-8f41-9c2a1b3e4f55' })
   @IsUUID('all')
   unidadeId: string;
 
@@ -36,7 +36,7 @@ export class CriarPedidoDto {
 
   @ApiPropertyOptional({
     description: 'Identificador do cliente (opcional para atendentes/gerentes em balcão)',
-    example: '0193514c-8d12-7a00-8f41-9c2a1b3e4f11',
+    example: '019c6199-df00-7a00-8f41-9c2a1b3e4f11',
   })
   @IsOptional()
   @IsUUID('all')
