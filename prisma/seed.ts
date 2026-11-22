@@ -5,6 +5,7 @@ import * as bcrypt from 'bcryptjs';
 import { uuidv7 } from 'uuidv7';
 
 const prisma = new PrismaClient();
+faker.seed(4841127);
 
 async function main(): Promise<void> {
   await prisma.logAuditoria.deleteMany();
