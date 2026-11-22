@@ -22,20 +22,20 @@
 
 ## 1. Introdução e Objetivos
 
-A rede de lanchonetes **Raízes do Nordeste** expandiu sua operação para múltiplas lojas vendendo simultaneamente por aplicativo, totem, balcão, web e retirada rápida. Sem um núcleo centralizado, surgiram divergências de preço no cardápio, venda de produtos sem estoque local, falhas na aplicação de cupons e ausência de controle sobre o consentimento de clientes no programa de fidelidade.
+A rede de lanchonetes **Raízes do Nordeste** expandiu sua operação para várias lojas físicas, vendendo ao mesmo tempo por aplicativo, totem de autoatendimento, balcão, site e retirada rápida (`PICKUP`). Como cada canal operava sem uma base centralizada, começaram a ocorrer diferenças de preço entre lojas, vendas de itens sem estoque na unidade escolhida, falhas na validação de cupons e falta de registro formal de consentimento dos clientes no programa de fidelidade.
 
-Este projeto implementa uma API REST em **NestJS 12, TypeScript e Prisma ORM (SQLite)** para centralizar catálogo, promoções e fidelidade na matriz, mantendo o estoque e a fila de preparo isolados por unidade física, com exigência do canal de origem, pagamento simulado idempotente e adequação à LGPD.
+Para resolver esse cenário, desenvolvi esta API REST em **NestJS 12, TypeScript e Prisma ORM (SQLite)**. A ideia foi manter o catálogo de produtos, as campanhas promocionais e a conta de fidelidade centralizados na matriz, mas isolar o saldo de estoque e a fila de preparo por unidade física, exigindo a identificação do canal do pedido, simulando pagamentos com chave de idempotência e aplicando os controles exigidos pela LGPD.
 
 ---
 <br>
 
 ## 2. Análise e Requisitos
 
-O sistema controla o acesso por perfil (`CLIENTE`, `ATENDENTE`, `COZINHA`, `GERENTE` e `ADMIN`), vinculando funcionários à sua respectiva `unidadeId`. O catálogo de produtos pertence à matriz, mas o saldo fica isolado em cada loja (`estoque_unidades`), de modo que a consulta pública do cardápio (`GET /unidades/:id/cardapio`) exibe apenas itens ativos e disponíveis naquele endereço.
+O controle de acesso foi dividido em cinco perfis (`CLIENTE`, `ATENDENTE`, `COZINHA`, `GERENTE` e `ADMIN`), amarrando os funcionários de loja ao `unidadeId` onde trabalham. Embora o cadastro de produtos venha da matriz, a disponibilidade e a quantidade ficam na tabela `estoque_unidades`. Assim, quando o cliente consulta o cardápio público de uma filial (`GET /unidades/:id/cardapio`), a API filtra apenas os itens ativos e com saldo disponível para venda naquela loja.
 
-Na abertura do pedido (`POST /pedidos`), o campo `canalPedido` (`APP`, `TOTEM`, `BALCAO`, `PICKUP` ou `WEB`) é obrigatório (`422` se ausente). Os cálculos de subtotal, cupom (`PERCENTUAL` ou `VALOR_FIXO`) e desconto de fidelidade rodam no servidor em centavos inteiros (`Int`), reservando o estoque na mesma transação. O pagamento (`POST /pagamentos`) exige `idempotencyKey` para evitar cobrança dupla: quando aprovado pelo gateway mock, o pedido vai para `EM_PREPARO` e gera pontos (1 pt a cada R$ 10,00 com consentimento ativo); se recusado ou cancelado antes da entrega, uma transação devolve o estoque e estorna os pontos utilizados ou gerados.
+Na criação do pedido (`POST /pedidos`), o campo `canalPedido` (`APP`, `TOTEM`, `BALCAO`, `PICKUP` ou `WEB`) é obrigatório e retorna `422 ERRO_VALIDACAO` se não for enviado. Todo o cálculo de valores — subtotal dos itens, desconto de cupom (`PERCENTUAL` ou `VALOR_FIXO`) e abatimento de pontos de fidelidade — é feito no back-end usando centavos inteiros (`Int`) para evitar erros de arredondamento com ponto flutuante, já reservando o estoque dentro da mesma transação. No pagamento (`POST /pagamentos`), o envio de uma `idempotencyKey` impede cobranças duplicadas: quando o gateway simulado aprova a transação, o pedido avança para `EM_PREPARO` e credita 1 ponto a cada R$ 10,00 pagos (desde que o cliente tenha consentimento ativo); se o pagamento for recusado ou o pedido for cancelado antes da entrega, o sistema devolve o estoque reservado e estorna os pontos na hora.
 
-No escopo do projeto, o MVP entrega todos esses fluxos transacionais localmente em SQLite com chaves UUIDv7. Integrações de infraestrutura externa - gateway real via webhooks, fila em tempo real por WebSocket, revogação de JWT em Redis e banco PostgreSQL - ficaram para a Fase 2, apoiadas nas interfaces da camada de aplicação.
+Como recorte do MVP para a disciplina, priorizei fechar todos os fluxos de negócio, persistência transacional, testes e auditoria rodando localmente em SQLite com chaves UUIDv7. Recursos que dependem de serviços externos — como webhooks de adquirentes reais, painel de cozinha via WebSocket, lista de revogação de tokens em Redis e migração para PostgreSQL — ficaram planejados para uma segunda fase, aproveitando as interfaces (`ports`) já separadas na camada de aplicação.
 
 <div class="page"></div>
 <br>
@@ -92,12 +92,16 @@ Fluxo transacional de `POST /pedidos` e `POST /pagamentos`, detalhando validaç�
 
 ## 4. API e Endpoints
 
-Rotas REST no plural, paginação `?page=1&limit=10`, header `X-Request-Id` e documentação interativa em `/docs`:
+As rotas seguem o padrão REST com recursos no plural, paginação via `?page=1&limit=10`, rastreamento pelo header `X-Request-Id` e documentação OpenAPI gerada pelo `@nestjs/swagger` em `http://localhost:3000/docs`:
 
-- **Auth e Usuários:** `GET /health`, `POST /auth/register` e `POST /auth/login` (públicos); `GET /usuarios/me` e `DELETE /usuarios/me` (titular JWT); `POST /usuarios` (`ADMIN` e `GERENTE`).
-- **Unidades, Catálogo, Estoque e Promoções:** `GET /unidades`, `GET /unidades/:id/cardapio`, `GET /produtos` e `GET /promocoes` (públicos); `POST /unidades`, `POST /produtos` e `POST /promocoes` (`ADMIN`); `GET /unidades/:id/estoque` (loja/`ADMIN`) e `POST /estoque/movimentacoes` (`GERENTE`/`ADMIN`).
-- **Pedidos e Pagamentos:** `POST /pedidos`, `GET /pedidos` (`?canalPedido=&status=&unidadeId=`), `GET /pedidos/:id`, `PATCH /pedidos/:id/status`, `POST /pedidos/:id/cancelar` e `POST /pagamentos` (`idempotencyKey`, `simularRecusa`).
-- **Fidelidade e Auditoria:** `GET /fidelidade/conta`, `PATCH /fidelidade/consentimento` e `GET /fidelidade/movimentacoes` (titular JWT); `GET /auditoria` (`ADMIN` geral e `GERENTE` da própria loja).
+- **Auth e Usuários:** `GET /health`, `POST /auth/register` (`201`) e `POST /auth/login` (`200`) são públicos; `GET /usuarios/me` (`200`) e `DELETE /usuarios/me` (`200`) exigem token JWT do titular; `POST /usuarios` (`201`) é restrito a `ADMIN` e `GERENTE`.
+- **Unidades, Catálogo, Estoque e Promoções:** `GET /unidades`, `GET /unidades/:id/cardapio`, `GET /produtos` e `GET /promocoes` (`200`) são públicos; `POST /unidades`, `POST /produtos` e `POST /promocoes` (`201`) exigem `ADMIN`; `GET /unidades/:id/estoque` (`200`) permite equipe da própria loja ou `ADMIN`; `POST /estoque/movimentacoes` (`201`) permite `GERENTE` da loja ou `ADMIN`.
+- **Pedidos e Pagamentos:** `POST /pedidos` (`201`), `GET /pedidos` (`200`, com filtros `?canalPedido=&status=&unidadeId=`), `GET /pedidos/:id` (`200`), `PATCH /pedidos/:id/status` (`200`, restrito à operação da loja), `POST /pedidos/:id/cancelar` (`200`) e `POST /pagamentos` (`201` no processamento inédito ou `200` em retentativa idempotente).
+- **Fidelidade e Auditoria:** `GET /fidelidade/conta`, `PATCH /fidelidade/consentimento` e `GET /fidelidade/movimentacoes` (`200`, titular JWT); `GET /auditoria` (`200`, `ADMIN` geral e `GERENTE` escopado à sua unidade).
+
+![Swagger UI - Visão Geral dos Endpoints em /docs](./docs/diagrams/img/swagger-overview.svg)
+
+![Swagger UI - Execução (Try it out) de POST /pedidos e POST /pagamentos](./docs/diagrams/img/swagger-try-it-out.svg)
 
 ```json
 // POST /auth/login -> 200 OK | Request: { "email": "cliente@exemplo.com", "senha": "Senha@123" }
@@ -126,25 +130,25 @@ Rotas REST no plural, paginação `?page=1&limit=10`, header `X-Request-Id` e do
 ```
 
 ```json
-// POST /pagamentos -> 201 Created (ou 200 OK no retry idempotente) | Request: { "pedidoId": "019c6199-df00-7a00-8f41-9c2a1b3e4f77", "formaPagamento": "PIX", "idempotencyKey": "pm-ok-1771164000000" }
+// POST /pagamentos -> 201 Created (ou 200 OK no retry idempotente) | Request: { "pedidoId": "019c6199-df00-7a00-8f41-9c2a1b3e4f77", "formaPagamento": "PIX", "idempotencyKey": "pm-ok-1795376412000" }
 {
   "id": "019c6199-df00-7a00-8f41-9c2a1b3e4f88",
   "pedidoId": "019c6199-df00-7a00-8f41-9c2a1b3e4f77",
   "unidadeId": "019c6199-df00-7b12-8a40-3c9e1f5b7d21",
   "status": "APROVADO",
   "valorCentavos": 4232,
-  "referenciaExterna": "MOCK-PIX-1771164000000",
+  "referenciaExterna": "MOCK-PIX-1795376412000",
   "payloadRetorno": { "provider": "raizes-mock-gateway", "aprovado": true, "motivo": null }
 }
 ```
 
 ```json
-// Erro padronizado -> 409 Conflict
+// Erro padronizado (401, 403, 404, 409, 422) -> Exemplo 409 Conflict
 {
   "error": "ESTOQUE_INSUFICIENTE",
   "message": "Estoque insuficiente na unidade selecionada.",
   "details": [{ "field": "itens", "issue": "Bolo de Rolo Tradicional: solicitado 5, disponível 2" }],
-  "timestamp": "2026-02-15T14:00:00.000Z",
+  "timestamp": "2026-11-22T19:42:10.000Z",
   "path": "/pedidos",
   "requestId": "019c6199-df00-7a00-8f41-9c2a1b3e4f99"
 }
@@ -215,9 +219,9 @@ No Postman, basta importar a coleção e executar as pastas `1` a `7` em ordem (
 
 ## 8. Conclusão
 
-A construção da API atendeu ao fluxo operacional da rede **Raízes do Nordeste**, conectando a modelagem (casos de uso, DER e classes) aos endpoints REST: o pedido exige `canalPedido`, reserva o saldo local em `estoque_unidades` e debita pontos em transação única; o pagamento simulado (`MockPaymentGateway`) garante idempotência, avança para `EM_PREPARO` (ou estorna reservas na recusa) e alimenta a fila de preparo (`PRONTO -> ENTREGUE`), enquanto todas as falhas seguem o contrato padronizado do `GlobalExceptionFilter` e a proteção de dados aplica hash `bcryptjs`, controle por perfil/unidade, consentimento explícito na fidelidade, anonimização em `DELETE /usuarios/me` e trilha de auditoria sem segredos.
+A implementação cobriu o fluxo principal da rede **Raízes do Nordeste** de ponta a ponta, amarrando a modelagem (casos de uso, DER e diagrama de classes) às rotas entregues: a abertura do pedido exige o `canalPedido`, valida o estoque da unidade escolhida e já abate os pontos de fidelidade na mesma transação; em seguida, o `MockPaymentGateway` processa a cobrança com proteção de idempotência, liberando o pedido para `EM_PREPARO` (ou devolvendo estoque e pontos quando recusado) até passar pela cozinha (`PRONTO`) e pelo balcão (`ENTREGUE`). Na parte de segurança e LGPD, todas as falhas respondem no mesmo formato JSON pelo `GlobalExceptionFilter`, as senhas são gravadas com hash `bcryptjs`, o programa de fidelidade só pontua ou resgata mediante consentimento ativo, a rota `DELETE /usuarios/me` anonimiza os dados pessoais sem quebrar o histórico fiscal dos pedidos, e a trilha de auditoria registra apenas metadados permitidos.
 
-Na prática, adotar o **NestJS** junto com o **Prisma ORM** trouxe desafios técnicos específicos. No NestJS, o principal trabalho foi acertar a ordem do pipeline de requisição (`X-Request-Id`, `ValidationPipe` com `enableImplicitConversion: false` para exigir conversão explícita com `@Type(() => Number)`, guards globais de JWT/RBAC, `AuditInterceptor` assíncrono com RxJS e `GlobalExceptionFilter`) e usar tokens `Symbol` na injeção das portas da camada de aplicação sem criar dependência circular entre módulos. No Prisma com SQLite, a atenção ficou nas transações interativas (`prisma.$transaction`) com `updateMany` condicional para evitar saldo negativo sob concorrência, na captura do erro `P2002` em `PagamentosService` e no `GlobalExceptionFilter` para tratar chaves duplicadas com resposta idempotente (`200`) ou conflito (`409`), e na separação do banco `prisma/test-e2e.db` para que as 13 suítes automatizadas não apagassem o `prisma/dev.db` usado nos testes do Postman.
+Durante o desenvolvimento com **NestJS** e **Prisma ORM**, alguns pontos deram mais trabalho para ajustar. No NestJS, precisei organizar a ordem de execução entre o middleware de `X-Request-Id`, o `ValidationPipe` (onde desativei o `enableImplicitConversion` para evitar que strings como `"false"` fossem convertidas para `true`, usando `@Type(() => Number)` apenas nas queries numéricas), os guards de JWT e perfil, o `AuditInterceptor` com RxJS e o filtro global de exceções, além de usar tokens `Symbol` nas interfaces da camada de aplicação para não gerar dependência circular entre módulos. Já no Prisma com SQLite, o maior cuidado foi evitar condição de corrida usando `updateMany` condicional dentro do `prisma.$transaction` (garantindo que o saldo de estoque ou de pontos nunca fique negativo em requisições simultâneas), tratar o código `P2002` do Prisma quando duas requisições chegam juntas com a mesma `idempotencyKey` em `PagamentosService`, e isolar a suíte E2E em um arquivo próprio (`prisma/test-e2e.db`) para que a execução dos testes automatizados não limpasse o banco `prisma/dev.db` usado na avaliação pelo Postman.
 
 ---
 <br>

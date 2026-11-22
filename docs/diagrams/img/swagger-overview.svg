@@ -1,0 +1,341 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1660" height="1051" viewBox="0 0 1660 1051">
+  <defs>
+    <filter id="shadow" x="-2%" y="-2%" width="104%" height="106%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0F172A" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+  <rect width="1660" height="1051" fill="#F8FAFC"/>
+  <rect x="12" y="12" width="1636" height="1027" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" filter="url(#shadow)"/>
+
+  <!-- Browser / Topbar -->
+  <path d="M 12 22 Q 12 12 22 12 L 1638 12 Q 1648 12 1648 22 L 1648 52 L 12 52 Z" fill="#1E293B"/>
+  <circle cx="34" cy="32" r="6" fill="#EF4444"/>
+  <circle cx="54" cy="32" r="6" fill="#F59E0B"/>
+  <circle cx="74" cy="32" r="6" fill="#10B981"/>
+  <rect x="110" y="20" width="540" height="24" rx="5" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+  <text x="126" y="36" font-family="DejaVu Sans Mono, monospace" font-size="11.5" fill="#E2E8F0">http://localhost:3000/docs</text>
+  <text x="1625" y="36" text-anchor="end" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="700" fill="#85EA2D">Swagger UI · OpenAPI 3.0</text>
+
+  <!-- Swagger Info Header -->
+  <g transform="translate(35, 74)">
+    <text x="0" y="26" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" font-weight="700" fill="#1E293B">Raízes do Nordeste API</text>
+    <rect x="305" y="6" width="54" height="22" rx="11" fill="#64748B"/>
+    <text x="332" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">1.0.0</text>
+    <rect x="367" y="6" width="70" height="22" rx="11" fill="#85EA2D"/>
+    <text x="402" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#1E293B">OAS 3.0</text>
+    <text x="0" y="48" font-family="DejaVu Sans Mono, monospace" font-size="11.5" fill="#2563EB">/docs-json</text>
+    <text x="0" y="70" font-family="DejaVu Sans, Arial, sans-serif" font-size="12.5" fill="#334155">API REST multicanal para gestão de unidades, cardápio, estoque por loja, pedidos, promoções, pagamento simulado, fidelidade (LGPD) e auditoria.</text>
+  </g>
+
+  <!-- Servers + Authorize Bar -->
+  <g transform="translate(35, 158)">
+    <rect x="0" y="0" width="1590" height="48" rx="6" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.2"/>
+    <text x="18" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="700" fill="#475569">Servers</text>
+    <rect x="18" y="25" width="260" height="18" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+    <text x="26" y="38" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#1E293B">http://localhost:3000 - Local MVP</text>
+
+    <text x="320" y="29" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" fill="#475569">Autenticação: <tspan font-weight="700" fill="#1E293B">Bearer JWT (HS256)</tspan> · Perfis: <tspan font-family="DejaVu Sans Mono, monospace" font-size="11">CLIENTE | ATENDENTE | COZINHA | GERENTE | ADMIN</tspan></text>
+
+    <rect x="1435" y="9" width="140" height="30" rx="4" fill="#FFFFFF" stroke="#49CC90" stroke-width="1.8"/>
+    <text x="1495" y="28" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#49CC90">Authorize</text>
+    <g transform="translate(1542, 14) scale(0.8)">
+      <path d="M12 1a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 7H9V6a3 3 0 0 1 6 0v2z" fill="#49CC90"/>
+    </g>
+  </g>
+
+  <g transform="translate(35, 225)">
+    <line x1="0" y1="28" x2="785" y2="28" stroke="#CBD5E1" stroke-width="1.2"/>
+    <text x="4" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="15.5" font-weight="700" fill="#1E293B">Auth</text>
+    <text x="56.0" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" fill="#64748B">Autenticação e cadastro público</text>
+    <path d="M 767 12 L 773 18 L 779 12" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(35, 261)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#E8F6F0" stroke="#49CC90" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#49CC90"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">POST</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/auth/register</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Cadastra um novo cliente e inicializa conta de fidelidade</text>
+  </g>
+  <g transform="translate(35, 301)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#E8F6F0" stroke="#49CC90" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#49CC90"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">POST</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/auth/login</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Autentica usuário e retorna token JWT</text>
+  </g>
+  <g transform="translate(35, 351)">
+    <line x1="0" y1="28" x2="785" y2="28" stroke="#CBD5E1" stroke-width="1.2"/>
+    <text x="4" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="15.5" font-weight="700" fill="#1E293B">Usuários</text>
+    <text x="98.0" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" fill="#64748B">Perfil, cadastro interno e LGPD</text>
+    <path d="M 767 12 L 773 18 L 779 12" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(35, 387)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#EBF5FF" stroke="#61AFFE" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#61AFFE"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">GET</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/usuarios/me</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Retorna dados do usuário autenticado</text>
+    <g transform="translate(759, 7) scale(0.8)">
+      <path d="M12 1a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 7H9V6a3 3 0 0 1 6 0v2z" fill="#475569"/>
+    </g>
+  </g>
+  <g transform="translate(35, 427)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#FDECEC" stroke="#F93E3E" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#F93E3E"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">DELETE</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/usuarios/me</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Anonimiza dados pessoais do titular autenticado preservando pedidos</text>
+    <g transform="translate(759, 7) scale(0.8)">
+      <path d="M12 1a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 7H9V6a3 3 0 0 1 6 0v2z" fill="#475569"/>
+    </g>
+  </g>
+  <g transform="translate(35, 467)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#E8F6F0" stroke="#49CC90" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#49CC90"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">POST</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/usuarios</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Cadastra usuário interno da rede ou da própria unidade</text>
+    <g transform="translate(759, 7) scale(0.8)">
+      <path d="M12 1a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 7H9V6a3 3 0 0 1 6 0v2z" fill="#475569"/>
+    </g>
+  </g>
+  <g transform="translate(35, 517)">
+    <line x1="0" y1="28" x2="785" y2="28" stroke="#CBD5E1" stroke-width="1.2"/>
+    <text x="4" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="15.5" font-weight="700" fill="#1E293B">Unidades</text>
+    <text x="98.0" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" fill="#64748B">Lojas, cardápio local e saldos</text>
+    <path d="M 767 12 L 773 18 L 779 12" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(35, 553)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#E8F6F0" stroke="#49CC90" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#49CC90"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">POST</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/unidades</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Cadastra uma nova unidade da rede</text>
+    <g transform="translate(759, 7) scale(0.8)">
+      <path d="M12 1a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 7H9V6a3 3 0 0 1 6 0v2z" fill="#475569"/>
+    </g>
+  </g>
+  <g transform="translate(35, 593)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#EBF5FF" stroke="#61AFFE" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#61AFFE"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">GET</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/unidades</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Lista unidades ativas da rede com paginação</text>
+  </g>
+  <g transform="translate(35, 633)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#EBF5FF" stroke="#61AFFE" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#61AFFE"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">GET</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/unidades/{id}/cardapio</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Consulta cardápio disponível para venda em uma unidade específica</text>
+  </g>
+  <g transform="translate(35, 673)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#EBF5FF" stroke="#61AFFE" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#61AFFE"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">GET</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/unidades/{id}/estoque</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Consulta saldos de estoque da unidade</text>
+    <g transform="translate(759, 7) scale(0.8)">
+      <path d="M12 1a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 7H9V6a3 3 0 0 1 6 0v2z" fill="#475569"/>
+    </g>
+  </g>
+  <g transform="translate(35, 723)">
+    <line x1="0" y1="28" x2="785" y2="28" stroke="#CBD5E1" stroke-width="1.2"/>
+    <text x="4" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="15.5" font-weight="700" fill="#1E293B">Estoque</text>
+    <text x="87.5" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" fill="#64748B">Movimentações manuais por loja</text>
+    <path d="M 767 12 L 773 18 L 779 12" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(35, 759)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#E8F6F0" stroke="#49CC90" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#49CC90"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">POST</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/estoque/movimentacoes</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Registra entrada ou saída manual no estoque de uma unidade</text>
+    <g transform="translate(759, 7) scale(0.8)">
+      <path d="M12 1a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 7H9V6a3 3 0 0 1 6 0v2z" fill="#475569"/>
+    </g>
+  </g>
+  <g transform="translate(35, 809)">
+    <line x1="0" y1="28" x2="785" y2="28" stroke="#CBD5E1" stroke-width="1.2"/>
+    <text x="4" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="15.5" font-weight="700" fill="#1E293B">Produtos</text>
+    <text x="98.0" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" fill="#64748B">Catálogo centralizado da matriz</text>
+    <path d="M 767 12 L 773 18 L 779 12" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(35, 845)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#E8F6F0" stroke="#49CC90" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#49CC90"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">POST</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/produtos</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Cadastra novo produto no catálogo da rede</text>
+    <g transform="translate(759, 7) scale(0.8)">
+      <path d="M12 1a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 7H9V6a3 3 0 0 1 6 0v2z" fill="#475569"/>
+    </g>
+  </g>
+  <g transform="translate(35, 885)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#EBF5FF" stroke="#61AFFE" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#61AFFE"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">GET</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/produtos</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Lista catálogo de produtos paginado com filtro opcional por categoria</text>
+  </g>
+  <g transform="translate(840, 225)">
+    <line x1="0" y1="28" x2="785" y2="28" stroke="#CBD5E1" stroke-width="1.2"/>
+    <text x="4" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="15.5" font-weight="700" fill="#1E293B">Promoções</text>
+    <text x="108.5" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" fill="#64748B">Campanhas e cupons por canal/loja</text>
+    <path d="M 767 12 L 773 18 L 779 12" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(840, 261)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#E8F6F0" stroke="#49CC90" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#49CC90"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">POST</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/promocoes</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Cadastra nova campanha ou cupom promocional</text>
+    <g transform="translate(759, 7) scale(0.8)">
+      <path d="M12 1a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 7H9V6a3 3 0 0 1 6 0v2z" fill="#475569"/>
+    </g>
+  </g>
+  <g transform="translate(840, 301)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#EBF5FF" stroke="#61AFFE" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#61AFFE"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">GET</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/promocoes</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Lista promoções paginadas com filtros opcionais</text>
+  </g>
+  <g transform="translate(840, 351)">
+    <line x1="0" y1="28" x2="785" y2="28" stroke="#CBD5E1" stroke-width="1.2"/>
+    <text x="4" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="15.5" font-weight="700" fill="#1E293B">Pedidos</text>
+    <text x="87.5" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" fill="#64748B">Fluxo crítico multicanal e fila operacional</text>
+    <path d="M 767 12 L 773 18 L 779 12" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(840, 387)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#E8F6F0" stroke="#49CC90" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#49CC90"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">POST</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/pedidos</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Cria pedido multicanal com reserva de estoque, cupom e resgate de fidelidade</text>
+    <g transform="translate(759, 7) scale(0.8)">
+      <path d="M12 1a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 7H9V6a3 3 0 0 1 6 0v2z" fill="#475569"/>
+    </g>
+  </g>
+  <g transform="translate(840, 427)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#EBF5FF" stroke="#61AFFE" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#61AFFE"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">GET</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/pedidos</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Lista pedidos paginados com filtros por canal, status e unidade</text>
+    <g transform="translate(759, 7) scale(0.8)">
+      <path d="M12 1a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 7H9V6a3 3 0 0 1 6 0v2z" fill="#475569"/>
+    </g>
+  </g>
+  <g transform="translate(840, 467)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#EBF5FF" stroke="#61AFFE" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#61AFFE"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">GET</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/pedidos/{id}</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Consulta detalhes de um pedido por ID</text>
+    <g transform="translate(759, 7) scale(0.8)">
+      <path d="M12 1a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 7H9V6a3 3 0 0 1 6 0v2z" fill="#475569"/>
+    </g>
+  </g>
+  <g transform="translate(840, 507)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#E6FBF6" stroke="#50E3C2" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#10B981"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">PATCH</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/pedidos/{id}/status</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Avança status operacional do pedido para PRONTO ou ENTREGUE</text>
+    <g transform="translate(759, 7) scale(0.8)">
+      <path d="M12 1a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 7H9V6a3 3 0 0 1 6 0v2z" fill="#475569"/>
+    </g>
+  </g>
+  <g transform="translate(840, 547)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#E8F6F0" stroke="#49CC90" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#49CC90"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">POST</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/pedidos/{id}/cancelar</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Cancela pedido antes da entrega e estorna estoque e pontos</text>
+    <g transform="translate(759, 7) scale(0.8)">
+      <path d="M12 1a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 7H9V6a3 3 0 0 1 6 0v2z" fill="#475569"/>
+    </g>
+  </g>
+  <g transform="translate(840, 597)">
+    <line x1="0" y1="28" x2="785" y2="28" stroke="#CBD5E1" stroke-width="1.2"/>
+    <text x="4" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="15.5" font-weight="700" fill="#1E293B">Pagamentos</text>
+    <text x="119.0" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" fill="#64748B">Integração simulada idempotente</text>
+    <path d="M 767 12 L 773 18 L 779 12" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(840, 633)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#E8F6F0" stroke="#49CC90" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#49CC90"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">POST</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/pagamentos</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Processa pagamento no gateway simulado com suporte a idempotencyKey</text>
+    <g transform="translate(759, 7) scale(0.8)">
+      <path d="M12 1a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 7H9V6a3 3 0 0 1 6 0v2z" fill="#475569"/>
+    </g>
+  </g>
+  <g transform="translate(840, 683)">
+    <line x1="0" y1="28" x2="785" y2="28" stroke="#CBD5E1" stroke-width="1.2"/>
+    <text x="4" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="15.5" font-weight="700" fill="#1E293B">Fidelidade</text>
+    <text x="119.0" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" fill="#64748B">Pontos e consentimento explícito LGPD</text>
+    <path d="M 767 12 L 773 18 L 779 12" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(840, 719)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#EBF5FF" stroke="#61AFFE" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#61AFFE"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">GET</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/fidelidade/conta</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Consulta saldo e status de consentimento do programa de fidelidade</text>
+    <g transform="translate(759, 7) scale(0.8)">
+      <path d="M12 1a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 7H9V6a3 3 0 0 1 6 0v2z" fill="#475569"/>
+    </g>
+  </g>
+  <g transform="translate(840, 759)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#E6FBF6" stroke="#50E3C2" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#10B981"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">PATCH</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/fidelidade/consentimento</text>
+    <text x="282.0" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Ativa ou revoga o consentimento explícito para fidelidade</text>
+    <g transform="translate(759, 7) scale(0.8)">
+      <path d="M12 1a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 7H9V6a3 3 0 0 1 6 0v2z" fill="#475569"/>
+    </g>
+  </g>
+  <g transform="translate(840, 799)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#EBF5FF" stroke="#61AFFE" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#61AFFE"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">GET</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/fidelidade/movimentacoes</text>
+    <text x="282.0" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Lista histórico paginado de movimentações de pontos do usuário</text>
+    <g transform="translate(759, 7) scale(0.8)">
+      <path d="M12 1a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 7H9V6a3 3 0 0 1 6 0v2z" fill="#475569"/>
+    </g>
+  </g>
+  <g transform="translate(840, 849)">
+    <line x1="0" y1="28" x2="785" y2="28" stroke="#CBD5E1" stroke-width="1.2"/>
+    <text x="4" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="15.5" font-weight="700" fill="#1E293B">Auditoria</text>
+    <text x="108.5" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" fill="#64748B">Rastreabilidade de ações sensíveis</text>
+    <path d="M 767 12 L 773 18 L 779 12" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(840, 885)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#EBF5FF" stroke="#61AFFE" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#61AFFE"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">GET</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/auditoria</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Consulta trilha de auditoria paginada e filtrável</text>
+    <g transform="translate(759, 7) scale(0.8)">
+      <path d="M12 1a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 7H9V6a3 3 0 0 1 6 0v2z" fill="#475569"/>
+    </g>
+  </g>
+  <g transform="translate(840, 935)">
+    <line x1="0" y1="28" x2="785" y2="28" stroke="#CBD5E1" stroke-width="1.2"/>
+    <text x="4" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="15.5" font-weight="700" fill="#1E293B">Health</text>
+    <text x="77.0" y="20" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" fill="#64748B">Disponibilidade e conexão SQLite</text>
+    <path d="M 767 12 L 773 18 L 779 12" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(840, 971)">
+    <rect x="0" y="0" width="785" height="34" rx="4" fill="#EBF5FF" stroke="#61AFFE" stroke-width="1.2"/>
+    <rect x="6" y="5" width="68" height="24" rx="3" fill="#61AFFE"/>
+    <text x="40" y="21" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">GET</text>
+    <text x="84" y="21" font-family="DejaVu Sans Mono, monospace" font-size="12" font-weight="700" fill="#1E293B">/health</text>
+    <text x="275" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#334155">Verifica disponibilidade da API e conexão com o banco de dados</text>
+  </g>
+</svg>

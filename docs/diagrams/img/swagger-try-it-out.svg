@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1660" height="740" viewBox="0 0 1660 740">
+  <defs>
+    <filter id="shadow" x="-2%" y="-2%" width="104%" height="106%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0F172A" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+  <rect width="1660" height="740" fill="#F8FAFC"/>
+  <rect x="12" y="12" width="1636" height="716" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" filter="url(#shadow)"/>
+
+  <!-- Topbar -->
+  <path d="M 12 22 Q 12 12 22 12 L 1638 12 Q 1648 12 1648 22 L 1648 52 L 12 52 Z" fill="#1E293B"/>
+  <circle cx="34" cy="32" r="6" fill="#EF4444"/>
+  <circle cx="54" cy="32" r="6" fill="#F59E0B"/>
+  <circle cx="74" cy="32" r="6" fill="#10B981"/>
+  <rect x="110" y="20" width="660" height="24" rx="5" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+  <text x="126" y="36" font-family="DejaVu Sans Mono, monospace" font-size="11.5" fill="#E2E8F0">http://localhost:3000/docs#/Pedidos/PedidosController_criar</text>
+  <text x="1625" y="36" text-anchor="end" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="700" fill="#85EA2D">Swagger UI · Try it out (T04 e T10)</text>
+
+  <!-- LEFT PANEL: POST /pedidos -->
+  <g transform="translate(35, 70)">
+    <rect x="0" y="0" width="785" height="638" rx="6" fill="#E8F6F0" stroke="#49CC90" stroke-width="1.5"/>
+    <rect x="10" y="8" width="68" height="24" rx="3" fill="#49CC90"/>
+    <text x="44" y="24" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">POST</text>
+    <text x="88" y="24" font-family="DejaVu Sans Mono, monospace" font-size="13" font-weight="700" fill="#1E293B">/pedidos</text>
+    <text x="175" y="24" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" fill="#334155">Cria pedido multicanal com reserva de estoque, cupom e fidelidade</text>
+
+    <rect x="10" y="40" width="765" height="588" rx="4" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+    <text x="24" y="64" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="700" fill="#1E293B">Request body</text>
+    <text x="120" y="64" font-family="DejaVu Sans Mono, monospace" font-size="10.5" fill="#EF4444">* required</text>
+    <text x="751" y="64" text-anchor="end" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#475569">application/json</text>
+
+    <rect x="24" y="74" width="737" height="182" rx="5" fill="#1E293B"/>
+    <text x="38" y="96" font-family="DejaVu Sans Mono, monospace" font-size="11.2" fill="#E2E8F0">{</text>
+    <text x="38" y="115" font-family="DejaVu Sans Mono, monospace" font-size="11.2" fill="#93C5FD">  "unidadeId"<tspan fill="#E2E8F0">: </tspan><tspan fill="#A7F3D0">"019c6199-df00-7b12-8a40-3c9e1f5b7d21"</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="134" font-family="DejaVu Sans Mono, monospace" font-size="11.2" fill="#93C5FD">  "canalPedido"<tspan fill="#E2E8F0">: </tspan><tspan fill="#FDE68A">"TOTEM"</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="153" font-family="DejaVu Sans Mono, monospace" font-size="11.2" fill="#93C5FD">  "codigoPromocao"<tspan fill="#E2E8F0">: </tspan><tspan fill="#A7F3D0">"TOTEM10"</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="172" font-family="DejaVu Sans Mono, monospace" font-size="11.2" fill="#93C5FD">  "pontosResgate"<tspan fill="#E2E8F0">: </tspan><tspan fill="#FCA5A5">5</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="191" font-family="DejaVu Sans Mono, monospace" font-size="11.2" fill="#93C5FD">  "itens"<tspan fill="#E2E8F0">: [</tspan></text>
+    <text x="38" y="210" font-family="DejaVu Sans Mono, monospace" font-size="11.2" fill="#E2E8F0">    { <tspan fill="#93C5FD">"produtoId"</tspan>: <tspan fill="#A7F3D0">"019c6199-df00-7c45-9e11-4a8b2d6f3c19"</tspan>, <tspan fill="#93C5FD">"quantidade"</tspan>: <tspan fill="#FCA5A5">2</tspan> }</text>
+    <text x="38" y="229" font-family="DejaVu Sans Mono, monospace" font-size="11.2" fill="#E2E8F0">  ]</text>
+    <text x="38" y="246" font-family="DejaVu Sans Mono, monospace" font-size="11.2" fill="#E2E8F0">}</text>
+
+    <!-- Execute Bar -->
+    <rect x="24" y="266" width="737" height="26" rx="4" fill="#2563EB"/>
+    <text x="392.5" y="283" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#FFFFFF">Execute</text>
+
+    <!-- Server response -->
+    <text x="24" y="314" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="700" fill="#1E293B">Server response</text>
+    <rect x="145" y="300" width="90" height="20" rx="3" fill="#DCFCE7" stroke="#22C55E" stroke-width="1"/>
+    <text x="190" y="314" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="10.5" font-weight="700" fill="#15803D">201 Created</text>
+    <text x="751" y="314" text-anchor="end" font-family="DejaVu Sans Mono, monospace" font-size="10.5" fill="#64748B">x-request-id: 019c6199-df00-7a00-8f41-9c2a1b3e4f70</text>
+
+    <rect x="24" y="324" width="737" height="232" rx="5" fill="#1E293B"/>
+    <text x="38" y="344" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#E2E8F0">{</text>
+    <text x="38" y="362" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#93C5FD">  "id"<tspan fill="#E2E8F0">: </tspan><tspan fill="#A7F3D0">"019c6199-df00-7a00-8f41-9c2a1b3e4f77"</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="380" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#93C5FD">  "unidadeId"<tspan fill="#E2E8F0">: </tspan><tspan fill="#A7F3D0">"019c6199-df00-7b12-8a40-3c9e1f5b7d21"</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="398" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#93C5FD">  "canalPedido"<tspan fill="#E2E8F0">: </tspan><tspan fill="#FDE68A">"TOTEM"</tspan><tspan fill="#E2E8F0">, </tspan><tspan fill="#93C5FD">"status"</tspan><tspan fill="#E2E8F0">: </tspan><tspan fill="#FDE68A">"AGUARDANDO_PAGAMENTO"</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="416" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#93C5FD">  "subtotalCentavos"<tspan fill="#E2E8F0">: </tspan><tspan fill="#FCA5A5">4980</tspan><tspan fill="#E2E8F0">, </tspan><tspan fill="#93C5FD">"subtotal"</tspan><tspan fill="#E2E8F0">: </tspan><tspan fill="#FCA5A5">49.8</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="434" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#93C5FD">  "descontoPromocaoCentavos"<tspan fill="#E2E8F0">: </tspan><tspan fill="#FCA5A5">498</tspan><tspan fill="#E2E8F0">, </tspan><tspan fill="#93C5FD">"descontoPromocao"</tspan><tspan fill="#E2E8F0">: </tspan><tspan fill="#FCA5A5">4.98</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="452" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#93C5FD">  "pontosUtilizados"<tspan fill="#E2E8F0">: </tspan><tspan fill="#FCA5A5">5</tspan><tspan fill="#E2E8F0">, </tspan><tspan fill="#93C5FD">"descontoFidelidadeCentavos"</tspan><tspan fill="#E2E8F0">: </tspan><tspan fill="#FCA5A5">250</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="470" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#93C5FD">  "valorTotalCentavos"<tspan fill="#E2E8F0">: </tspan><tspan fill="#FCA5A5">4232</tspan><tspan fill="#E2E8F0">, </tspan><tspan fill="#93C5FD">"valorTotal"</tspan><tspan fill="#E2E8F0">: </tspan><tspan fill="#FCA5A5">42.32</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="488" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#93C5FD">  "itens"<tspan fill="#E2E8F0">: [{ </tspan><tspan fill="#93C5FD">"quantidade"</tspan><tspan fill="#E2E8F0">: </tspan><tspan fill="#FCA5A5">2</tspan><tspan fill="#E2E8F0">, </tspan><tspan fill="#93C5FD">"precoUnitarioCentavos"</tspan><tspan fill="#E2E8F0">: </tspan><tspan fill="#FCA5A5">2490</tspan><tspan fill="#E2E8F0">, </tspan><tspan fill="#93C5FD">"subtotalCentavos"</tspan><tspan fill="#E2E8F0">: </tspan><tspan fill="#FCA5A5">4980</tspan><tspan fill="#E2E8F0"> }],</tspan></text>
+    <text x="38" y="506" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#93C5FD">  "createdAt"<tspan fill="#E2E8F0">: </tspan><tspan fill="#A7F3D0">"2026-11-22T19:40:12.000Z"</tspan></text>
+    <text x="38" y="524" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#E2E8F0">}</text>
+
+    <!-- Status codes summary -->
+    <text x="24" y="576" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="700" fill="#334155">Responses documentadas no Swagger:</text>
+    <text x="24" y="596" font-family="DejaVu Sans Mono, monospace" font-size="10.8" fill="#15803D">201 Created <tspan fill="#475569">(Pedido criado e estoque reservado)</tspan> · <tspan fill="#B91C1C">401</tspan> <tspan fill="#475569">NAO_AUTENTICADO</tspan> · <tspan fill="#B91C1C">403</tspan> <tspan fill="#475569">ACESSO_NEGADO</tspan></text>
+    <text x="24" y="614" font-family="DejaVu Sans Mono, monospace" font-size="10.8" fill="#B91C1C">404 <tspan fill="#475569">UNIDADE/PRODUTO_NAO_ENCONTRADO</tspan> · <tspan fill="#B91C1C">409</tspan> <tspan fill="#475569">ESTOQUE_INSUFICIENTE</tspan> · <tspan fill="#B91C1C">422</tspan> <tspan fill="#475569">ERRO_VALIDACAO</tspan></text>
+  </g>
+
+  <!-- RIGHT PANEL: POST /pagamentos -->
+  <g transform="translate(840, 70)">
+    <rect x="0" y="0" width="785" height="638" rx="6" fill="#E8F6F0" stroke="#49CC90" stroke-width="1.5"/>
+    <rect x="10" y="8" width="68" height="24" rx="3" fill="#49CC90"/>
+    <text x="44" y="24" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="11.5" font-weight="700" fill="#FFFFFF">POST</text>
+    <text x="88" y="24" font-family="DejaVu Sans Mono, monospace" font-size="13" font-weight="700" fill="#1E293B">/pagamentos</text>
+    <text x="200" y="24" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" fill="#334155">Processa pagamento no gateway simulado com idempotencyKey</text>
+
+    <rect x="10" y="40" width="765" height="588" rx="4" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+    <text x="24" y="64" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="700" fill="#1E293B">Request body</text>
+    <text x="120" y="64" font-family="DejaVu Sans Mono, monospace" font-size="10.5" fill="#EF4444">* required</text>
+    <text x="751" y="64" text-anchor="end" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#475569">application/json</text>
+
+    <rect x="24" y="74" width="737" height="182" rx="5" fill="#1E293B"/>
+    <text x="38" y="102" font-family="DejaVu Sans Mono, monospace" font-size="11.2" fill="#E2E8F0">{</text>
+    <text x="38" y="126" font-family="DejaVu Sans Mono, monospace" font-size="11.2" fill="#93C5FD">  "pedidoId"<tspan fill="#E2E8F0">: </tspan><tspan fill="#A7F3D0">"019c6199-df00-7a00-8f41-9c2a1b3e4f77"</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="150" font-family="DejaVu Sans Mono, monospace" font-size="11.2" fill="#93C5FD">  "formaPagamento"<tspan fill="#E2E8F0">: </tspan><tspan fill="#FDE68A">"PIX"</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="174" font-family="DejaVu Sans Mono, monospace" font-size="11.2" fill="#93C5FD">  "idempotencyKey"<tspan fill="#E2E8F0">: </tspan><tspan fill="#A7F3D0">"pm-ok-1795376412000"</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="198" font-family="DejaVu Sans Mono, monospace" font-size="11.2" fill="#93C5FD">  "simularRecusa"<tspan fill="#E2E8F0">: </tspan><tspan fill="#FCA5A5">false</tspan></text>
+    <text x="38" y="222" font-family="DejaVu Sans Mono, monospace" font-size="11.2" fill="#E2E8F0">}</text>
+
+    <!-- Execute Bar -->
+    <rect x="24" y="266" width="737" height="26" rx="4" fill="#2563EB"/>
+    <text x="392.5" y="283" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#FFFFFF">Execute</text>
+
+    <!-- Server response -->
+    <text x="24" y="314" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="700" fill="#1E293B">Server response</text>
+    <rect x="145" y="300" width="195" height="20" rx="3" fill="#DCFCE7" stroke="#22C55E" stroke-width="1"/>
+    <text x="242" y="314" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="10.5" font-weight="700" fill="#15803D">201 Created (200 no retry)</text>
+    <text x="751" y="314" text-anchor="end" font-family="DejaVu Sans Mono, monospace" font-size="10.5" fill="#64748B">x-request-id: 019c6199-df00-7a00-8f41-9c2a1b3e4f80</text>
+
+    <rect x="24" y="324" width="737" height="232" rx="5" fill="#1E293B"/>
+    <text x="38" y="344" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#E2E8F0">{</text>
+    <text x="38" y="362" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#93C5FD">  "id"<tspan fill="#E2E8F0">: </tspan><tspan fill="#A7F3D0">"019c6199-df00-7a00-8f41-9c2a1b3e4f88"</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="380" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#93C5FD">  "pedidoId"<tspan fill="#E2E8F0">: </tspan><tspan fill="#A7F3D0">"019c6199-df00-7a00-8f41-9c2a1b3e4f77"</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="398" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#93C5FD">  "unidadeId"<tspan fill="#E2E8F0">: </tspan><tspan fill="#A7F3D0">"019c6199-df00-7b12-8a40-3c9e1f5b7d21"</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="416" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#93C5FD">  "idempotencyKey"<tspan fill="#E2E8F0">: </tspan><tspan fill="#A7F3D0">"pm-ok-1795376412000"</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="434" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#93C5FD">  "formaPagamento"<tspan fill="#E2E8F0">: </tspan><tspan fill="#FDE68A">"PIX"</tspan><tspan fill="#E2E8F0">, </tspan><tspan fill="#93C5FD">"status"</tspan><tspan fill="#E2E8F0">: </tspan><tspan fill="#A7F3D0">"APROVADO"</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="452" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#93C5FD">  "valorCentavos"<tspan fill="#E2E8F0">: </tspan><tspan fill="#FCA5A5">4232</tspan><tspan fill="#E2E8F0">, </tspan><tspan fill="#93C5FD">"valor"</tspan><tspan fill="#E2E8F0">: </tspan><tspan fill="#FCA5A5">42.32</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="470" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#93C5FD">  "referenciaExterna"<tspan fill="#E2E8F0">: </tspan><tspan fill="#A7F3D0">"MOCK-PIX-1795376412000"</tspan><tspan fill="#E2E8F0">,</tspan></text>
+    <text x="38" y="488" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#93C5FD">  "payloadRetorno"<tspan fill="#E2E8F0">: { </tspan><tspan fill="#93C5FD">"provider"</tspan><tspan fill="#E2E8F0">: </tspan><tspan fill="#A7F3D0">"raizes-mock-gateway"</tspan><tspan fill="#E2E8F0">, </tspan><tspan fill="#93C5FD">"aprovado"</tspan><tspan fill="#E2E8F0">: </tspan><tspan fill="#FCA5A5">true</tspan><tspan fill="#E2E8F0">, </tspan><tspan fill="#93C5FD">"motivo"</tspan><tspan fill="#E2E8F0">: </tspan><tspan fill="#FCA5A5">null</tspan><tspan fill="#E2E8F0"> },</tspan></text>
+    <text x="38" y="506" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#93C5FD">  "processadoEm"<tspan fill="#E2E8F0">: </tspan><tspan fill="#A7F3D0">"2026-11-22T19:40:15.000Z"</tspan></text>
+    <text x="38" y="524" font-family="DejaVu Sans Mono, monospace" font-size="11" fill="#E2E8F0">}</text>
+
+    <!-- Status codes summary -->
+    <text x="24" y="576" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="700" fill="#334155">Responses documentadas no Swagger:</text>
+    <text x="24" y="596" font-family="DejaVu Sans Mono, monospace" font-size="10.8" fill="#15803D">201 Created <tspan fill="#475569">(Processado; avança p/ EM_PREPARO ou estorna na recusa)</tspan> · <tspan fill="#15803D">200 OK</tspan> <tspan fill="#475569">(Retry idempotente)</tspan></text>
+    <text x="24" y="614" font-family="DejaVu Sans Mono, monospace" font-size="10.8" fill="#B91C1C">401 <tspan fill="#475569">NAO_AUTENTICADO</tspan> · <tspan fill="#B91C1C">404</tspan> <tspan fill="#475569">PEDIDO_NAO_ENCONTRADO</tspan> · <tspan fill="#B91C1C">409</tspan> <tspan fill="#475569">PEDIDO_NAO_PAGAVEL / IDEMPOTENCY_KEY_CONFLITO</tspan></text>
+  </g>
+</svg>
