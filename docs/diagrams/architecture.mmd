@@ -2,35 +2,35 @@ flowchart LR
   Canais["Canais de Acesso\n(App, Totem, Web, Balcão, Cozinha, Gestão)"]
 
   subgraph Backend["Back-end Raízes do Nordeste (NestJS + TypeScript)"]
-    subgraph CamadaAPI["Camada 1 — API (Interface / Controllers)"]
+    subgraph CamadaAPI["Camada 1 - API (Controllers e Filtros)"]
       direction TB
-      A1["Rotas REST e Controllers"] ~~~ A2["Validação de DTOs e Erros Padrão"] ~~~ A3["Autenticação JWT e RBAC"] ~~~ A4["Documentação Swagger / OpenAPI"]
+      A1["Controllers REST e DTOs"] ~~~ A2["JwtAuthGuard, RolesGuard e AuditInterceptor"] ~~~ A3["GlobalExceptionFilter e RequestId"] ~~~ A4["Swagger / OpenAPI (/docs)"]
     end
 
-    subgraph CamadaApp["Camada 2 — Application (Casos de Uso)"]
+    subgraph CamadaApp["Camada 2 - Application (Casos de Uso)"]
       direction TB
-      B1["Orquestração dos Fluxos\n(Pedidos, Estoque, Pagamento, Fidelidade)"] ~~~ B2["Interfaces de Serviços Externos\n(Pagamento, Hash, Auditoria, UUIDv7)"]
+      B1["Services por Módulo\n(Pedidos, Estoque, Pagamentos, Fidelidade, Auditoria)"] ~~~ B2["Helpers Compartilhados\n(Paginação, Escopo, Estorno, Select)"] ~~~ B3["Portas / Interfaces\n(PaymentGateway, AuditLogger, IdGenerator, PasswordHasher)"]
     end
 
-    subgraph CamadaDomain["Camada 3 — Domain (Núcleo de Negócio)"]
+    subgraph CamadaDomain["Camada 3 - Domain (Núcleo Puro)"]
       direction TB
-      C1["Entidades e Enums\n(Pedido, Estoque, Promoção, Fidelidade)"] ~~~ C2["Regras de Negócio e Erros de Domínio"] ~~~ C3["Interfaces de Repositórios"]
+      C1["Enums de Domínio\n(Perfis, Canais, Status, Pagamento, Fidelidade)"] ~~~ C2["Regras Puras e Utilitários\n(Cálculo de Desconto/Pontos, Transições, Centavos)"] ~~~ C3["Erros de Domínio Tipados"]
     end
 
-    subgraph CamadaInfra["Camada 4 — Infrastructure (Detalhes Técnicos)"]
+    subgraph CamadaInfra["Camada 4 - Infrastructure (Implementações)"]
       direction TB
-      D1["Prisma ORM e Repositórios"] ~~~ D2["Segurança (Bcrypt, JWT) e UUIDv7"] ~~~ D3["Logs de Auditoria"] ~~~ D4["Adaptador de Pagamento Mock"]
+      D1["InfrastructureModule e PrismaService"] ~~~ D2["Segurança (Bcrypt, JWT, UUIDv7)"] ~~~ D3["PrismaAuditLogger"] ~~~ D4["MockPaymentGateway"]
     end
   end
 
-  subgraph Externos["Recursos Externos / Persistência"]
+  subgraph Externos["Persistência e Integrações"]
     direction TB
     DB[("Banco SQLite (dev.db)")] ~~~ Gateway["Gateway de Pagamento (Mock)"]
   end
 
   Canais -->|"HTTP / REST + JWT"| CamadaAPI
-  CamadaAPI -->|"chama casos de uso"| CamadaApp
-  CamadaApp -->|"executa regras"| CamadaDomain
-  CamadaApp -.->|"usa interfaces implementadas por"| CamadaInfra
-  CamadaDomain -.->|"repositórios implementados por"| CamadaInfra
-  CamadaInfra -->|"persiste dados, logs e simula cobrança"| Externos
+  CamadaAPI -->|"chama services"| CamadaApp
+  CamadaApp -->|"executa regras e erros"| CamadaDomain
+  CamadaApp -->|"persiste via PrismaService"| CamadaInfra
+  CamadaApp -.->|"usa portas implementadas por"| CamadaInfra
+  CamadaInfra -->|"grava dados/logs e simula cobrança"| Externos

@@ -1,4 +1,4 @@
-// DER Lógico e Físico — Rede "Raízes do Nordeste"
+// DER Lógico e Físico - Rede "Raízes do Nordeste"
 // Compatível com dbdiagram.io (DBML) e espelhado no prisma/schema.prisma (SQLite)
 
 Enum PerfilUsuario {
