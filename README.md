@@ -105,15 +105,15 @@ Rotas REST no plural, paginação `?page=1&limit=10`, header `X-Request-Id` e do
   "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "tokenType": "Bearer",
   "expiresIn": 3600,
-  "user": { "id": "019c6199-df00-7000-8000-000000000305", "nome": "Maria Cliente", "email": "cliente@exemplo.com", "perfil": "CLIENTE", "unidadeId": null }
+  "user": { "id": "019c6199-df00-7d34-9b18-6f4a2e1c8d52", "nome": "Dr. João Pedro Albuquerque", "email": "cliente@exemplo.com", "perfil": "CLIENTE", "unidadeId": null }
 }
 ```
 
 ```json
-// POST /pedidos -> 201 Created | Request: { "unidadeId": "019c6199-df00-7000-8000-000000000101", "canalPedido": "TOTEM", "codigoPromocao": "TOTEM10", "pontosResgate": 5, "itens": [{ "produtoId": "019c6199-df00-7000-8000-000000000201", "quantidade": 2 }] }
+// POST /pedidos -> 201 Created | Request: { "unidadeId": "019c6199-df00-7b12-8a40-3c9e1f5b7d21", "canalPedido": "TOTEM", "codigoPromocao": "TOTEM10", "pontosResgate": 5, "itens": [{ "produtoId": "019c6199-df00-7c45-9e11-4a8b2d6f3c19", "quantidade": 2 }] }
 {
   "id": "019c6199-df00-7a00-8f41-9c2a1b3e4f77",
-  "unidadeId": "019c6199-df00-7000-8000-000000000101",
+  "unidadeId": "019c6199-df00-7b12-8a40-3c9e1f5b7d21",
   "canalPedido": "TOTEM",
   "status": "AGUARDANDO_PAGAMENTO",
   "subtotalCentavos": 4980,
@@ -130,7 +130,7 @@ Rotas REST no plural, paginação `?page=1&limit=10`, header `X-Request-Id` e do
 {
   "id": "019c6199-df00-7a00-8f41-9c2a1b3e4f88",
   "pedidoId": "019c6199-df00-7a00-8f41-9c2a1b3e4f77",
-  "unidadeId": "019c6199-df00-7000-8000-000000000101",
+  "unidadeId": "019c6199-df00-7b12-8a40-3c9e1f5b7d21",
   "status": "APROVADO",
   "valorCentavos": 4232,
   "referenciaExterna": "MOCK-PIX-1771164000000",
@@ -176,7 +176,7 @@ npm run prisma:generate && npx prisma migrate deploy && npm run prisma:seed
 npm run start:dev
 ```
 
-O seed (`prisma/seed.ts`) cria as unidades `REC-01` e `FOR-01`, o catálogo, os cupons `TOTEM10` e `RAIZES5`, e cinco contas de teste (senha `Senha@123`): `admin@raizes.com`, `gerente.rec@raizes.com`, `atendente.rec@raizes.com`, `cozinha.rec@raizes.com` e `cliente@exemplo.com` (20 pontos e consentimento ativo), além de estoque reduzido (`2` unidades) para o *Bolo de Rolo Tradicional* em Recife.
+O seed (`prisma/seed.ts`, com `@faker-js/faker` semeado pelo RU `4841127` e chaves UUIDv7 geradas em runtime) cadastra as unidades `REC-01` e `FOR-01`, o catálogo regional, os cupons `TOTEM10` e `RAIZES5`, e cinco contas de teste (senha `Senha@123`): `admin@raizes.com`, `gerente.rec@raizes.com`, `atendente.rec@raizes.com`, `cozinha.rec@raizes.com` e `cliente@exemplo.com` (20 pontos e consentimento ativo), além de estoque reduzido (`2` unidades) para o *Bolo de Rolo Tradicional* em Recife.
 
 <div class="page"></div>
 <br>
@@ -215,9 +215,9 @@ No Postman, basta importar a coleção e executar as pastas `1` a `7` em ordem (
 
 ## 8. Conclusão
 
-A construção da API atendeu aos requisitos operacionais da rede **Raízes do Nordeste**, mas a adoção simultânea do **NestJS** e do **Prisma ORM** trouxe dificuldades técnicas práticas ao longo do desenvolvimento. No NestJS, a principal curva de aprendizado foi dominar a ordem do pipeline de requisição - integrando middleware de `X-Request-Id`, `ValidationPipe` (onde foi preciso desativar a conversão implícita do `class-transformer` que transformava qualquer string em booleano verdadeiro), guards globais de JWT/RBAC, `AuditInterceptor` assíncrono com RxJS e o `GlobalExceptionFilter` - além de configurar a injeção de dependências com tokens `Symbol` para desacoplar as portas da camada de aplicação sem gerar dependências circulares entre módulos.
+A construção da API atendeu ao fluxo operacional da rede **Raízes do Nordeste**, conectando a modelagem (casos de uso, DER e classes) aos endpoints REST: o pedido exige `canalPedido`, reserva o saldo local em `estoque_unidades` e debita pontos em transação única; o pagamento simulado (`MockPaymentGateway`) garante idempotência, avança para `EM_PREPARO` (ou estorna reservas na recusa) e alimenta a fila de preparo (`PRONTO -> ENTREGUE`), enquanto todas as falhas seguem o contrato padronizado do `GlobalExceptionFilter` e a proteção de dados aplica hash `bcryptjs`, controle por perfil/unidade, consentimento explícito na fidelidade, anonimização em `DELETE /usuarios/me` e trilha de auditoria sem segredos.
 
-No Prisma com SQLite, os desafios concentraram-se na coordenação de transações interativas (`prisma.$transaction`) para reservar e estornar estoque e pontos sem condição de corrida, bem como na tradução de erros internos do ORM (como interceptar o código `P2002` de violação de chave única em chamadas concorrentes de pagamento para devolver `409` ou o registro idempotente em vez de um erro `500`). Outro ponto crítico foi o isolamento do banco nos testes automatizados: como os testes E2E limpavam as tabelas a cada suíte, foi necessário redirecionar o `DATABASE_URL` de testes para um arquivo separado (`prisma/test-e2e.db`), preservando o banco `prisma/dev.db` populado pelo seed.
+Na prática, adotar o **NestJS** junto com o **Prisma ORM** trouxe desafios técnicos específicos. No NestJS, o principal trabalho foi acertar a ordem do pipeline de requisição (`X-Request-Id`, `ValidationPipe` com `enableImplicitConversion: false` para exigir conversão explícita com `@Type(() => Number)`, guards globais de JWT/RBAC, `AuditInterceptor` assíncrono com RxJS e `GlobalExceptionFilter`) e usar tokens `Symbol` na injeção das portas da camada de aplicação sem criar dependência circular entre módulos. No Prisma com SQLite, a atenção ficou nas transações interativas (`prisma.$transaction`) com `updateMany` condicional para evitar saldo negativo sob concorrência, na captura do erro `P2002` em `PagamentosService` e no `GlobalExceptionFilter` para tratar chaves duplicadas com resposta idempotente (`200`) ou conflito (`409`), e na separação do banco `prisma/test-e2e.db` para que as 13 suítes automatizadas não apagassem o `prisma/dev.db` usado nos testes do Postman.
 
 ---
 <br>
