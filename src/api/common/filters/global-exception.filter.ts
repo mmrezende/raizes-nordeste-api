@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import type { Response } from 'express';
 import type { RequestWithId } from '@api/common/middlewares/request-id.middleware';
 import {
@@ -122,6 +123,15 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         status,
         error: mapStatusToErrorCode(status),
         message: extractHttpExceptionMessage(exception.getResponse()),
+        details: [],
+      };
+    }
+
+    if (exception instanceof Prisma.PrismaClientKnownRequestError && exception.code === 'P2002') {
+      return {
+        status: HttpStatus.CONFLICT,
+        error: 'CONFLITO_UNICIDADE',
+        message: 'Registro duplicado para campo único.',
         details: [],
       };
     }

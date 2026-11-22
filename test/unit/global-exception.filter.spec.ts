@@ -1,4 +1,5 @@
 import { type ArgumentsHost, Logger, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { GlobalExceptionFilter } from '@api/common/filters/global-exception.filter';
 import { ConflictDomainError } from '@domain/errors/domain.error';
 
@@ -79,6 +80,26 @@ describe('GlobalExceptionFilter', () => {
       timestamp: expect.any(String),
       path: '/pedidos',
       requestId: 'req-789',
+    });
+  });
+
+  it('deve mapear P2002 do Prisma para 409 CONFLITO_UNICIDADE', () => {
+    const { host, status, json } = createMockHost('req-p2002');
+    const prismaError = new Prisma.PrismaClientKnownRequestError('Unique constraint failed', {
+      code: 'P2002',
+      clientVersion: '6.19.3',
+    });
+
+    filter.catch(prismaError, host);
+
+    expect(status).toHaveBeenCalledWith(409);
+    expect(json).toHaveBeenCalledWith({
+      error: 'CONFLITO_UNICIDADE',
+      message: 'Registro duplicado para campo único.',
+      details: [],
+      timestamp: expect.any(String),
+      path: '/pedidos',
+      requestId: 'req-p2002',
     });
   });
 });

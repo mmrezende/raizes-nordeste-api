@@ -71,10 +71,15 @@ describe('Pagamentos Simulados e Ciclo de Vida de Pedidos (e2e)', () => {
       expect(payRes.body).toMatchObject({
         id: pagamentoId,
         pedidoId,
+        unidadeId: unidade.id,
         formaPagamento: 'PIX',
         status: 'APROVADO',
         valorCentavos: 3500,
         valor: 35,
+        payloadRetorno: {
+          provider: 'raizes-mock-gateway',
+          aprovado: true,
+        },
       });
       expect((payRes.body.referenciaExterna as string).length).toBeGreaterThan(0);
       expect(payRes.body.processadoEm).toBeTruthy();
@@ -172,6 +177,12 @@ describe('Pagamentos Simulados e Ciclo de Vida de Pedidos (e2e)', () => {
         .expect(201);
 
       expect(payRes.body.status).toBe('RECUSADO');
+      expect(payRes.body.unidadeId).toBe(unidade.id);
+      expect(payRes.body.payloadRetorno).toMatchObject({
+        provider: 'raizes-mock-gateway',
+        aprovado: false,
+        motivo: 'RECUSA_SIMULADA_GATEWAY',
+      });
 
       const pedidoAtualizado = await ctx.prisma.pedido.findUniqueOrThrow({
         where: { id: pedidoId },

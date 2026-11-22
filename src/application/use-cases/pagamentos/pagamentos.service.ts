@@ -23,12 +23,14 @@ export interface ProcessarPagamentoInput {
 export interface PagamentoResultado {
   id: string;
   pedidoId: string;
+  unidadeId: string;
   idempotencyKey: string;
   formaPagamento: FormaPagamento;
   status: StatusPagamento;
   valorCentavos: number;
   valor: number;
   referenciaExterna: string | null;
+  payloadRetorno: Record<string, unknown> | null;
   processadoEm: Date | null;
   createdAt: Date;
 }
@@ -38,16 +40,33 @@ export interface ProcessarPagamentoOutput {
   jaProcessado: boolean;
 }
 
-function formatarPagamento(pagamento: Pagamento): PagamentoResultado {
+function parsePayloadRetorno(raw: string | null): Record<string, unknown> | null {
+  if (!raw) {
+    return null;
+  }
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
+      return parsed as Record<string, unknown>;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function formatarPagamento(pagamento: Pagamento, unidadeId: string): PagamentoResultado {
   return {
     id: pagamento.id,
     pedidoId: pagamento.pedidoId,
+    unidadeId,
     idempotencyKey: pagamento.idempotencyKey,
     formaPagamento: pagamento.formaPagamento,
     status: pagamento.status,
     valorCentavos: pagamento.valorCentavos,
     valor: centavosParaReais(pagamento.valorCentavos),
     referenciaExterna: pagamento.referenciaExterna,
+    payloadRetorno: parsePayloadRetorno(pagamento.payloadRetorno),
     processadoEm: pagamento.processadoEm,
     createdAt: pagamento.createdAt,
   };
@@ -90,7 +109,7 @@ export class PagamentosService {
 
       validarAcessoPedido(existente.pedido, ator, MENSAGENS_ACESSO_PAGAMENTO);
       return {
-        pagamento: formatarPagamento(existente),
+        pagamento: formatarPagamento(existente, existente.pedido.unidadeId),
         jaProcessado: true,
       };
     }
@@ -123,6 +142,27 @@ export class PagamentosService {
     });
 
     const pagamentoCriado = await this.prisma.$transaction(async (tx) => {
+      const novoStatusPedido =
+        retornoGateway.status === StatusPagamento.APROVADO
+          ? StatusPedido.EM_PREPARO
+          : StatusPedido.PAGAMENTO_RECUSADO;
+
+      const pedidoAtualizado = await tx.pedido.updateMany({
+        where: {
+          id: pedido.id,
+          status: StatusPedido.AGUARDANDO_PAGAMENTO,
+        },
+        data: { status: novoStatusPedido },
+      });
+
+      if (pedidoAtualizado.count === 0) {
+        throw new ConflictDomainError(
+          'Este pedido não está aguardando pagamento.',
+          [{ field: 'pedidoId', issue: 'Status alterado concorrentemente.' }],
+          'PEDIDO_NAO_PAGAVEL',
+        );
+      }
+
       const pagamento = await tx.pagamento.create({
         data: {
           id: this.idGenerator.generate(),
@@ -138,11 +178,6 @@ export class PagamentosService {
       });
 
       if (retornoGateway.status === StatusPagamento.APROVADO) {
-        await tx.pedido.update({
-          where: { id: pedido.id },
-          data: { status: StatusPedido.EM_PREPARO },
-        });
-
         const pontosAcumulo = calcularPontosAcumulo(pedido.valorTotalCentavos);
         if (pontosAcumulo > 0) {
           const conta = await tx.contaFidelidade.findUnique({
@@ -169,11 +204,6 @@ export class PagamentosService {
           }
         }
       } else {
-        await tx.pedido.update({
-          where: { id: pedido.id },
-          data: { status: StatusPedido.PAGAMENTO_RECUSADO },
-        });
-
         await estornarReservasDoPedido(tx, this.idGenerator, {
           pedido,
           atorUsuarioId: ator.id,
@@ -185,7 +215,7 @@ export class PagamentosService {
     });
 
     return {
-      pagamento: formatarPagamento(pagamentoCriado),
+      pagamento: formatarPagamento(pagamentoCriado, pedido.unidadeId),
       jaProcessado: false,
     };
   }

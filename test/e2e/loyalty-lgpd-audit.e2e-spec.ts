@@ -295,6 +295,16 @@ describe('Fidelidade, LGPD e Auditoria (e2e)', () => {
         })
         .expect(201);
 
+      const pagARes = await request(ctx.app.getHttpServer())
+        .post('/pagamentos')
+        .set('Authorization', `Bearer ${cliente.token}`)
+        .send({
+          pedidoId: pedidoARes.body.id,
+          formaPagamento: 'PIX',
+          idempotencyKey: 'audit-pag-a-001',
+        })
+        .expect(201);
+
       const clienteForbidden = await request(ctx.app.getHttpServer())
         .get('/auditoria')
         .set('Authorization', `Bearer ${cliente.token}`)
@@ -317,6 +327,7 @@ describe('Fidelidade, LGPD e Auditoria (e2e)', () => {
         metadados: { unidadeId?: string } | null;
       }>;
       expect(gerenteLogs.some((item) => item.entidadeId === pedidoARes.body.id)).toBe(true);
+      expect(gerenteLogs.some((item) => item.entidadeId === pagARes.body.id)).toBe(true);
       expect(gerenteLogs.some((item) => item.entidadeId === pedidoBRes.body.id)).toBe(false);
       expect(
         gerenteLogs.every((item) => item.metadados?.unidadeId === unidadeA.id),
