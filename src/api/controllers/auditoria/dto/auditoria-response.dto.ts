@@ -27,7 +27,7 @@ export class LogAuditoriaResponseDto {
   @ApiProperty({ type: String, nullable: true, example: 'req-1234' })
   requestId: string | null;
 
-  @ApiProperty({ example: '2026-11-22T02:00:00.000Z' })
+  @ApiProperty({ example: '2026-02-15T14:00:00.000Z' })
   createdAt: Date;
 }
 

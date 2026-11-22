@@ -6,6 +6,8 @@ import {
   type PaginacaoInput,
   type ResultadoPaginado,
 } from '@application/common/paginacao.util';
+import type { UsuarioAutenticado } from '@application/common/usuario-autenticado.type';
+import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
 import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 
 export interface ListarAuditoriaInput extends PaginacaoInput {
@@ -43,7 +45,14 @@ function parseMetadados(raw: string | null): Record<string, unknown> | null {
 export class AuditoriaService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async listar(query: ListarAuditoriaInput): Promise<ResultadoPaginado<LogAuditoriaItem>> {
+  async listar(
+    query: ListarAuditoriaInput,
+    ator: UsuarioAutenticado,
+  ): Promise<ResultadoPaginado<LogAuditoriaItem>> {
+    if (ator.perfil !== PerfilUsuario.ADMIN && !ator.unidadeId) {
+      return montarResultadoPaginado([], 0, query);
+    }
+
     const skip = calcularOffset(query);
 
     const where: Prisma.LogAuditoriaWhereInput = {};
@@ -52,6 +61,13 @@ export class AuditoriaService {
     }
     if (query.acao?.trim()) {
       where.acao = query.acao.trim();
+    }
+
+    if (ator.perfil !== PerfilUsuario.ADMIN && ator.unidadeId) {
+      where.OR = [
+        { usuario: { unidadeId: ator.unidadeId } },
+        { metadados: { contains: `"unidadeId":"${ator.unidadeId}"` } },
+      ];
     }
 
     const [total, registros] = await Promise.all([

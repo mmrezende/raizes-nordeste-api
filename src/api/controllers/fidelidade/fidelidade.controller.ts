@@ -26,7 +26,7 @@ export class FidelidadeController {
   constructor(private readonly fidelidadeService: FidelidadeService) {}
 
   @Get('conta')
-  @ApiOperation({ summary: 'Consulta saldo e status de consentimento LGPD do programa de fidelidade' })
+  @ApiOperation({ summary: 'Consulta saldo e status de consentimento do programa de fidelidade' })
   @ApiOkResponse({ type: ContaFidelidadeResponseDto })
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })
   async buscarConta(@CurrentUser() user: UsuarioAutenticado): Promise<ContaFidelidadeResponseDto> {
@@ -35,7 +35,7 @@ export class FidelidadeController {
 
   @Patch('consentimento')
   @Auditable({ acao: 'FIDELIDADE_CONSENTIMENTO_ATUALIZADO', entidade: 'contas_fidelidade' })
-  @ApiOperation({ summary: 'Ativa ou revoga o consentimento explícito LGPD para fidelidade' })
+  @ApiOperation({ summary: 'Ativa ou revoga o consentimento explícito para fidelidade' })
   @ApiOkResponse({ type: ContaFidelidadeResponseDto })
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })
   @ApiUnprocessableEntityResponse({ type: ErrorResponseDto })

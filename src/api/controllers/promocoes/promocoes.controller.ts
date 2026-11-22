@@ -30,7 +30,7 @@ export class PromocoesController {
   @ApiBearerAuth()
   @Roles([PerfilUsuario.ADMIN])
   @Auditable({ acao: 'PROMOCAO_CRIADA', entidade: 'promocoes' })
-  @ApiOperation({ summary: 'Cadastra nova campanha ou cupom promocional (ADMIN)' })
+  @ApiOperation({ summary: 'Cadastra nova campanha ou cupom promocional' })
   @ApiCreatedResponse({ type: PromocaoResponseDto })
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })
   @ApiForbiddenResponse({ type: ErrorResponseDto })

@@ -10,7 +10,7 @@ export class HealthResponseDto {
   @ApiProperty({ enum: ['up', 'down'], example: 'up' })
   database: 'up' | 'down';
 
-  @ApiProperty({ example: '2026-11-21T22:00:00.000Z' })
+  @ApiProperty({ example: '2026-02-15T14:00:00.000Z' })
   timestamp: string;
 
   @ApiProperty({ example: '1.0.0' })

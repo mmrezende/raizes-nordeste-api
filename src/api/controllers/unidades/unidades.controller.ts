@@ -38,7 +38,7 @@ export class UnidadesController {
   @ApiBearerAuth()
   @Roles([PerfilUsuario.ADMIN])
   @Auditable({ acao: 'UNIDADE_CRIADA', entidade: 'unidades' })
-  @ApiOperation({ summary: 'Cadastra uma nova unidade da rede (ADMIN)' })
+  @ApiOperation({ summary: 'Cadastra uma nova unidade da rede' })
   @ApiCreatedResponse({ type: UnidadeResponseDto })
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })
   @ApiForbiddenResponse({ type: ErrorResponseDto })
@@ -76,7 +76,7 @@ export class UnidadesController {
     PerfilUsuario.ATENDENTE,
     PerfilUsuario.COZINHA,
   ])
-  @ApiOperation({ summary: 'Consulta saldos de estoque da unidade (restrito à equipe da loja ou ADMIN)' })
+  @ApiOperation({ summary: 'Consulta saldos de estoque da unidade' })
   @ApiOkResponse({ type: EstoquePaginadoResponseDto })
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })
   @ApiForbiddenResponse({ type: ErrorResponseDto })

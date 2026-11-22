@@ -3,10 +3,10 @@ import { IsOptional, IsString, MaxLength } from 'class-validator';
 import { PaginationQueryDto } from '@api/common/dtos/pagination-query.dto';
 
 export class ListarAuditoriaQueryDto extends PaginationQueryDto {
-  @ApiPropertyOptional({ example: 'pedidos', maxLength: 60 })
+  @ApiPropertyOptional({ example: 'pedidos', maxLength: 80 })
   @IsOptional()
   @IsString()
-  @MaxLength(60)
+  @MaxLength(80)
   entidade?: string;
 
   @ApiPropertyOptional({ example: 'PEDIDO_CRIADO', maxLength: 80 })

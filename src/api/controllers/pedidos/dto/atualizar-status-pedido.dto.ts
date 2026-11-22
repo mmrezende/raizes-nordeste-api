@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum } from 'class-validator';
-import { StatusPedido } from '@domain/enums/pedido.enum';
+import { StatusOperacionalPedido } from '@domain/enums/pedido.enum';
 
 export class AtualizarStatusPedidoDto {
-  @ApiProperty({ enum: [StatusPedido.PRONTO, StatusPedido.ENTREGUE], example: StatusPedido.PRONTO })
-  @IsEnum(StatusPedido)
-  status: StatusPedido;
+  @ApiProperty({ enum: StatusOperacionalPedido, example: StatusOperacionalPedido.PRONTO })
+  @IsEnum(StatusOperacionalPedido)
+  status: StatusOperacionalPedido;
 }

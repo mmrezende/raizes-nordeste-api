@@ -9,6 +9,7 @@ import {
 } from '@application/common/paginacao.util';
 import type { UsuarioAutenticado } from '@application/common/usuario-autenticado.type';
 import { ID_GENERATOR, type IdGenerator } from '@application/ports/id-generator.interface';
+import { TipoMovimentacaoFidelidade } from '@domain/enums/fidelidade.enum';
 import { type CanalPedido, StatusPedido } from '@domain/enums/pedido.enum';
 import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
 import { TipoMovimentacaoEstoque } from '@domain/enums/tipo-movimentacao-estoque.enum';
@@ -144,12 +145,10 @@ export class PedidosService {
     const [unidade, produtos, cliente] = await Promise.all([
       this.prisma.unidade.findUnique({ where: { id: input.unidadeId } }),
       this.prisma.produto.findMany({ where: { id: { in: produtoIds } } }),
-      clienteId === ator.id
-        ? Promise.resolve({ id: ator.id, ativo: true })
-        : this.prisma.usuario.findUnique({
-            where: { id: clienteId },
-            select: { id: true, ativo: true },
-          }),
+      this.prisma.usuario.findUnique({
+        where: { id: clienteId },
+        select: { id: true, ativo: true, anonimizadoEm: true },
+      }),
     ]);
 
     if (!unidade) {
@@ -158,7 +157,7 @@ export class PedidosService {
     if (!unidade.ativo) {
       throw new ConflictDomainError('Unidade inativa para receber pedidos.', [], 'UNIDADE_INATIVA');
     }
-    if (!cliente || !cliente.ativo) {
+    if (!cliente || !cliente.ativo || cliente.anonimizadoEm !== null) {
       throw new NotFoundDomainError('Cliente não encontrado.', [], 'USUARIO_NAO_ENCONTRADO');
     }
 
@@ -365,7 +364,7 @@ export class PedidosService {
             id: this.idGenerator.generate(),
             contaFidelidadeId,
             pedidoId,
-            tipo: 'RESGATE',
+            tipo: TipoMovimentacaoFidelidade.RESGATE,
             pontos: pontosUtilizados,
             descricao: 'Resgate de pontos como desconto no pedido',
           },

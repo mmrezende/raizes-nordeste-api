@@ -38,6 +38,18 @@ function extractResponseEntityId(data: unknown): string | null {
   return null;
 }
 
+function extractUnidadeId(data: unknown, user?: UsuarioAutenticado): string | undefined {
+  if (isRecord(data)) {
+    if (typeof data.unidadeId === 'string') {
+      return data.unidadeId;
+    }
+    if (isRecord(data.saldo) && typeof data.saldo.unidadeId === 'string') {
+      return data.saldo.unidadeId;
+    }
+  }
+  return user?.unidadeId ?? undefined;
+}
+
 @Injectable()
 export class AuditInterceptor implements NestInterceptor {
   constructor(
@@ -55,10 +67,19 @@ export class AuditInterceptor implements NestInterceptor {
       return next.handle();
     }
 
-    const request = context.switchToHttp().getRequest<AuditableRequest>();
+    const http = context.switchToHttp();
+    const request = http.getRequest<AuditableRequest>();
+    const response = http.getResponse?.() as { statusCode?: number } | undefined;
 
     return next.handle().pipe(
       mergeMap(async (responseData: unknown) => {
+        if (
+          meta.ignorarQuandoStatus !== undefined &&
+          response?.statusCode === meta.ignorarQuandoStatus
+        ) {
+          return responseData;
+        }
+
         const responseId = extractResponseEntityId(responseData);
         const paramId = typeof request.params?.id === 'string' ? request.params.id : null;
         const entidadeId = responseId ?? paramId ?? 'N/A';
@@ -74,6 +95,13 @@ export class AuditInterceptor implements NestInterceptor {
             if (responseData[field] !== undefined) {
               metadados[field] = responseData[field];
             }
+          }
+        }
+
+        if (metadados.unidadeId === undefined) {
+          const unidadeId = extractUnidadeId(responseData, request.user);
+          if (unidadeId !== undefined) {
+            metadados.unidadeId = unidadeId;
           }
         }
 

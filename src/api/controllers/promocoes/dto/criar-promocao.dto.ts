@@ -14,10 +14,10 @@ import {
 import { CanalPedido, TipoDesconto } from '@domain/enums/pedido.enum';
 
 export class CriarPromocaoDto {
-  @ApiProperty({ example: 'TOTEM10', maxLength: 50 })
+  @ApiProperty({ example: 'TOTEM10', maxLength: 40 })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(50)
+  @MaxLength(40)
   codigo: string;
 
   @ApiProperty({ example: '10% de desconto para pedidos realizados no totem', maxLength: 255 })
@@ -55,7 +55,7 @@ export class CriarPromocaoDto {
   @IsEnum(CanalPedido)
   canalAplicavel?: CanalPedido;
 
-  @ApiProperty({ example: '2026-11-21T00:00:00.000Z' })
+  @ApiProperty({ example: '2026-02-01T00:00:00.000Z' })
   @IsDateString()
   inicioEm: string;
 

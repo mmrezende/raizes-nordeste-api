@@ -74,10 +74,10 @@ export class PedidoResponseDto {
   @ApiProperty({ type: () => [ItemPedidoResponseDto] })
   itens: ItemPedidoResponseDto[];
 
-  @ApiProperty({ example: '2026-11-22T01:55:00.000Z' })
+  @ApiProperty({ example: '2026-02-15T14:00:00.000Z' })
   createdAt: Date;
 
-  @ApiProperty({ example: '2026-11-22T01:55:00.000Z' })
+  @ApiProperty({ example: '2026-02-15T14:00:00.000Z' })
   updatedAt: Date;
 }
 

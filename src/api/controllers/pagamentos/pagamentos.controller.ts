@@ -35,9 +35,13 @@ export class PagamentosController {
     PerfilUsuario.GERENTE,
     PerfilUsuario.ADMIN,
   ])
-  @Auditable({ acao: 'PAGAMENTO_PROCESSADO', entidade: 'pagamentos' })
+  @Auditable({
+    acao: 'PAGAMENTO_PROCESSADO',
+    entidade: 'pagamentos',
+    ignorarQuandoStatus: HttpStatus.OK,
+  })
   @ApiOperation({
-    summary: 'Processa pagamento no gateway mock com suporte a idempotencyKey (201 novo / 200 retentativa)',
+    summary: 'Processa pagamento no gateway simulado com suporte a idempotencyKey',
   })
   @ApiCreatedResponse({ type: PagamentoResponseDto })
   @ApiOkResponse({ type: PagamentoResponseDto })

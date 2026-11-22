@@ -15,13 +15,13 @@ export class ContaFidelidadeResponseDto {
   @ApiProperty({ example: true })
   consentimentoAtivo: boolean;
 
-  @ApiProperty({ type: Date, nullable: true, example: '2026-11-22T02:00:00.000Z' })
+  @ApiProperty({ type: Date, nullable: true, example: '2026-02-15T14:00:00.000Z' })
   consentimentoEm: Date | null;
 
   @ApiProperty({ type: Date, nullable: true, example: null })
   revogadoEm: Date | null;
 
-  @ApiProperty({ example: '2026-11-22T02:00:00.000Z' })
+  @ApiProperty({ example: '2026-02-15T14:00:00.000Z' })
   updatedAt: Date;
 }
 
@@ -44,7 +44,7 @@ export class MovimentacaoFidelidadeResponseDto {
   @ApiProperty({ type: String, nullable: true, example: 'Acúmulo de pontos por pagamento aprovado' })
   descricao: string | null;
 
-  @ApiProperty({ example: '2026-11-22T02:00:00.000Z' })
+  @ApiProperty({ example: '2026-02-15T14:00:00.000Z' })
   createdAt: Date;
 }
 

@@ -66,7 +66,7 @@ export class PedidosController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Consulta detalhes de um pedido por ID conforme escopo do perfil' })
+  @ApiOperation({ summary: 'Consulta detalhes de um pedido por ID' })
   @ApiOkResponse({ type: PedidoResponseDto })
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })
   @ApiForbiddenResponse({ type: ErrorResponseDto })
@@ -87,7 +87,7 @@ export class PedidosController {
   ])
   @Auditable({ acao: 'PEDIDO_STATUS_ATUALIZADO', entidade: 'pedidos' })
   @ApiOperation({
-    summary: 'Avança status operacional do pedido (COZINHA: PRONTO; ATENDENTE: ENTREGUE)',
+    summary: 'Avança status operacional do pedido para PRONTO ou ENTREGUE',
   })
   @ApiOkResponse({ type: PedidoResponseDto })
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })

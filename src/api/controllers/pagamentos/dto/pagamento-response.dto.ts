@@ -26,9 +26,9 @@ export class PagamentoResponseDto {
   @ApiProperty({ type: String, nullable: true, example: 'MOCK-PIX-1732245600000' })
   referenciaExterna: string | null;
 
-  @ApiProperty({ type: Date, nullable: true, example: '2026-11-22T02:00:00.000Z' })
+  @ApiProperty({ type: Date, nullable: true, example: '2026-02-15T14:00:00.000Z' })
   processadoEm: Date | null;
 
-  @ApiProperty({ example: '2026-11-22T02:00:00.000Z' })
+  @ApiProperty({ example: '2026-02-15T14:00:00.000Z' })
   createdAt: Date;
 }

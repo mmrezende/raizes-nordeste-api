@@ -20,7 +20,7 @@ export class MovimentacaoEstoqueDto {
   @ApiProperty({ type: String, nullable: true, example: 'Reposição inicial' })
   motivo: string | null;
 
-  @ApiProperty({ example: '2026-11-22T01:55:00.000Z' })
+  @ApiProperty({ example: '2026-02-15T14:00:00.000Z' })
   createdAt: Date;
 }
 

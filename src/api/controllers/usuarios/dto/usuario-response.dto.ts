@@ -20,10 +20,10 @@ export class UsuarioResponseDto {
   @ApiProperty({ example: true })
   ativo: boolean;
 
-  @ApiProperty({ example: '2026-11-21T23:25:00.000Z' })
+  @ApiProperty({ example: '2026-02-15T14:00:00.000Z' })
   createdAt: Date;
 
-  @ApiProperty({ example: '2026-11-21T23:25:00.000Z' })
+  @ApiProperty({ example: '2026-02-15T14:00:00.000Z' })
   updatedAt: Date;
 }
 
@@ -37,6 +37,6 @@ export class UsuarioAnonimizadoResponseDto {
   @ApiProperty({ example: false })
   ativo: boolean;
 
-  @ApiProperty({ example: '2026-11-22T02:30:00.000Z' })
+  @ApiProperty({ example: '2026-02-15T14:30:00.000Z' })
   anonimizadoEm: Date;
 }

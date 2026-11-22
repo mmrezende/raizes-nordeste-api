@@ -30,7 +30,7 @@ export class PromocaoResponseDto {
   @ApiProperty({ enum: CanalPedido, nullable: true, example: CanalPedido.TOTEM })
   canalAplicavel: CanalPedido | null;
 
-  @ApiProperty({ example: '2026-11-21T00:00:00.000Z' })
+  @ApiProperty({ example: '2026-02-01T00:00:00.000Z' })
   inicioEm: Date;
 
   @ApiProperty({ example: '2026-12-31T23:59:59.000Z' })
@@ -39,10 +39,10 @@ export class PromocaoResponseDto {
   @ApiProperty({ example: true })
   ativo: boolean;
 
-  @ApiProperty({ example: '2026-11-22T01:55:00.000Z' })
+  @ApiProperty({ example: '2026-02-15T14:00:00.000Z' })
   createdAt: Date;
 
-  @ApiProperty({ example: '2026-11-22T01:55:00.000Z' })
+  @ApiProperty({ example: '2026-02-15T14:00:00.000Z' })
   updatedAt: Date;
 }
 

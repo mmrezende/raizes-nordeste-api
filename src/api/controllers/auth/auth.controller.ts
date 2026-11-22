@@ -25,7 +25,7 @@ export class AuthController {
   @Public()
   @Post('register')
   @Auditable({ acao: 'USUARIO_CADASTRADO', entidade: 'usuarios' })
-  @ApiOperation({ summary: 'Cadastra um novo cliente e inicializa conta de fidelidade (LGPD)' })
+  @ApiOperation({ summary: 'Cadastra um novo cliente e inicializa conta de fidelidade' })
   @ApiCreatedResponse({ type: UsuarioResponseDto })
   @ApiConflictResponse({ type: ErrorResponseDto })
   @ApiUnprocessableEntityResponse({ type: ErrorResponseDto })

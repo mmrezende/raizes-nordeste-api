@@ -42,10 +42,10 @@ export class CriarPedidoDto {
   @IsUUID('all')
   clienteId?: string;
 
-  @ApiPropertyOptional({ example: 'TOTEM10', maxLength: 50 })
+  @ApiPropertyOptional({ example: 'TOTEM10', maxLength: 40 })
   @IsOptional()
   @IsString()
-  @MaxLength(50)
+  @MaxLength(40)
   codigoPromocao?: string;
 
   @ApiPropertyOptional({ example: 10, minimum: 0, default: 0 })

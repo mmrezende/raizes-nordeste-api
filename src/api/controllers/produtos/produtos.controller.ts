@@ -28,7 +28,7 @@ export class ProdutosController {
   @ApiBearerAuth()
   @Roles([PerfilUsuario.ADMIN])
   @Auditable({ acao: 'PRODUTO_CRIADO', entidade: 'produtos' })
-  @ApiOperation({ summary: 'Cadastra novo produto no catálogo da rede (ADMIN)' })
+  @ApiOperation({ summary: 'Cadastra novo produto no catálogo da rede' })
   @ApiCreatedResponse({ type: ProdutoResponseDto })
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })
   @ApiForbiddenResponse({ type: ErrorResponseDto })

@@ -21,14 +21,14 @@ import { PerfilUsuario } from '@domain/enums/perfil-usuario.enum';
 import { CriarUsuarioDto } from './dto/criar-usuario.dto';
 import { UsuarioAnonimizadoResponseDto, UsuarioResponseDto } from './dto/usuario-response.dto';
 
-@ApiTags('Usuarios')
+@ApiTags('Usuários')
 @ApiBearerAuth()
 @Controller('usuarios')
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
 
   @Get('me')
-  @ApiOperation({ summary: 'Retorna dados do usuário autenticado (sem senhaHash)' })
+  @ApiOperation({ summary: 'Retorna dados do usuário autenticado' })
   @ApiOkResponse({ type: UsuarioResponseDto })
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })
   async me(@CurrentUser() user: UsuarioAutenticado): Promise<UsuarioResponseDto> {
@@ -38,7 +38,7 @@ export class UsuariosController {
   @Delete('me')
   @Auditable({ acao: 'USUARIO_ANONIMIZADO', entidade: 'usuarios' })
   @ApiOperation({
-    summary: 'Anonimiza dados pessoais do titular autenticado conforme LGPD, preservando pedidos',
+    summary: 'Anonimiza dados pessoais do titular autenticado preservando pedidos',
   })
   @ApiOkResponse({ type: UsuarioAnonimizadoResponseDto })
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })
@@ -52,7 +52,7 @@ export class UsuariosController {
   @Post()
   @Roles([PerfilUsuario.ADMIN, PerfilUsuario.GERENTE])
   @Auditable({ acao: 'USUARIO_CRIADO', entidade: 'usuarios' })
-  @ApiOperation({ summary: 'Cadastra usuário interno (ADMIN ou GERENTE para própria unidade)' })
+  @ApiOperation({ summary: 'Cadastra usuário interno da rede ou da própria unidade' })
   @ApiCreatedResponse({ type: UsuarioResponseDto })
   @ApiUnauthorizedResponse({ type: ErrorResponseDto })
   @ApiForbiddenResponse({ type: ErrorResponseDto })

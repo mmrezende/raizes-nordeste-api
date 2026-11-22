@@ -22,11 +22,11 @@ export class CriarPagamentoDto {
   @ApiProperty({
     description: 'Chave única para garantir idempotência em retentativas',
     example: 'pay-key-001',
-    maxLength: 120,
+    maxLength: 100,
   })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(120)
+  @MaxLength(100)
   idempotencyKey: string;
 
   @ApiPropertyOptional({
